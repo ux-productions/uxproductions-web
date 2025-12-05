@@ -83,7 +83,7 @@ import { LanguageService } from '../../i18n/language.service';
               <div class="flex flex-col sm:flex-row gap-6 justify-center pt-6">
                 <a routerLink="/games"
                    class="inline-flex items-center justify-center px-8 py-4
-                          bg-amber-500 text-black font-pixel text-lg
+                          bg-amber-500 text-black font-pixel text-lg uppercase
                           border-3 border-amber-400
                           hover:bg-amber-400
                           shadow-lg shadow-amber-500/30
@@ -93,7 +93,7 @@ import { LanguageService } from '../../i18n/language.service';
                 </a>
                 <a routerLink="/demo"
                    class="retro-btn inline-flex items-center justify-center px-8 py-4
-                          bg-zinc-800 border-zinc-600 text-amber-400 font-pixel text-lg
+                          bg-zinc-800 border-zinc-600 text-amber-400 font-pixel text-lg uppercase
                           hover:bg-zinc-700 hover:text-amber-300 hover:border-zinc-500">
                   <span class="mr-2">◉</span>
                   {{ t().demo.title }}
