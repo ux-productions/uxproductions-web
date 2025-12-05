@@ -74,7 +74,7 @@ import { LanguageService } from '../../i18n/language.service';
 
               <!-- Subtitle with typewriter effect -->
               <div class="max-w-2xl mx-auto">
-                <p class="font-pixel text-lg sm:text-xl text-amber-100/80 leading-relaxed tracking-wide">
+                <p class="font-pixel text-lg sm:text-xl text-amber-100 leading-relaxed tracking-wide">
                   > {{ t().hero.subtitle }}<span class="cursor-blink"></span>
                 </p>
               </div>
@@ -102,7 +102,7 @@ import { LanguageService } from '../../i18n/language.service';
 
               <!-- Retro Status Bar -->
               <div class="pt-8 border-t border-amber-500/30 mt-8">
-                <div class="flex flex-wrap justify-center gap-4 sm:gap-8 text-base font-pixel text-amber-500/70">
+                <div class="flex flex-wrap justify-center gap-4 sm:gap-8 text-base font-pixel text-amber-400">
                   <span>EST. 2013</span>
                   <span class="hidden sm:inline">•</span>
                   <span>MÄLARDALEN, SWEDEN</span>
@@ -155,7 +155,7 @@ import { LanguageService } from '../../i18n/language.service';
                   {{ t().nav.games }}
                 </h3>
 
-                <p class="text-amber-100/60 text-sm leading-relaxed">
+                <p class="text-amber-100/80 text-sm leading-relaxed">
                   {{ t().games.subtitle }}
                 </p>
 
@@ -167,7 +167,7 @@ import { LanguageService } from '../../i18n/language.service';
                 </div>
 
                 <!-- Hover instruction -->
-                <div class="font-pixel text-xs text-amber-500/40 group-hover:text-amber-400 transition-colors">
+                <div class="font-pixel text-xs text-amber-500/60 group-hover:text-amber-400 transition-colors">
                   [ PRESS TO CONTINUE ]
                 </div>
               </div>
@@ -188,7 +188,7 @@ import { LanguageService } from '../../i18n/language.service';
                   {{ t().nav.tools }}
                 </h3>
 
-                <p class="text-orange-100/60 text-sm leading-relaxed">
+                <p class="text-orange-100/80 text-sm leading-relaxed">
                   {{ t().tools.subtitle }}
                 </p>
 
@@ -199,7 +199,7 @@ import { LanguageService } from '../../i18n/language.service';
                 </div>
 
                 <!-- Hover instruction -->
-                <div class="font-pixel text-xs text-orange-500/40 group-hover:text-orange-400 transition-colors">
+                <div class="font-pixel text-xs text-orange-500/60 group-hover:text-orange-400 transition-colors">
                   [ PRESS TO CONTINUE ]
                 </div>
               </div>
@@ -221,12 +221,12 @@ import { LanguageService } from '../../i18n/language.service';
                   {{ t().nav.about }}
                 </h3>
 
-                <p class="text-amber-100/60 text-sm leading-relaxed">
+                <p class="text-amber-100/80 text-sm leading-relaxed">
                   {{ t().about.description }}
                 </p>
 
                 <!-- Hover instruction -->
-                <div class="font-pixel text-xs text-amber-500/40 group-hover:text-amber-400 transition-colors pt-6">
+                <div class="font-pixel text-xs text-amber-500/60 group-hover:text-amber-400 transition-colors pt-6">
                   [ PRESS TO CONTINUE ]
                 </div>
               </div>
@@ -234,7 +234,7 @@ import { LanguageService } from '../../i18n/language.service';
           </div>
 
           <!-- Bottom ASCII Art Decoration -->
-          <div class="text-center mt-16 font-pixel text-amber-500/30 text-base">
+          <div class="text-center mt-16 font-pixel text-amber-500/50 text-base">
             <div>╔═══════════════════════════════════════════════════╗</div>
             <div>║&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ t().hero.qualityOverQuantity }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;║</div>
             <div>╚═══════════════════════════════════════════════════╝</div>

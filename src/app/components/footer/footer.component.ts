@@ -19,7 +19,7 @@ import { LanguageService } from '../../i18n/language.service';
               <img src="images/logo.png" alt="UX Productions" class="w-12 h-12" />
               <span class="font-pixel text-amber-400 text-lg">UX PRODUCTIONS AB</span>
             </div>
-            <p class="font-pixel text-amber-100/50 text-base max-w-md leading-relaxed">
+            <p class="font-pixel text-amber-100/70 text-base max-w-md leading-relaxed">
               {{ t().about.description }}
             </p>
           </div>
@@ -29,18 +29,18 @@ import { LanguageService } from '../../i18n/language.service';
             <h3 class="font-pixel text-amber-400 text-base mb-4">[ NAVIGATION ]</h3>
             <ul class="space-y-3">
               <li>
-                <a routerLink="/games" class="text-amber-100/50 hover:text-amber-400 transition-colors text-base font-pixel flex items-center gap-2">
-                  <span class="text-amber-500/50">▸</span> {{ t().nav.games }}
+                <a routerLink="/games" class="text-amber-100/70 hover:text-amber-400 transition-colors text-base font-pixel flex items-center gap-2">
+                  <span class="text-amber-500/70">▸</span> {{ t().nav.games }}
                 </a>
               </li>
               <li>
-                <a routerLink="/tools" class="text-amber-100/50 hover:text-amber-400 transition-colors text-base font-pixel flex items-center gap-2">
-                  <span class="text-amber-500/50">▸</span> {{ t().nav.tools }}
+                <a routerLink="/tools" class="text-amber-100/70 hover:text-amber-400 transition-colors text-base font-pixel flex items-center gap-2">
+                  <span class="text-amber-500/70">▸</span> {{ t().nav.tools }}
                 </a>
               </li>
               <li>
-                <a routerLink="/about" class="text-amber-100/50 hover:text-amber-400 transition-colors text-base font-pixel flex items-center gap-2">
-                  <span class="text-amber-500/50">▸</span> {{ t().nav.about }}
+                <a routerLink="/about" class="text-amber-100/70 hover:text-amber-400 transition-colors text-base font-pixel flex items-center gap-2">
+                  <span class="text-amber-500/70">▸</span> {{ t().nav.about }}
                 </a>
               </li>
             </ul>
@@ -51,8 +51,8 @@ import { LanguageService } from '../../i18n/language.service';
             <h3 class="font-pixel text-amber-400 text-base mb-4">[ LEGAL ]</h3>
             <ul class="space-y-3">
               <li>
-                <a routerLink="/integritetspolicy" class="text-amber-100/50 hover:text-amber-400 transition-colors text-base font-pixel flex items-center gap-2">
-                  <span class="text-amber-500/50">▸</span> {{ t().nav.privacy }}
+                <a routerLink="/integritetspolicy" class="text-amber-100/70 hover:text-amber-400 transition-colors text-base font-pixel flex items-center gap-2">
+                  <span class="text-amber-500/70">▸</span> {{ t().nav.privacy }}
                 </a>
               </li>
             </ul>
@@ -60,10 +60,10 @@ import { LanguageService } from '../../i18n/language.service';
         </div>
 
         <div class="mt-12 pt-8 border-t-2 border-amber-500/20 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p class="font-pixel text-amber-500/50 text-sm">
+          <p class="font-pixel text-amber-500/70 text-sm">
             © {{ currentYear }} UX PRODUCTIONS AB • {{ t().footer.rights }}
           </p>
-          <p class="font-pixel text-amber-500/50 text-sm flex items-center gap-1">
+          <p class="font-pixel text-amber-500/70 text-sm flex items-center gap-1">
             {{ t().footer.madeWith }}
             <span class="text-red-500">♥</span>
             {{ t().footer.inSweden }}

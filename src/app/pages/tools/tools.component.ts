@@ -61,12 +61,14 @@ export interface Tool {
 
                 @if (tool.assetStoreUrl) {
                   <a [href]="tool.assetStoreUrl" target="_blank" rel="noopener"
-                     class="retro-btn inline-flex items-center gap-2 px-6 py-3
-                            bg-orange-500 border-orange-400 text-black font-pixel text-base
-                            hover:bg-orange-400 hover:border-orange-300
-                            shadow-lg shadow-orange-500/30">
+                     class="inline-flex items-center justify-center px-8 py-4
+                            bg-orange-500 text-black font-pixel text-lg uppercase
+                            border-3 border-orange-400
+                            hover:bg-orange-400
+                            shadow-lg shadow-orange-500/30
+                            transition-all">
+                    <span class="mr-2">▶</span>
                     {{ t().tools.viewOnAssetStore }}
-                    <span>▶</span>
                   </a>
                 }
               </div>
