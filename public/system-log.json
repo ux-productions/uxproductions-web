@@ -1,0 +1,20 @@
+[
+  {
+    "id": "demo",
+    "version": "v1.1",
+    "status": "UPDATED",
+    "date": "2025-12-05"
+  },
+  {
+    "id": "games",
+    "version": "v1.0",
+    "status": "RELEASE",
+    "date": "2025-12-02"
+  },
+  {
+    "id": "tools",
+    "version": "v1.0",
+    "status": "RELEASE",
+    "date": "2025-12-02"
+  }
+]

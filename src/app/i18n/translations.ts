@@ -52,6 +52,12 @@ export interface Translations {
     madeWith: string;
     inSweden: string;
   };
+  log: {
+    title: string;
+    demo: string;
+    games: string;
+    tools: string;
+  };
 }
 
 export const translations: Record<Language, Translations> = {
@@ -107,6 +113,12 @@ export const translations: Record<Language, Translations> = {
       madeWith: 'Skapat med',
       inSweden: 'i Sverige',
     },
+    log: {
+      title: 'SYSTEM LOGG',
+      demo: 'Demo uppdaterad',
+      games: 'Spelmodul initierad',
+      tools: 'Verktygsmodul initierad',
+    },
   },
   en: {
     nav: {
@@ -159,6 +171,12 @@ export const translations: Record<Language, Translations> = {
       rights: 'All rights reserved.',
       madeWith: 'Made with',
       inSweden: 'in Sweden',
+    },
+    log: {
+      title: 'SYSTEM LOG',
+      demo: 'Demo updated',
+      games: 'Games module initialized',
+      tools: 'Tools module initialized',
     },
   },
 };

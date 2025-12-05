@@ -1,6 +1,15 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { LanguageService } from '../../i18n/language.service';
+
+interface LogEntry {
+  id: 'demo' | 'games' | 'tools';
+  version: string;
+  status: string;
+  date: string;
+}
 
 @Component({
   selector: 'app-home',
@@ -244,12 +253,44 @@ import { LanguageService } from '../../i18n/language.service';
         <!-- Bottom divider -->
         <div class="absolute bottom-0 left-0 right-0 h-1 bg-linear-to-r from-transparent via-amber-500 to-transparent"></div>
       </section>
+
+      <!-- System Log Section -->
+      <section class="py-16 bg-[#0a0a1a] relative border-t border-amber-900/30">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="dos-box p-6 sm:p-8 bg-black/40">
+            <h3 class="font-pixel text-amber-500 text-xl mb-6 flex items-center">
+              <span class="animate-pulse mr-2">_</span> {{ t().log.title }}
+            </h3>
+
+            <div class="font-mono text-sm sm:text-base space-y-3">
+              @for (entry of logEntries(); track entry.id) {
+                <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-amber-500/80 border-b border-amber-900/30 pb-2 last:border-0">
+                  <span class="text-amber-700">[{{ entry.date }}]</span>
+                  <span class="text-amber-300 font-bold w-24">{{ entry.version }}</span>
+                  <span class="flex-1 text-amber-100/90">
+                    {{ t().log[entry.id] }}
+                  </span>
+                  <span class="text-xs px-2 py-0.5 rounded bg-amber-900/30 text-amber-400 border border-amber-500/20">
+                    {{ entry.status }}
+                  </span>
+                </div>
+              }
+              <div class="pt-2 text-amber-500/50 animate-pulse">
+                > AWAITING INPUT...
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   `,
 })
 export class HomeComponent {
   protected readonly langService = inject(LanguageService);
   protected readonly t = this.langService.t;
+  private readonly http = inject(HttpClient);
+
+  protected readonly logEntries = toSignal(this.http.get<LogEntry[]>('system-log.json'), { initialValue: [] });
 
   // Generate random stars for the background
   protected readonly stars = Array.from({ length: 80 }, (_, i) => ({
