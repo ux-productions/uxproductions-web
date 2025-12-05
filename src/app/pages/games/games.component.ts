@@ -39,7 +39,7 @@ export interface Game {
           @for (game of games; track game.id) {
             <div class="group dos-box p-0 overflow-hidden hover:border-amber-400 transition-all w-full max-w-sm">
               <!-- Game Image -->
-              <div class="aspect-video bg-zinc-900 relative overflow-hidden">
+              <div class="aspect-video bg-zinc-900 relative overflow-hidden border-b-2 border-amber-400/30">
                 <img [src]="game.image" [alt]="langService.language() === 'sv' ? game.titleSv : game.titleEn"
                      class="w-full h-full object-cover" />
                 @if (game.comingSoon) {

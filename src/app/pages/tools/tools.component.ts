@@ -35,7 +35,7 @@ export interface Tool {
           @for (tool of tools; track tool.id) {
             <div class="dos-box p-0 overflow-hidden hover:border-orange-400 transition-all w-full max-w-xl">
               <!-- Tool Image -->
-              <div class="aspect-21/9 bg-zinc-900 relative overflow-hidden">
+              <div class="aspect-21/9 bg-zinc-900 relative overflow-hidden border-b-2 border-orange-400/30">
                 <img [src]="tool.image" [alt]="langService.language() === 'sv' ? tool.titleSv : tool.titleEn"
                      class="w-full h-full object-cover" />
               </div>
