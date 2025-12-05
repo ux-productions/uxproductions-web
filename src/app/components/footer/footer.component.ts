@@ -13,9 +13,7 @@ import { LanguageService } from '../../i18n/language.service';
           <!-- Brand -->
           <div class="col-span-1 md:col-span-2">
             <div class="flex items-center gap-2 mb-4">
-              <div class="w-10 h-10 rounded-lg bg-linear-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center font-bold text-white text-lg">
-                UX
-              </div>
+              <img src="images/logo.png" alt="UX Productions" class="w-10 h-10 rounded-lg" />
               <span class="text-white font-semibold text-lg">Productions AB</span>
             </div>
             <p class="text-slate-400 text-sm max-w-md">
@@ -28,17 +26,17 @@ import { LanguageService } from '../../i18n/language.service';
             <h3 class="text-white font-semibold mb-4">{{ t().nav.home }}</h3>
             <ul class="space-y-2">
               <li>
-                <a routerLink="/games" class="text-slate-400 hover:text-violet-400 transition-colors text-sm">
+                <a routerLink="/games" class="text-slate-400 hover:text-amber-400 transition-colors text-sm">
                   {{ t().nav.games }}
                 </a>
               </li>
               <li>
-                <a routerLink="/tools" class="text-slate-400 hover:text-violet-400 transition-colors text-sm">
+                <a routerLink="/tools" class="text-slate-400 hover:text-amber-400 transition-colors text-sm">
                   {{ t().nav.tools }}
                 </a>
               </li>
               <li>
-                <a routerLink="/about" class="text-slate-400 hover:text-violet-400 transition-colors text-sm">
+                <a routerLink="/about" class="text-slate-400 hover:text-amber-400 transition-colors text-sm">
                   {{ t().nav.about }}
                 </a>
               </li>
@@ -50,7 +48,7 @@ import { LanguageService } from '../../i18n/language.service';
             <h3 class="text-white font-semibold mb-4">Legal</h3>
             <ul class="space-y-2">
               <li>
-                <a routerLink="/integritetspolicy" class="text-slate-400 hover:text-violet-400 transition-colors text-sm">
+                <a routerLink="/integritetspolicy" class="text-slate-400 hover:text-amber-400 transition-colors text-sm">
                   {{ t().nav.privacy }}
                 </a>
               </li>

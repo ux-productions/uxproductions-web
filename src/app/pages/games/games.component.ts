@@ -35,15 +35,13 @@ export interface Game {
         <!-- Games Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           @for (game of games; track game.id) {
-            <div class="group bg-slate-800/50 rounded-2xl border border-slate-700/50 overflow-hidden hover:border-violet-500/50 transition-all">
-              <!-- Image placeholder -->
-              <div class="aspect-video bg-linear-to-br from-violet-600/20 to-fuchsia-600/20 flex items-center justify-center relative overflow-hidden">
-                <div class="absolute inset-0 bg-[linear-gradient(rgba(139,92,246,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(139,92,246,0.1)_1px,transparent_1px)] bg-size-[20px_20px]"></div>
-                <svg class="w-16 h-16 text-violet-400/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"/>
-                </svg>
+            <div class="group bg-slate-800/50 rounded-2xl border border-slate-700/50 overflow-hidden hover:border-amber-500/50 transition-all">
+              <!-- Game Image -->
+              <div class="aspect-video bg-slate-800 relative overflow-hidden">
+                <img [src]="game.image" [alt]="langService.language() === 'sv' ? game.titleSv : game.titleEn"
+                     class="w-full h-full object-cover" />
                 @if (game.comingSoon) {
-                  <div class="absolute top-4 right-4 px-3 py-1 bg-violet-600 text-white text-sm font-medium rounded-full">
+                  <div class="absolute top-4 right-4 px-3 py-1 bg-amber-500 text-zinc-900 text-sm font-medium rounded-full">
                     {{ t().games.comingSoon }}
                   </div>
                 }
@@ -58,7 +56,7 @@ export interface Game {
                   {{ langService.language() === 'sv' ? game.descriptionSv : game.descriptionEn }}
                 </p>
                 @if (game.targetAudienceSv) {
-                  <p class="text-sm text-violet-400 mb-3">
+                  <p class="text-sm text-amber-400 mb-3">
                     <span class="font-medium">{{ langService.language() === 'sv' ? 'Målgrupp' : 'Target audience' }}:</span>
                     {{ langService.language() === 'sv' ? game.targetAudienceSv : game.targetAudienceEn }}
                   </p>
@@ -117,9 +115,11 @@ export class GamesComponent {
       titleEn: 'The Treasure Hunt',
       descriptionSv: 'Skattjakten är en rolig app där det gäller att lista ut en hemlig mening, som är ett ordspråk eller ett tankeväckande citat. Samtidigt övar eleven på ordbildning och logiskt tänkande. Appen har en spännande skattjakt i flera unika stämningsfulla miljöer. Spela dagens ordspråk/citat och få ett nytt varje dag.',
       descriptionEn: 'The Treasure Hunt is a fun app where you need to figure out a secret sentence, which is a proverb or a thought-provoking quote. At the same time, the student practices word formation and logical thinking. The app features an exciting treasure hunt in several unique atmospheric environments.',
-      image: '',
+      image: 'images/game-skattjakten.png',
       targetAudienceSv: 'Privatpersoner eller skolor. Grundskolan åk 3-9. Gymnasieskolan/Vuxenundervisning',
       targetAudienceEn: 'Individuals or schools. Elementary school grades 3-9. High school/Adult education',
+      appStoreUrl: 'https://apps.apple.com/app/id6447555720',
+      playStoreUrl: 'https://play.google.com/store/apps/details?id=se.alfamax.skattjakten',
       collaborators: [
         { role: 'Pedagogik', name: 'Alfamax AB' },
         { role: 'Programutveckling, illustrationer, ljud', name: 'UX Productions AB' },
@@ -131,9 +131,11 @@ export class GamesComponent {
       titleEn: 'AHA - en or ett?',
       descriptionSv: 'Här kan du lära dig ord med hjälp av 500 fint tecknade bilder. AHA innehåller 4 olika spel i flera svårighetsnivåer. AHA kan användas av barn och vuxna som vill lära sig svenska språket.',
       descriptionEn: 'Here you can learn words with the help of 500 beautifully drawn pictures. AHA contains 4 different games at multiple difficulty levels. AHA can be used by children and adults who want to learn the Swedish language.',
-      image: '',
+      image: 'images/game-aha.png',
       targetAudienceSv: 'Barn och vuxna som vill lära sig svenska språket',
       targetAudienceEn: 'Children and adults who want to learn the Swedish language',
+      appStoreUrl: 'https://apps.apple.com/app/id6447555160',
+      playStoreUrl: 'https://play.google.com/store/apps/details?id=se.alfamax.aha',
       collaborators: [
         { role: 'Pedagogik', name: 'Alfamax AB' },
         { role: 'Illustrationer', name: 'UDAL Design' },
