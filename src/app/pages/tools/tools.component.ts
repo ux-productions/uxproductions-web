@@ -16,44 +16,44 @@ export interface Tool {
   selector: 'app-tools',
   standalone: true,
   template: `
-    <div class="min-h-screen bg-slate-900 pt-24">
+    <div class="min-h-screen bg-[#0a0a1a] pt-24 crt-scanlines">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <!-- Header -->
         <div class="text-center mb-16">
-          <h1 class="text-4xl sm:text-5xl font-bold text-white mb-4">
-            {{ t().tools.title }}
-          </h1>
-          <p class="text-xl text-slate-400 max-w-2xl mx-auto">
+          <div class="inline-block dos-box px-8 py-4 mb-4">
+            <h1 class="font-pixel text-3xl sm:text-4xl text-orange-400">
+              ═══ {{ t().tools.title }} ═══
+            </h1>
+          </div>
+          <p class="font-pixel text-lg text-orange-100/60 max-w-2xl mx-auto">
             {{ t().tools.subtitle }}
           </p>
         </div>
 
         <!-- Tools Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="flex flex-wrap justify-center gap-8">
           @for (tool of tools; track tool.id) {
-            <div class="bg-slate-800/50 rounded-2xl border border-slate-700/50 overflow-hidden hover:border-orange-500/50 transition-all">
+            <div class="dos-box p-0 overflow-hidden hover:border-orange-400 transition-all w-full max-w-xl">
               <!-- Tool Image -->
-              <div class="aspect-21/9 bg-slate-800 relative overflow-hidden">
+              <div class="aspect-21/9 bg-zinc-900 relative overflow-hidden">
                 <img [src]="tool.image" [alt]="langService.language() === 'sv' ? tool.titleSv : tool.titleEn"
                      class="w-full h-full object-cover" />
               </div>
 
               <!-- Content -->
               <div class="p-8">
-                <h3 class="text-2xl font-semibold text-white mb-3">
+                <h3 class="font-pixel text-xl text-orange-300 mb-3">
                   {{ langService.language() === 'sv' ? tool.titleSv : tool.titleEn }}
                 </h3>
-                <p class="text-slate-400 mb-6">
+                <p class="font-pixel text-orange-100/60 text-sm mb-6">
                   {{ langService.language() === 'sv' ? tool.descriptionSv : tool.descriptionEn }}
                 </p>
 
                 <!-- Features -->
                 <ul class="space-y-2 mb-6">
                   @for (feature of tool.features; track feature) {
-                    <li class="flex items-center gap-2 text-slate-300 text-sm">
-                      <svg class="w-5 h-5 text-orange-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                      </svg>
+                    <li class="flex items-center gap-2 text-orange-100/70 text-sm font-pixel">
+                      <span class="text-orange-400">▸</span>
                       {{ feature }}
                     </li>
                   }
@@ -61,11 +61,12 @@ export interface Tool {
 
                 @if (tool.assetStoreUrl) {
                   <a [href]="tool.assetStoreUrl" target="_blank" rel="noopener"
-                     class="inline-flex items-center gap-2 px-6 py-3 bg-linear-to-r from-amber-500 to-orange-500 text-zinc-900 font-medium rounded-xl hover:from-amber-400 hover:to-orange-400 transition-all shadow-lg shadow-amber-500/25">
+                     class="retro-btn inline-flex items-center gap-2 px-6 py-3
+                            bg-orange-500 border-orange-400 text-black font-pixel text-base
+                            hover:bg-orange-400 hover:border-orange-300
+                            shadow-lg shadow-orange-500/30">
                     {{ t().tools.viewOnAssetStore }}
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-                    </svg>
+                    <span>▶</span>
                   </a>
                 }
               </div>

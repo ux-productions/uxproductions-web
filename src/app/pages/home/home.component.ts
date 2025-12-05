@@ -7,112 +7,242 @@ import { LanguageService } from '../../i18n/language.service';
   standalone: true,
   imports: [RouterLink],
   template: `
-    <div class="min-h-screen">
-      <!-- Hero Section -->
-      <section class="relative min-h-screen flex items-center justify-center overflow-hidden">
-        <!-- Background gradient -->
-        <div class="absolute inset-0 bg-linear-to-br from-zinc-900 via-slate-900 to-zinc-900"></div>
+    <div class="min-h-screen bg-[#0a0a1a] relative overflow-hidden">
 
-        <!-- Animated background shapes -->
+      <!-- Hero Section - CRT Monitor Style -->
+      <section class="relative min-h-screen flex items-center justify-center crt-scanlines crt-vignette">
+
+        <!-- Starfield Background -->
         <div class="absolute inset-0 overflow-hidden">
-          <div class="absolute -top-40 -right-40 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl animate-pulse"></div>
-          <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-zinc-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
-          <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-slate-600/10 rounded-full blur-3xl"></div>
+          <!-- Static stars -->
+          @for (i of stars; track i) {
+            <div class="star"
+                 [style.left.%]="i.x"
+                 [style.top.%]="i.y"
+                 [style.animation-delay.s]="i.delay"
+                 [style.width.px]="i.size"
+                 [style.height.px]="i.size">
+            </div>
+          }
+
+          <!-- Gradient nebula -->
+          <div class="absolute top-1/4 -left-20 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl"></div>
+          <div class="absolute bottom-1/4 -right-20 w-80 h-80 bg-orange-600/5 rounded-full blur-3xl"></div>
         </div>
 
-        <!-- Grid pattern overlay -->
-        <div class="absolute inset-0 bg-[linear-gradient(rgba(245,158,11,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(245,158,11,0.03)_1px,transparent_1px)] bg-size-[60px_60px]"></div>
+        <!-- Pixel grid overlay -->
+        <div class="absolute inset-0 opacity-30"
+             style="background-image:
+               linear-gradient(rgba(245,158,11,0.03) 1px, transparent 1px),
+               linear-gradient(90deg, rgba(245,158,11,0.03) 1px, transparent 1px);
+               background-size: 8px 8px;">
+        </div>
 
-        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div class="space-y-8">
-            <!-- Logo -->
-            <div class="flex justify-center mb-8">
-              <img src="images/logo.png" alt="UX Productions" class="w-32 h-auto rounded-2xl shadow-2xl shadow-black/50" />
+        <div class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+
+          <!-- Retro Frame Container -->
+          <div class="dos-box p-8 sm:p-12 relative crt-glow">
+
+            <!-- Corner decorations -->
+            <div class="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-amber-500"></div>
+            <div class="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-amber-500"></div>
+            <div class="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-amber-500"></div>
+            <div class="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-amber-500"></div>
+
+            <!-- Title Bar -->
+            <div class="absolute -top-px left-8 right-8 h-6 bg-linear-to-r from-amber-600 via-amber-500 to-amber-600 flex items-center justify-center">
+              <span class="font-pixel text-xs text-black tracking-widest">★ UX PRODUCTIONS ★</span>
             </div>
 
-            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight">
-              {{ t().hero.title }}
-            </h1>
+            <div class="space-y-8 pt-6">
+              <!-- ASCII Art Style Logo Area -->
+              <div class="flex justify-center mb-6">
+                <div class="relative">
+                  <img src="images/logo.png"
+                       alt="UX Productions"
+                       class="w-28 h-auto pixel-art rounded-lg shadow-lg shadow-amber-500/20"
+                       style="image-rendering: auto;" />
+                  <!-- Glow effect -->
+                  <div class="absolute inset-0 bg-amber-500/20 blur-xl -z-10 rounded-lg"></div>
+                </div>
+              </div>
 
-            <p class="text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
-              {{ t().hero.subtitle }}
-            </p>
+              <!-- Main Title - Pixel Font -->
+              <h1 class="font-pixel text-3xl sm:text-4xl lg:text-5xl retro-text leading-relaxed flicker">
+                {{ t().hero.title }}
+              </h1>
 
-            <div class="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-              <a routerLink="/games"
-                 class="inline-flex items-center justify-center px-8 py-4 bg-linear-to-r from-amber-500 to-orange-500 text-zinc-900 font-semibold rounded-xl hover:from-amber-400 hover:to-orange-400 transition-all shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 hover:scale-105">
-                {{ t().hero.cta }}
-                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                </svg>
-              </a>
-              <a routerLink="/demo"
-                 class="inline-flex items-center justify-center px-8 py-4 bg-slate-800/50 text-white font-semibold rounded-xl border border-slate-700 hover:bg-slate-800 hover:border-amber-500/50 transition-all">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                {{ t().demo.title }}
-              </a>
+              <!-- Subtitle with typewriter effect -->
+              <div class="max-w-2xl mx-auto">
+                <p class="font-pixel text-lg sm:text-xl text-amber-100/80 leading-relaxed tracking-wide">
+                  > {{ t().hero.subtitle }}<span class="cursor-blink"></span>
+                </p>
+              </div>
+
+              <!-- Retro Action Buttons -->
+              <div class="flex flex-col sm:flex-row gap-6 justify-center pt-6">
+                <a routerLink="/games"
+                   class="inline-flex items-center justify-center px-8 py-4
+                          bg-amber-500 text-black font-pixel text-lg
+                          border-3 border-amber-400
+                          hover:bg-amber-400
+                          shadow-lg shadow-amber-500/30
+                          transition-all">
+                  <span class="mr-2">▶</span>
+                  {{ t().hero.cta }}
+                </a>
+                <a routerLink="/demo"
+                   class="retro-btn inline-flex items-center justify-center px-8 py-4
+                          bg-zinc-800 border-zinc-600 text-amber-400 font-pixel text-lg
+                          hover:bg-zinc-700 hover:text-amber-300 hover:border-zinc-500">
+                  <span class="mr-2">◉</span>
+                  {{ t().demo.title }}
+                </a>
+              </div>
+
+              <!-- Retro Status Bar -->
+              <div class="pt-8 border-t border-amber-500/30 mt-8">
+                <div class="flex flex-wrap justify-center gap-4 sm:gap-8 text-base font-pixel text-amber-500/70">
+                  <span>EST. 2013</span>
+                  <span class="hidden sm:inline">•</span>
+                  <span>MÄLARDALEN, SWEDEN</span>
+                  <span class="hidden sm:inline">•</span>
+                  <span>GAMES & TOOLS</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Scroll indicator -->
-        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-          <svg class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
-          </svg>
+        <!-- Scroll indicator - Retro arrow -->
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 text-center">
+          <div class="font-pixel text-amber-500/60 text-xs mb-2 animate-pulse">SCROLL</div>
+          <div class="font-pixel text-amber-400 text-2xl animate-bounce">▼</div>
         </div>
       </section>
 
-      <!-- Features Preview -->
-      <section class="py-24 bg-slate-900">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Features Section - Adventure Game Menu Style -->
+      <section class="py-24 bg-linear-to-b from-[#0a0a1a] via-[#0d0d20] to-[#0a0a1a] relative crt-scanlines">
+
+        <!-- Section divider - pixel style -->
+        <div class="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-transparent via-amber-500 to-transparent"></div>
+
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+
+          <!-- Section Header -->
+          <div class="text-center mb-16">
+            <div class="inline-block dos-box px-8 py-4 mb-4">
+              <h2 class="font-pixel text-2xl sm:text-3xl text-amber-400">
+                ═══ SELECT YOUR QUEST ═══
+              </h2>
+            </div>
+          </div>
+
           <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
             <!-- Games Card -->
-            <a routerLink="/games" class="group p-8 bg-slate-800/50 rounded-2xl border border-slate-700/50 hover:border-amber-500/50 transition-all hover:bg-slate-800">
-              <div class="w-14 h-14 rounded-xl bg-amber-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <svg class="w-7 h-7 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"/>
-                </svg>
-              </div>
-              <h3 class="text-xl font-semibold text-white mb-2">{{ t().nav.games }}</h3>
-              <p class="text-slate-400 mb-4">{{ t().games.subtitle }}</p>
-              <div class="flex gap-2 flex-wrap">
-                <span class="px-2 py-1 text-xs bg-slate-700/50 text-slate-300 rounded">Web</span>
-                <span class="px-2 py-1 text-xs bg-slate-700/50 text-slate-300 rounded">iOS</span>
-                <span class="px-2 py-1 text-xs bg-slate-700/50 text-slate-300 rounded">Android</span>
-                <span class="px-2 py-1 text-xs bg-slate-700/50 text-slate-300 rounded">Desktop</span>
+            <a routerLink="/games"
+               class="group retro-card dos-box p-6 hover:border-amber-400 transition-all cursor-pointer block">
+              <div class="text-center space-y-4">
+                <!-- Icon Frame -->
+                <div class="w-20 h-20 mx-auto bg-linear-to-b from-amber-500/20 to-amber-700/20
+                            border-2 border-amber-500/50 flex items-center justify-center
+                            group-hover:border-amber-400 group-hover:bg-amber-500/30 transition-all">
+                  <span class="font-pixel text-4xl text-amber-400 group-hover:scale-110 transition-transform">🎮</span>
+                </div>
+
+                <h3 class="font-pixel text-xl text-amber-300 group-hover:text-amber-200">
+                  {{ t().nav.games }}
+                </h3>
+
+                <p class="text-amber-100/60 text-sm leading-relaxed">
+                  {{ t().games.subtitle }}
+                </p>
+
+                <!-- Platform Tags -->
+                <div class="flex gap-2 flex-wrap justify-center pt-2">
+                  <span class="px-2 py-1 text-xs font-pixel bg-zinc-800 text-amber-500/80 border border-amber-500/30">WEB</span>
+                  <span class="px-2 py-1 text-xs font-pixel bg-zinc-800 text-amber-500/80 border border-amber-500/30">iOS</span>
+                  <span class="px-2 py-1 text-xs font-pixel bg-zinc-800 text-amber-500/80 border border-amber-500/30">ANDROID</span>
+                </div>
+
+                <!-- Hover instruction -->
+                <div class="font-pixel text-xs text-amber-500/40 group-hover:text-amber-400 transition-colors">
+                  [ PRESS TO CONTINUE ]
+                </div>
               </div>
             </a>
 
             <!-- Tools Card -->
-            <a routerLink="/tools" class="group p-8 bg-slate-800/50 rounded-2xl border border-slate-700/50 hover:border-orange-500/50 transition-all hover:bg-slate-800">
-              <div class="w-14 h-14 rounded-xl bg-orange-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <svg class="w-7 h-7 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                </svg>
-              </div>
-              <h3 class="text-xl font-semibold text-white mb-2">{{ t().nav.tools }}</h3>
-              <p class="text-slate-400 mb-4">{{ t().tools.subtitle }}</p>
-              <div class="flex gap-2 flex-wrap">
-                <span class="px-2 py-1 text-xs bg-slate-700/50 text-slate-300 rounded">Unity</span>
-                <span class="px-2 py-1 text-xs bg-slate-700/50 text-slate-300 rounded">Asset Store</span>
+            <a routerLink="/tools"
+               class="group retro-card dos-box p-6 hover:border-orange-400 transition-all cursor-pointer block">
+              <div class="text-center space-y-4">
+                <!-- Icon Frame -->
+                <div class="w-20 h-20 mx-auto bg-linear-to-b from-orange-500/20 to-orange-700/20
+                            border-2 border-orange-500/50 flex items-center justify-center
+                            group-hover:border-orange-400 group-hover:bg-orange-500/30 transition-all">
+                  <span class="font-pixel text-4xl text-orange-400 group-hover:scale-110 transition-transform">⚙️</span>
+                </div>
+
+                <h3 class="font-pixel text-xl text-orange-300 group-hover:text-orange-200">
+                  {{ t().nav.tools }}
+                </h3>
+
+                <p class="text-orange-100/60 text-sm leading-relaxed">
+                  {{ t().tools.subtitle }}
+                </p>
+
+                <!-- Platform Tags -->
+                <div class="flex gap-2 flex-wrap justify-center pt-2">
+                  <span class="px-2 py-1 text-xs font-pixel bg-zinc-800 text-orange-500/80 border border-orange-500/30">UNITY</span>
+                  <span class="px-2 py-1 text-xs font-pixel bg-zinc-800 text-orange-500/80 border border-orange-500/30">ASSET STORE</span>
+                </div>
+
+                <!-- Hover instruction -->
+                <div class="font-pixel text-xs text-orange-500/40 group-hover:text-orange-400 transition-colors">
+                  [ PRESS TO CONTINUE ]
+                </div>
               </div>
             </a>
 
             <!-- About Card -->
-            <a routerLink="/about" class="group p-8 bg-slate-800/50 rounded-2xl border border-slate-700/50 hover:border-zinc-500/50 transition-all hover:bg-slate-800">
-              <div class="w-14 h-14 rounded-xl overflow-hidden mb-6 group-hover:scale-110 transition-transform">
-                <img src="images/logo.png" alt="UX Productions" class="w-full h-full object-cover" />
+            <a routerLink="/about"
+               class="group retro-card dos-box p-6 hover:border-amber-400 transition-all cursor-pointer block">
+              <div class="text-center space-y-4">
+                <!-- Logo Frame -->
+                <div class="w-20 h-20 mx-auto bg-linear-to-b from-amber-500/20 to-amber-700/20
+                            border-2 border-amber-500/50 flex items-center justify-center overflow-hidden
+                            group-hover:border-amber-400 group-hover:bg-amber-500/30 transition-all">
+                  <img src="images/logo.png" alt="UX Productions"
+                       class="w-14 h-14 object-cover group-hover:scale-110 transition-transform" />
+                </div>
+
+                <h3 class="font-pixel text-xl text-amber-300 group-hover:text-amber-200">
+                  {{ t().nav.about }}
+                </h3>
+
+                <p class="text-amber-100/60 text-sm leading-relaxed">
+                  {{ t().about.description }}
+                </p>
+
+                <!-- Hover instruction -->
+                <div class="font-pixel text-xs text-amber-500/40 group-hover:text-amber-400 transition-colors pt-6">
+                  [ PRESS TO CONTINUE ]
+                </div>
               </div>
-              <h3 class="text-xl font-semibold text-white mb-2">{{ t().nav.about }}</h3>
-              <p class="text-slate-400">{{ t().about.description }}</p>
             </a>
           </div>
+
+          <!-- Bottom ASCII Art Decoration -->
+          <div class="text-center mt-16 font-pixel text-amber-500/30 text-base">
+            <div>╔═══════════════════════════════════════════════════╗</div>
+            <div>║&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ t().hero.qualityOverQuantity }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;║</div>
+            <div>╚═══════════════════════════════════════════════════╝</div>
+          </div>
         </div>
+
+        <!-- Bottom divider -->
+        <div class="absolute bottom-0 left-0 right-0 h-1 bg-linear-to-r from-transparent via-amber-500 to-transparent"></div>
       </section>
     </div>
   `,
@@ -120,4 +250,12 @@ import { LanguageService } from '../../i18n/language.service';
 export class HomeComponent {
   protected readonly langService = inject(LanguageService);
   protected readonly t = this.langService.t;
+
+  // Generate random stars for the background
+  protected readonly stars = Array.from({ length: 80 }, (_, i) => ({
+    x: Math.random() * 100,
+    y: Math.random() * 100,
+    delay: Math.random() * 5,
+    size: Math.random() > 0.8 ? 3 : Math.random() > 0.5 ? 2 : 1,
+  }));
 }

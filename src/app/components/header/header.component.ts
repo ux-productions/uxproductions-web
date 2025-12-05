@@ -7,31 +7,32 @@ import { LanguageService } from '../../i18n/language.service';
   standalone: true,
   imports: [RouterLink, RouterLinkActive],
   template: `
-    <header class="fixed top-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-sm border-b border-slate-800">
+    <header class="fixed top-0 left-0 right-0 z-50 bg-[#0a0a1a]/95 backdrop-blur-sm border-b-2 border-amber-500/30">
       <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
           <!-- Logo -->
           <a routerLink="/" class="flex items-center gap-2 group">
             <img src="images/logo.png" alt="UX Productions" class="h-10 w-auto" />
+            <span class="font-pixel text-amber-400 text-base hidden sm:inline">UX PRODUCTIONS</span>
           </a>
 
           <!-- Desktop Navigation -->
           <div class="hidden md:flex items-center gap-1">
-            <a routerLink="/" routerLinkActive="text-amber-400 bg-slate-800"
+            <a routerLink="/" routerLinkActive="!text-amber-400 !border-amber-500"
                [routerLinkActiveOptions]="{exact: true}"
-               class="px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all">
+               class="px-4 py-2 font-pixel text-base text-amber-100/70 hover:text-amber-400 border-b-2 border-transparent hover:border-amber-500/50 transition-all">
               {{ t().nav.home }}
             </a>
-            <a routerLink="/games" routerLinkActive="text-amber-400 bg-slate-800"
-               class="px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all">
+            <a routerLink="/games" routerLinkActive="!text-amber-400 !border-amber-500"
+               class="px-4 py-2 font-pixel text-base text-amber-100/70 hover:text-amber-400 border-b-2 border-transparent hover:border-amber-500/50 transition-all">
               {{ t().nav.games }}
             </a>
-            <a routerLink="/tools" routerLinkActive="text-amber-400 bg-slate-800"
-               class="px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all">
+            <a routerLink="/tools" routerLinkActive="!text-amber-400 !border-amber-500"
+               class="px-4 py-2 font-pixel text-base text-amber-100/70 hover:text-amber-400 border-b-2 border-transparent hover:border-amber-500/50 transition-all">
               {{ t().nav.tools }}
             </a>
-            <a routerLink="/about" routerLinkActive="text-amber-400 bg-slate-800"
-               class="px-4 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all">
+            <a routerLink="/about" routerLinkActive="!text-amber-400 !border-amber-500"
+               class="px-4 py-2 font-pixel text-base text-amber-100/70 hover:text-amber-400 border-b-2 border-transparent hover:border-amber-500/50 transition-all">
               {{ t().nav.about }}
             </a>
           </div>
@@ -41,43 +42,38 @@ import { LanguageService } from '../../i18n/language.service';
             <div class="relative">
               <button
                 (click)="langDropdownOpen = !langDropdownOpen"
-                class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-all text-sm font-medium border border-slate-700"
+                class="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900 text-amber-100/70 hover:text-amber-400 transition-all font-pixel text-sm border-2 border-amber-500/30 hover:border-amber-500"
               >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
-                </svg>
-                {{ langService.language() === 'sv' ? 'Svenska' : 'English' }}
-                <svg class="w-3 h-3 transition-transform" [class.rotate-180]="langDropdownOpen" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                </svg>
+                <span class="text-amber-500">▸</span>
+                {{ langService.language() === 'sv' ? 'SV' : 'EN' }}
               </button>
               @if (langDropdownOpen) {
-                <div class="absolute right-0 mt-2 w-36 bg-slate-800 border border-slate-700 rounded-lg shadow-xl overflow-hidden z-50">
+                <div class="absolute right-0 mt-1 w-36 bg-[#0a0a1a] border-2 border-amber-500/50 shadow-xl shadow-amber-500/10 overflow-hidden z-50">
                   <button
                     (click)="selectLanguage('sv')"
-                    class="w-full px-4 py-2.5 text-left text-sm hover:bg-slate-700 transition-colors flex items-center gap-2"
+                    class="w-full px-4 py-2.5 text-left font-pixel text-sm hover:bg-amber-500/20 transition-colors flex items-center gap-2"
                     [class.text-amber-400]="langService.language() === 'sv'"
-                    [class.text-slate-300]="langService.language() !== 'sv'"
+                    [class.text-amber-100/60]="langService.language() !== 'sv'"
                   >
                     @if (langService.language() === 'sv') {
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                      </svg>
+                      <span class="text-amber-400">►</span>
+                    } @else {
+                      <span class="opacity-0">►</span>
                     }
-                    Svenska
+                    SVENSKA
                   </button>
                   <button
                     (click)="selectLanguage('en')"
-                    class="w-full px-4 py-2.5 text-left text-sm hover:bg-slate-700 transition-colors flex items-center gap-2"
+                    class="w-full px-4 py-2.5 text-left font-pixel text-sm hover:bg-amber-500/20 transition-colors flex items-center gap-2"
                     [class.text-amber-400]="langService.language() === 'en'"
-                    [class.text-slate-300]="langService.language() !== 'en'"
+                    [class.text-amber-100/60]="langService.language() !== 'en'"
                   >
                     @if (langService.language() === 'en') {
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                      </svg>
+                      <span class="text-amber-400">►</span>
+                    } @else {
+                      <span class="opacity-0">►</span>
                     }
-                    English
+                    ENGLISH
                   </button>
                 </div>
               }
@@ -86,38 +82,38 @@ import { LanguageService } from '../../i18n/language.service';
             <!-- Mobile Menu Button -->
             <button
               (click)="mobileMenuOpen = !mobileMenuOpen"
-              class="md:hidden p-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800"
+              class="md:hidden p-2 text-amber-100/70 hover:text-amber-400 border-2 border-amber-500/30 hover:border-amber-500 transition-all"
             >
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <span class="font-pixel text-lg">
                 @if (mobileMenuOpen) {
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                  ✕
                 } @else {
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                  ☰
                 }
-              </svg>
+              </span>
             </button>
           </div>
         </div>
 
         <!-- Mobile Navigation -->
         @if (mobileMenuOpen) {
-          <div class="md:hidden py-4 border-t border-slate-800">
+          <div class="md:hidden py-4 border-t-2 border-amber-500/30">
             <div class="flex flex-col gap-1">
               <a routerLink="/" (click)="mobileMenuOpen = false"
-                 class="px-4 py-3 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all">
-                {{ t().nav.home }}
+                 class="px-4 py-3 font-pixel text-base text-amber-100/70 hover:text-amber-400 hover:bg-amber-500/10 transition-all flex items-center gap-2">
+                <span class="text-amber-500">▸</span> {{ t().nav.home }}
               </a>
               <a routerLink="/games" (click)="mobileMenuOpen = false"
-                 class="px-4 py-3 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all">
-                {{ t().nav.games }}
+                 class="px-4 py-3 font-pixel text-base text-amber-100/70 hover:text-amber-400 hover:bg-amber-500/10 transition-all flex items-center gap-2">
+                <span class="text-amber-500">▸</span> {{ t().nav.games }}
               </a>
               <a routerLink="/tools" (click)="mobileMenuOpen = false"
-                 class="px-4 py-3 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all">
-                {{ t().nav.tools }}
+                 class="px-4 py-3 font-pixel text-base text-amber-100/70 hover:text-amber-400 hover:bg-amber-500/10 transition-all flex items-center gap-2">
+                <span class="text-amber-500">▸</span> {{ t().nav.tools }}
               </a>
               <a routerLink="/about" (click)="mobileMenuOpen = false"
-                 class="px-4 py-3 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all">
-                {{ t().nav.about }}
+                 class="px-4 py-3 font-pixel text-base text-amber-100/70 hover:text-amber-400 hover:bg-amber-500/10 transition-all flex items-center gap-2">
+                <span class="text-amber-500">▸</span> {{ t().nav.about }}
               </a>
             </div>
           </div>

@@ -13,6 +13,7 @@ export interface Translations {
     title: string;
     subtitle: string;
     cta: string;
+    qualityOverQuantity: string;
   };
   games: {
     title: string;
@@ -49,6 +50,7 @@ export interface Translations {
   footer: {
     rights: string;
     madeWith: string;
+    inSweden: string;
   };
 }
 
@@ -66,6 +68,7 @@ export const translations: Record<Language, Translations> = {
       title: 'Handgjorda spelupplevelser',
       subtitle: 'Vi skapar pedagogiska spel, klassiska äventyr och verktyg för utvecklare.',
       cta: 'Utforska våra spel',
+      qualityOverQuantity: 'KVALITET FÖRE KVANTITET',
     },
     games: {
       title: 'Våra Spel',
@@ -79,7 +82,7 @@ export const translations: Record<Language, Translations> = {
       viewOnAssetStore: 'Visa på Asset Store',
     },
     about: {
-      title: 'Om UX Productions',
+      title: 'Om UX Productions AB',
       description: 'Svenskt spelutvecklingsföretag i Mälardalen sedan 2013. Vi skapar pedagogiska spel, klassiska äventyr och verktyg för utvecklare.',
       mission: 'Vårt löfte',
       missionText: 'Vi släpper aldrig något som inte är väl genomarbetat. Kvalitet före kvantitet.',
@@ -89,7 +92,7 @@ export const translations: Record<Language, Translations> = {
       subtitle: 'Har du frågor eller vill veta mer? Hör gärna av dig!',
       email: 'E-post',
       address: 'Adress',
-      orgNumber: 'Kontaktperson',
+      orgNumber: 'Org.nummer',
     },
     privacy: {
       title: 'Integritetspolicy',
@@ -102,6 +105,7 @@ export const translations: Record<Language, Translations> = {
     footer: {
       rights: 'Alla rättigheter förbehållna.',
       madeWith: 'Skapat med',
+      inSweden: 'i Sverige',
     },
   },
   en: {
@@ -117,6 +121,7 @@ export const translations: Record<Language, Translations> = {
       title: 'Handcrafted game experiences',
       subtitle: 'We create educational games, classic adventures, and tools for developers.',
       cta: 'Explore our games',
+      qualityOverQuantity: 'QUALITY OVER QUANTITY',
     },
     games: {
       title: 'Our Games',
@@ -140,7 +145,7 @@ export const translations: Record<Language, Translations> = {
       subtitle: 'Have questions or want to know more? Get in touch!',
       email: 'Email',
       address: 'Address',
-      orgNumber: 'Contact Person',
+      orgNumber: 'Org. Number',
     },
     privacy: {
       title: 'Privacy Policy',
@@ -153,6 +158,7 @@ export const translations: Record<Language, Translations> = {
     footer: {
       rights: 'All rights reserved.',
       madeWith: 'Made with',
+      inSweden: 'in Sweden',
     },
   },
 };
