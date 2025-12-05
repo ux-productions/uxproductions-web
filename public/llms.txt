@@ -1,0 +1,37 @@
+# UX Productions AB
+
+> Swedish game studio creating handcrafted game experiences since 2013.
+
+## About
+
+UX Productions AB is an independent game development studio based in Mälardalen, Sweden. Founded in 2013, we specialize in creating educational games, classic adventure experiences, and developer tools for Unity.
+
+## What We Do
+
+### Games
+We develop games for multiple platforms including Web, iOS, and Android. Our focus is on quality over quantity, creating meaningful and engaging experiences.
+
+### Developer Tools
+We create tools and assets for Unity developers, available on the Unity Asset Store. Our tools help other developers build better games faster.
+
+## Contact
+
+- Website: https://uxproductions.se
+- Email: info@uxproductions.se
+- Location: Mälardalen, Sweden
+
+## Pages
+
+- Home: https://uxproductions.se/
+- Games: https://uxproductions.se/games
+- Tools: https://uxproductions.se/tools
+- About: https://uxproductions.se/about
+- Demo: https://uxproductions.se/demo
+- Privacy Policy: https://uxproductions.se/privacy
+
+## Company Information
+
+- Company Name: UX Productions AB
+- Organization Number: 556947-8661
+- Founded: 2013
+- Country: Sweden
