@@ -80,8 +80,8 @@ main > * {
     0deg,
     transparent,
     transparent 2px,
-    rgba(0, 0, 0, 0.15) 2px,
-    rgba(0, 0, 0, 0.15) 4px
+    rgba(0, 0, 0, 0.12) 2px,
+    rgba(0, 0, 0, 0.12) 4px
   );
   pointer-events: none;
   z-index: 50;
@@ -104,7 +104,7 @@ main > * {
     ellipse at center,
     transparent 0%,
     transparent 60%,
-    rgba(0, 0, 0, 0.4) 100%
+    rgba(0, 0, 0, 0.3) 100%
   );
   pointer-events: none;
   z-index: 40;
@@ -231,22 +231,11 @@ main > * {
   position: relative;
 }
 
-.retro-card::before {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  background: linear-gradient(135deg, #f59e0b, #d97706, #f59e0b);
-  z-index: -1;
-  opacity: 0;
-  transition: opacity 0.15s ease;
-}
-
-.retro-card:hover::before {
-  opacity: 1;
-}
-
 .retro-card:hover {
   transform: scale(1.02);
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+  border-color: #fbbf24;
+  z-index: 10;
 }
 
 /* Pixel art image rendering */

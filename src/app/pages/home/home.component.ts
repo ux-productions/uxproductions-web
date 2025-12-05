@@ -40,7 +40,7 @@ interface LogEntry {
         </div>
 
         <!-- Pixel grid overlay -->
-        <div class="absolute inset-0 opacity-30"
+        <div class="absolute inset-0 opacity-10"
              style="background-image:
                linear-gradient(rgba(245,158,11,0.03) 1px, transparent 1px),
                linear-gradient(90deg, rgba(245,158,11,0.03) 1px, transparent 1px);
@@ -77,7 +77,7 @@ interface LogEntry {
               </div>
 
               <!-- Main Title - Pixel Font -->
-              <h1 class="font-pixel text-3xl sm:text-4xl lg:text-5xl retro-text leading-relaxed flicker">
+              <h1 class="font-pixel text-3xl sm:text-4xl lg:text-5xl retro-text leading-relaxed">
                 {{ t().hero.title }}
               </h1>
 
@@ -91,12 +91,10 @@ interface LogEntry {
               <!-- Retro Action Buttons -->
               <div class="flex flex-col sm:flex-row gap-6 justify-center pt-6">
                 <a routerLink="/games"
-                   class="inline-flex items-center justify-center px-8 py-4
+                   class="retro-btn inline-flex items-center justify-center px-8 py-4
                           bg-amber-500 text-black font-pixel text-lg uppercase
-                          border-3 border-amber-400
-                          hover:bg-amber-400
-                          shadow-lg shadow-amber-500/30
-                          transition-all">
+                          border-amber-400
+                          hover:bg-black hover:text-amber-500 hover:border-amber-500">
                   <span class="mr-2">▶</span>
                   {{ t().hero.cta }}
                 </a>
