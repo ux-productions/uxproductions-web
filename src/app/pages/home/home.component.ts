@@ -50,8 +50,8 @@ import { LanguageService } from '../../i18n/language.service';
             <div class="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-amber-500"></div>
 
             <!-- Title Bar -->
-            <div class="absolute -top-px left-8 right-8 h-6 bg-linear-to-r from-amber-600 via-amber-500 to-amber-600 flex items-center justify-center">
-              <span class="font-pixel text-xs text-black tracking-widest">★ UX PRODUCTIONS ★</span>
+            <div class="absolute -top-px left-8 right-8 h-7 bg-linear-to-r from-amber-600 via-amber-500 to-amber-600 flex items-center justify-center">
+              <span class="font-pixel text-sm text-black tracking-widest">★ UX PRODUCTIONS ★</span>
             </div>
 
             <div class="space-y-8 pt-6">
