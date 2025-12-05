@@ -1,12 +1,35 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { HeaderComponent } from './components/header/header.component';
+import { FooterComponent } from './components/footer/footer.component';
+import { LanguageService } from './i18n/language.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.html',
-  styleUrl: './app.css'
+  standalone: true,
+  imports: [RouterOutlet, HeaderComponent, FooterComponent],
+  template: `
+    <div class="min-h-screen bg-slate-900 text-white flex flex-col">
+      <app-header />
+      <main class="flex-1">
+        <router-outlet />
+      </main>
+      <app-footer />
+    </div>
+  `,
+  styles: [`
+    :host {
+      display: block;
+    }
+  `]
 })
-export class App {
-  protected readonly title = signal('uxproductions-web');
+export class App implements OnInit {
+  private readonly langService = inject(LanguageService);
+
+  ngOnInit(): void {
+    // Set initial language on document
+    if (typeof document !== 'undefined') {
+      document.documentElement.lang = this.langService.language();
+    }
+  }
 }
