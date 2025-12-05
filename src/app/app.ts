@@ -9,7 +9,7 @@ import { LanguageService } from './i18n/language.service';
   standalone: true,
   imports: [RouterOutlet, HeaderComponent, FooterComponent],
   template: `
-    <div class="min-h-screen bg-slate-900 text-white flex flex-col">
+    <div class="min-h-screen bg-[#0a0a1a] text-white flex flex-col">
       <app-header />
       <main class="flex-1">
         <router-outlet />
