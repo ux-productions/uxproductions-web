@@ -5,7 +5,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { LanguageService } from '../../i18n/language.service';
 
 interface LogEntry {
-  id: 'demo' | 'games' | 'tools';
+  id: 'demo' | 'games' | 'tools' | 'cheat';
   version: string;
   status: string;
   date: string;
@@ -19,7 +19,7 @@ interface LogEntry {
     <div class="min-h-screen bg-[#0a0a1a] relative overflow-hidden">
 
       <!-- Hero Section - CRT Monitor Style -->
-      <section class="relative min-h-screen flex items-center justify-center crt-scanlines crt-vignette">
+      <section class="relative min-h-screen flex items-center justify-center crt-scanlines crt-vignette pt-24 pb-12">
 
         <!-- Starfield Background -->
         <div class="absolute inset-0 overflow-hidden">

@@ -57,6 +57,7 @@ export interface Translations {
     demo: string;
     games: string;
     tools: string;
+    cheat: string;
   };
 }
 
@@ -88,7 +89,7 @@ export const translations: Record<Language, Translations> = {
       viewOnAssetStore: 'Visa på Asset Store',
     },
     about: {
-      title: 'Om UX Productions AB',
+      title: 'Om UX Productions',
       description: 'Svenskt spelutvecklingsföretag i Mälardalen sedan 2013. Vi skapar pedagogiska spel, klassiska äventyr och verktyg för utvecklare.',
       mission: 'Vårt löfte',
       missionText: 'Vi släpper aldrig något som inte är väl genomarbetat. Kvalitet före kvantitet.',
@@ -118,6 +119,7 @@ export const translations: Record<Language, Translations> = {
       demo: 'Demo uppdaterad',
       games: 'Spelmodul initierad',
       tools: 'Verktygsmodul initierad',
+      cheat: 'Stöd för fusk tillagt',
     },
   },
   en: {
@@ -147,7 +149,7 @@ export const translations: Record<Language, Translations> = {
       viewOnAssetStore: 'View on Asset Store',
     },
     about: {
-      title: 'About UX Productions AB',
+      title: 'About UX Productions',
       description: 'Swedish game development company in Mälardalen since 2013. We create educational games, classic adventures, and tools for developers.',
       mission: 'Our Promise',
       missionText: 'We never release anything that isn\'t well-crafted. Quality over quantity.',
@@ -177,6 +179,7 @@ export const translations: Record<Language, Translations> = {
       demo: 'Demo updated',
       games: 'Games module initialized',
       tools: 'Tools module initialized',
+      cheat: 'Cheat code support added',
     },
   },
 };

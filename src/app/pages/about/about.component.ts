@@ -5,10 +5,10 @@ import { LanguageService } from '../../i18n/language.service';
   selector: 'app-about',
   standalone: true,
   template: `
-    <div class="min-h-screen bg-[#0a0a1a] pt-24 crt-scanlines">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="min-h-screen bg-[#0a0a1a] pt-20 sm:pt-24 crt-scanlines">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-8 sm:pt-4 sm:pb-16">
         <!-- Header -->
-        <div class="text-center mb-16">
+        <div class="text-center mb-8 sm:mb-12">
           <div class="inline-block dos-box px-8 py-4 mb-4">
             <h1 class="font-pixel text-3xl sm:text-4xl text-amber-400">
               ═══ {{ t().about.title }} ═══

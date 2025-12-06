@@ -20,16 +20,16 @@ export interface Game {
   selector: 'app-games',
   standalone: true,
   template: `
-    <div class="min-h-screen bg-[#0a0a1a] pt-24 crt-scanlines">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="min-h-screen bg-[#0a0a1a] pt-20 sm:pt-24 crt-scanlines">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-8 sm:pt-4 sm:pb-16">
         <!-- Header -->
-        <div class="text-center mb-16">
-          <div class="inline-block dos-box px-8 py-4 mb-4">
-            <h1 class="font-pixel text-3xl sm:text-4xl text-amber-400">
+        <div class="text-center mb-8 sm:mb-12">
+          <div class="inline-block dos-box px-4 py-2 sm:px-6 sm:py-3 mb-4">
+            <h1 class="font-pixel text-xl sm:text-3xl text-amber-400">
               ═══ {{ t().games.title }} ═══
             </h1>
           </div>
-          <p class="font-pixel text-lg text-amber-100/60 max-w-2xl mx-auto">
+          <p class="font-pixel text-base sm:text-lg text-amber-100/60 max-w-2xl mx-auto px-4">
             {{ t().games.subtitle }}
           </p>
         </div>

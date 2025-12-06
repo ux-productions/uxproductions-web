@@ -1,5 +1,11 @@
 [
   {
+    "id": "cheat",
+    "version": "v9.9",
+    "status": "SECRET",
+    "date": "2025-12-06"
+  },
+  {
     "id": "demo",
     "version": "v1.1",
     "status": "UPDATED",
