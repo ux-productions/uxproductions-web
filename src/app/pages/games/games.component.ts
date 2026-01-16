@@ -37,7 +37,7 @@ export interface Game {
         <!-- Games Grid -->
         <div class="flex flex-wrap justify-center gap-8">
           @for (game of games; track game.id) {
-            <div class="group dos-box p-0 overflow-hidden hover:border-amber-400 transition-all w-full max-w-sm">
+            <div [id]="game.id" class="group dos-box p-0 overflow-hidden hover:border-amber-400 transition-all w-full max-w-sm scroll-mt-24">
               <!-- Game Image -->
               <div class="aspect-video bg-zinc-900 relative overflow-hidden border-b-2 border-amber-400/30">
                 <img [src]="game.image" [alt]="langService.language() === 'sv' ? game.titleSv : game.titleEn"
@@ -143,6 +143,20 @@ export class GamesComponent {
         { role: 'Illustrationer', name: 'UDAL Design' },
         { role: 'Programutveckling', name: 'UX Productions AB' },
       ],
+    },
+    {
+      id: 'tinytreads',
+      titleSv: 'Tiny Treads',
+      titleEn: 'Tiny Treads',
+      descriptionSv: 'Tiny Treads är ett taktiskt pusselspel där du programmerar din robots rörelser innan de spelas upp samtidigt med dina motståndare. Planera den perfekta rutten genom rullband, faror och hinder. Kampanjläge med 16 nivåer och multiplayer-strider där du utmanar vänner i realtidsmatcher.',
+      descriptionEn: 'Tiny Treads is a tactical puzzle game where you program your robot\'s movements before watching them play out simultaneously with your opponents. Plan the perfect route through conveyor belts, hazards, and obstacles. Campaign mode with 16 levels and multiplayer battles where you challenge friends in real-time matches.',
+      image: 'images/game-tinytreads.png',
+      targetAudienceSv: 'Spelare som gillar pusselspel, strategi och multiplayer',
+      targetAudienceEn: 'Players who enjoy puzzle games, strategy and multiplayer',
+      collaborators: [
+        { role: 'Programutveckling, illustrationer, ljud', name: 'UX Productions AB' },
+      ],
+      comingSoon: true,
     },
   ];
 }
