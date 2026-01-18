@@ -153,10 +153,11 @@ export class GamesComponent {
       image: 'images/game-tinytreads.png',
       targetAudienceSv: 'Spelare som gillar pusselspel, strategi och multiplayer',
       targetAudienceEn: 'Players who enjoy puzzle games, strategy and multiplayer',
+      appStoreUrl: 'https://apps.apple.com/us/app/tiny-treads/id6756526074',
+      playStoreUrl: 'https://play.google.com/store/apps/details?id=se.uxproductions.tinytreads',
       collaborators: [
         { role: 'Programutveckling, illustrationer, ljud', name: 'UX Productions AB' },
       ],
-      comingSoon: true,
     },
   ];
 }
