@@ -13,6 +13,7 @@ export interface Game {
   targetAudienceEn?: string;
   appStoreUrl?: string;
   playStoreUrl?: string;
+  websiteUrl?: string;
   comingSoon?: boolean;
 }
 
@@ -91,7 +92,16 @@ export interface Game {
                       Google Play
                     </a>
                   }
-                  @if (!game.appStoreUrl && !game.playStoreUrl) {
+                  @if (game.websiteUrl) {
+                    <a [href]="game.websiteUrl" target="_blank" rel="noopener"
+                       class="retro-btn flex items-center gap-2 px-4 py-2 bg-zinc-800 border-zinc-600 text-amber-400 font-pixel text-sm hover:bg-zinc-700">
+                      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                      </svg>
+                      {{ langService.language() === 'sv' ? 'Spela' : 'Play' }}
+                    </a>
+                  }
+                  @if (!game.appStoreUrl && !game.playStoreUrl && !game.websiteUrl) {
                     <span class="font-pixel text-amber-500/50 text-sm italic">
                       {{ t().games.comingSoon }}
                     </span>
@@ -155,6 +165,18 @@ export class GamesComponent {
       targetAudienceEn: 'Players who enjoy puzzle games, strategy and multiplayer',
       appStoreUrl: 'https://apps.apple.com/us/app/tiny-treads/id6756526074',
       playStoreUrl: 'https://play.google.com/store/apps/details?id=se.uxproductions.tinytreads',
+      collaborators: [
+        { role: 'Programutveckling, illustrationer, ljud', name: 'UX Productions AB' },
+      ],
+    },
+    {
+      id: 'the-perfect-murder',
+      titleSv: 'The Perfect Murder',
+      titleEn: 'The Perfect Murder',
+      descriptionSv: 'The Perfect Murder är ett gratis online-multiplayerspel där spelarna får hemliga roller som antingen oskyldiga bybor eller maffiamedlemmar. Använd deduktion och bluffande för att avslöja mördarna innan maffian eliminerar alla bybor. Ingen spelledare behövs — appen sköter allt. 4–20 spelare, direkt i webbläsaren.',
+      descriptionEn: 'The Perfect Murder is a free online multiplayer social deduction game where players take on secret roles as either innocent villagers or members of the Mafia. Use deduction and deception to identify and eliminate the killers before the Mafia eliminates all villagers. No game master needed — the app handles everything. 4–20 players, right in your browser.',
+      image: 'images/game-the-perfect-murder.png',
+      websiteUrl: 'https://the-perfect-murder.com',
       collaborators: [
         { role: 'Programutveckling, illustrationer, ljud', name: 'UX Productions AB' },
       ],
