@@ -176,6 +176,8 @@ export class GamesComponent {
       descriptionSv: 'The Perfect Murder är ett gratis online-multiplayerspel där spelarna får hemliga roller som antingen oskyldiga bybor eller maffiamedlemmar. Använd deduktion och bluffande för att avslöja mördarna innan maffian eliminerar alla bybor. Ingen spelledare behövs — appen sköter allt. 4–20 spelare, direkt i webbläsaren.',
       descriptionEn: 'The Perfect Murder is a free online multiplayer social deduction game where players take on secret roles as either innocent villagers or members of the Mafia. Use deduction and deception to identify and eliminate the killers before the Mafia eliminates all villagers. No game master needed — the app handles everything. 4–20 players, right in your browser.',
       image: 'images/game-the-perfect-murder.png',
+      appStoreUrl: 'https://apps.apple.com/us/app/the-perfect-murder/id6783261206',
+      playStoreUrl: 'https://play.google.com/store/apps/details?id=se.uxproductions.theperfectmurder',
       websiteUrl: 'https://the-perfect-murder.com',
       collaborators: [
         { role: 'Programutveckling, illustrationer, ljud', name: 'UX Productions AB' },
