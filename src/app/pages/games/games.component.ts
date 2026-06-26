@@ -73,7 +73,7 @@ export interface Game {
                 }
 
                 <!-- App Store Links -->
-                <div class="flex gap-3">
+                <div class="flex flex-wrap gap-3">
                   @if (game.appStoreUrl) {
                     <a [href]="game.appStoreUrl" target="_blank" rel="noopener"
                        class="retro-btn flex items-center gap-2 px-4 py-2 bg-zinc-800 border-zinc-600 text-amber-400 font-pixel text-sm hover:bg-zinc-700">
