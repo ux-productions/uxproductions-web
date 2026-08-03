@@ -51,6 +51,8 @@ export interface Translations {
     rights: string;
     madeWith: string;
     inSweden: string;
+    gameTerms: string;
+    gamePrivacy: string;
   };
   log: {
     title: string;
@@ -113,6 +115,8 @@ export const translations: Record<Language, Translations> = {
       rights: 'Alla rättigheter förbehållna.',
       madeWith: 'Skapat med',
       inSweden: 'i Sverige',
+      gameTerms: 'Köpvillkor (spel)',
+      gamePrivacy: 'Integritetspolicy (spel)',
     },
     log: {
       title: 'SYSTEM LOGG',
@@ -173,6 +177,8 @@ export const translations: Record<Language, Translations> = {
       rights: 'All rights reserved.',
       madeWith: 'Made with',
       inSweden: 'in Sweden',
+      gameTerms: 'Terms of Sale (Games)',
+      gamePrivacy: 'Privacy Notice (Games)',
     },
     log: {
       title: 'SYSTEM LOG',

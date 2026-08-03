@@ -39,6 +39,15 @@ jobs:
       - name: Copy index.html to 404.html for SPA routing
         run: cp dist/uxproductions-web/browser/index.html dist/uxproductions-web/browser/404.html
 
+      # The legal pages are linked from Stripe Checkout, so they must answer 200
+      # rather than the 404-with-fallback that GitHub Pages gives every other route.
+      - name: Serve the game legal pages as real files
+        run: |
+          for route in games/terms games/privacy; do
+            mkdir -p "dist/uxproductions-web/browser/$route"
+            cp dist/uxproductions-web/browser/index.html "dist/uxproductions-web/browser/$route/index.html"
+          done
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

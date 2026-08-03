@@ -55,6 +55,16 @@ import { LanguageService } from '../../i18n/language.service';
                   <span class="text-amber-500/70">▸</span> {{ t().nav.privacy }}
                 </a>
               </li>
+              <li>
+                <a routerLink="/games/terms" class="text-amber-100/70 hover:text-amber-400 transition-colors text-base font-pixel flex items-center gap-2">
+                  <span class="text-amber-500/70">▸</span> {{ t().footer.gameTerms }}
+                </a>
+              </li>
+              <li>
+                <a routerLink="/games/privacy" class="text-amber-100/70 hover:text-amber-400 transition-colors text-base font-pixel flex items-center gap-2">
+                  <span class="text-amber-500/70">▸</span> {{ t().footer.gamePrivacy }}
+                </a>
+              </li>
             </ul>
           </div>
         </div>

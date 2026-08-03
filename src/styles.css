@@ -243,3 +243,116 @@ main > * {
   image-rendering: pixelated;
   image-rendering: crisp-edges;
 }
+
+/* ========== LEGAL DOCUMENT BODY ========== */
+/* Long-form prose inside <app-legal-doc>. Global because the markup is
+   projected in from the page components. */
+
+.legal-body {
+  line-height: 1.65;
+}
+
+.legal-body h2 {
+  font-family: 'NFPixels', monospace;
+  letter-spacing: 0.05em;
+  color: #fbbf24;
+  font-size: 1.125rem;
+  margin-top: 2.5rem;
+  margin-bottom: 0.75rem;
+  scroll-margin-top: 6rem;
+}
+
+.legal-body > *:first-child {
+  margin-top: 0;
+}
+
+.legal-body h3 {
+  font-family: 'NFPixels', monospace;
+  letter-spacing: 0.05em;
+  color: #fcd34d;
+  font-size: 1rem;
+  margin-top: 1.75rem;
+  margin-bottom: 0.5rem;
+  scroll-margin-top: 6rem;
+}
+
+.legal-body p {
+  margin-bottom: 0.875rem;
+}
+
+.legal-body ul {
+  margin: 0 0 0.875rem 0;
+  padding: 0;
+  list-style: none;
+}
+
+.legal-body ul li {
+  position: relative;
+  padding-left: 1.25rem;
+  margin-bottom: 0.4rem;
+}
+
+.legal-body ul li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: rgba(245, 158, 11, 0.7);
+}
+
+.legal-body a {
+  color: #fbbf24;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.legal-body a:hover {
+  color: #fcd34d;
+}
+
+.legal-body strong {
+  color: #fde68a;
+  font-weight: 600;
+}
+
+.legal-body .lead {
+  color: rgba(254, 243, 199, 0.9);
+}
+
+/* Placeholder still awaiting a real value from the company. */
+.legal-body .todo {
+  display: inline-block;
+  padding: 0 0.4rem;
+  border: 2px dashed #ef4444;
+  color: #fca5a5;
+  font-family: 'NFPixels', monospace;
+  font-size: 0.85em;
+}
+
+.legal-body .callout {
+  border: 2px solid rgba(245, 158, 11, 0.4);
+  background: rgba(245, 158, 11, 0.06);
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.legal-body .callout p:last-child {
+  margin-bottom: 0;
+}
+
+.legal-body .toc {
+  border: 2px solid rgba(245, 158, 11, 0.3);
+  padding: 1rem 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.legal-body .toc ul {
+  margin-bottom: 0;
+  columns: 2;
+  column-gap: 2rem;
+}
+
+@media (max-width: 640px) {
+  .legal-body .toc ul {
+    columns: 1;
+  }
+}

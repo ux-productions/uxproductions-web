@@ -28,6 +28,8 @@ We create tools and assets for Unity developers, available on the Unity Asset St
 - About: https://uxproductions.se/about
 - Demo: https://uxproductions.se/demo
 - Privacy Policy: https://uxproductions.se/privacy
+- Terms of Sale (games sold by UX Productions AB): https://uxproductions.se/games/terms
+- Privacy Notice (games by UX Productions AB): https://uxproductions.se/games/privacy
 
 ## Company Information
 

@@ -10,6 +10,16 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/games/games.component').then(m => m.GamesComponent),
   },
   {
+    path: 'games/terms',
+    loadComponent: () =>
+      import('./pages/games-terms/games-terms.component').then(m => m.GamesTermsComponent),
+  },
+  {
+    path: 'games/privacy',
+    loadComponent: () =>
+      import('./pages/games-privacy/games-privacy.component').then(m => m.GamesPrivacyComponent),
+  },
+  {
     path: 'tools',
     loadComponent: () => import('./pages/tools/tools.component').then(m => m.ToolsComponent),
   },
