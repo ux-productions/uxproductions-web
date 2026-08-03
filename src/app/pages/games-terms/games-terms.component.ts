@@ -46,7 +46,7 @@ import { LegalDocComponent } from '../../components/legal-doc/legal-doc.componen
         <li>Registration number (organisationsnummer): 556947-8661</li>
         <li>Address: Lyckåsgatan 3, 633 58 Eskilstuna, Sweden</li>
         <li>Email: <a href="mailto:support&#64;uxproductions.se">support&#64;uxproductions.se</a></li>
-        <li>VAT number: <span class="todo">TODO: add VAT number, or delete this line if not VAT registered</span></li>
+        <li>VAT number: SE556947866101</li>
       </ul>
       <p>
         UX Productions AB is the seller and merchant of record for everything described here. Stripe

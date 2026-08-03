@@ -14,8 +14,8 @@ import { LegalDocComponent } from '../../components/legal-doc/legal-doc.componen
 
       <p class="lead">
         This notice covers <strong>The Perfect Race</strong> and <strong>The Perfect Murder</strong>.
-        Both games run on the same stack, so one notice covers both; where something is true of only
-        one of them, the game is named. Our
+        We build and run both games the same way, so one notice covers both; where something is true
+        of only one of them, the game is named. Our
         <a routerLink="/games/terms">terms of sale</a> cover purchases.
       </p>
 
@@ -67,13 +67,14 @@ import { LegalDocComponent } from '../../components/legal-doc/legal-doc.componen
       <h2 id="data">3. What we process</h2>
       <ul>
         <li>
-          <strong>Account details</strong> — email address, display or racer name, a hash of your
-          password, verification status, and the identifier of a linked Google or Apple account if
-          you signed in that way. We never see your Google or Apple password.
+          <strong>Account details</strong> — email address, display or racer name, your password
+          (stored only in scrambled form, never as plain text), verification status, and the
+          identifier of a linked Google or Apple account if you signed in that way. We never see your
+          Google or Apple password.
         </li>
         <li>
-          <strong>Purchases</strong> — payment transaction identifiers, what was bought, and the
-          entitlements it unlocked. Card details are handled by Stripe; we never receive or store a
+          <strong>Purchases</strong> — payment transaction identifiers, what was bought, and what it
+          unlocked on your account. Card details are handled by Stripe; we never receive or store a
           complete card number.
         </li>
         <li>
@@ -184,7 +185,7 @@ import { LegalDocComponent } from '../../components/legal-doc/legal-doc.componen
       <ul>
         <li>Account and game data: while your account exists.</li>
         <li>Friend activity inbox items: about 180 days, then removed automatically.</li>
-        <li>Operational telemetry: normally about 30 days.</li>
+        <li>Operational logs and diagnostics: normally about 30 days.</li>
         <li>
           Deleted data can remain briefly in encrypted service backups until those backups expire on
           their normal schedule.
@@ -229,9 +230,8 @@ import { LegalDocComponent } from '../../components/legal-doc/legal-doc.componen
 
       <h2 id="children">12. Age</h2>
       <p>
-        You must be at least
-        <span class="todo">TODO: minimum age</span>
-        years old to create an account. Younger players can still play as guests, without an account.
+        You must be at least <strong>13</strong> years old to create an account. Younger children can
+        still play as guests, without an account and without giving us an email address.
       </p>
 
       <h2 id="changes">13. Changes</h2>
