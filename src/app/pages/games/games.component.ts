@@ -192,6 +192,8 @@ export class GamesComponent {
       image: 'images/game-the-perfect-race.png',
       targetAudienceSv: 'Spelare som gillar arkadracing, time attack och multiplayer',
       targetAudienceEn: 'Players who enjoy arcade racing, time attack and multiplayer',
+      appStoreUrl: 'https://apps.apple.com/us/app/the-perfect-race/id6800795522',
+      playStoreUrl: 'https://play.google.com/store/apps/details?id=se.uxproductions.theperfectrace',
       websiteUrl: 'https://the-perfect-race.com',
       collaborators: [
         { role: 'Programutveckling, illustrationer, ljud', name: 'UX Productions AB' },

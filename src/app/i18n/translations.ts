@@ -121,7 +121,7 @@ export const translations: Record<Language, Translations> = {
     log: {
       title: 'SYSTEM LOGG',
       demo: 'Demo uppdaterad',
-      games: 'Spelmodul initierad',
+      games: 'The Perfect Race släppt på mobil',
       tools: 'Verktygsmodul initierad',
       cheat: 'Stöd för fusk tillagt',
     },
@@ -183,7 +183,7 @@ export const translations: Record<Language, Translations> = {
     log: {
       title: 'SYSTEM LOG',
       demo: 'Demo updated',
-      games: 'Games module initialized',
+      games: 'The Perfect Race released on mobile',
       tools: 'Tools module initialized',
       cheat: 'Cheat code support added',
     },
