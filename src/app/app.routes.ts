@@ -20,11 +20,6 @@ export const routes: Routes = [
       import('./pages/games-privacy/games-privacy.component').then(m => m.GamesPrivacyComponent),
   },
   {
-    path: 'games/the-perfect-robot/privacy',
-    loadComponent: () =>
-      import('./pages/robot-privacy/robot-privacy.component').then(m => m.RobotPrivacyComponent),
-  },
-  {
     path: 'tools',
     loadComponent: () => import('./pages/tools/tools.component').then(m => m.ToolsComponent),
   },

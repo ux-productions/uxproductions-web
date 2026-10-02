@@ -13,6 +13,7 @@ export interface Game {
   targetAudienceEn?: string;
   appStoreUrl?: string;
   playStoreUrl?: string;
+  steamUrl?: string;
   websiteUrl?: string;
   comingSoon?: boolean;
 }
@@ -92,6 +93,15 @@ export interface Game {
                       Google Play
                     </a>
                   }
+                  @if (game.steamUrl) {
+                    <a [href]="game.steamUrl" target="_blank" rel="noopener"
+                       class="retro-btn flex items-center gap-2 px-4 py-2 bg-zinc-800 border-zinc-600 text-amber-400 font-pixel text-sm hover:bg-zinc-700">
+                      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm4-3c-.83 0-1.5-.67-1.5-1.5S18.67 9 19.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                      </svg>
+                      Steam
+                    </a>
+                  }
                   @if (game.websiteUrl) {
                     <a [href]="game.websiteUrl" target="_blank" rel="noopener"
                        class="retro-btn flex items-center gap-2 px-4 py-2 bg-zinc-800 border-zinc-600 text-amber-400 font-pixel text-sm hover:bg-zinc-700">
@@ -101,7 +111,7 @@ export interface Game {
                       {{ langService.language() === 'sv' ? 'Spela' : 'Play' }}
                     </a>
                   }
-                  @if (!game.appStoreUrl && !game.playStoreUrl && !game.websiteUrl) {
+                  @if (!game.appStoreUrl && !game.playStoreUrl && !game.steamUrl && !game.websiteUrl) {
                     <span class="font-pixel text-amber-500/50 text-sm italic">
                       {{ t().games.comingSoon }}
                     </span>
@@ -155,16 +165,17 @@ export class GamesComponent {
       ],
     },
     {
-      id: 'tinytreads',
-      titleSv: 'Tiny Treads',
-      titleEn: 'Tiny Treads',
-      descriptionSv: 'Tiny Treads är ett taktiskt pusselspel där du programmerar din robots rörelser innan de spelas upp samtidigt med dina motståndare. Planera den perfekta rutten genom rullband, faror och hinder. Kampanjläge och multiplayer-strider där du utmanar vänner i realtidsmatcher.',
-      descriptionEn: 'Tiny Treads is a tactical puzzle game where you program your robot\'s movements before watching them play out simultaneously with your opponents. Plan the perfect route through conveyor belts, hazards, and obstacles. Campaign mode and multiplayer battles where you challenge friends in real-time matches.',
+      id: 'the-perfect-robot',
+      titleSv: 'The Perfect Robot',
+      titleEn: 'The Perfect Robot',
+      descriptionSv: 'Din robot gör exakt det du säger åt den. Det är det som är problemet. The Perfect Robot är ett pusselspel om programmering: lägg fyra rörelsekort och se roboten följa dem till punkt och pricka över rullband, kugghjul, gropar och lasrar. 34 handgjorda banor i fyra världar, race mot rivaliserande robotar och onlinespel med vänner. Hette tidigare Tiny Treads.',
+      descriptionEn: 'Your robot does exactly what you tell it. That\'s the problem. The Perfect Robot is a programming puzzle game: lay down four move cards and watch your robot carry them out to the letter across conveyor belts, gears, pits and lasers. 34 hand-made levels in four worlds, races against rival robots and online play with friends. Formerly Tiny Treads.',
       image: 'images/game-tinytreads.png',
-      targetAudienceSv: 'Spelare som gillar pusselspel, strategi och multiplayer',
-      targetAudienceEn: 'Players who enjoy puzzle games, strategy and multiplayer',
-      appStoreUrl: 'https://apps.apple.com/us/app/tiny-treads/id6756526074',
+      targetAudienceSv: 'Pusselspelare i alla åldrar som gillar logik och planering',
+      targetAudienceEn: 'Puzzle players of all ages who enjoy logic and planning',
+      appStoreUrl: 'https://apps.apple.com/app/id6756526074',
       playStoreUrl: 'https://play.google.com/store/apps/details?id=se.uxproductions.tinytreads',
+      steamUrl: 'https://store.steampowered.com/app/4367790/',
       collaborators: [
         { role: 'Programutveckling, illustrationer, ljud', name: 'UX Productions AB' },
       ],

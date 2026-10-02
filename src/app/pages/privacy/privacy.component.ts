@@ -35,7 +35,7 @@ import { LanguageService } from '../../i18n/language.service';
                 > Vi bryr oss om användarnas integritet.
               </p>
 
-              <p class="font-pixel text-sm text-amber-400/80">Följande gäller för apparna:</p>
+              <p class="font-pixel text-sm text-amber-400/80">Följande gäller för apparna, om inte appen har ett eget avsnitt nedan:</p>
 
               <ul class="space-y-4">
                 <li class="flex items-start gap-3">
@@ -59,6 +59,33 @@ import { LanguageService } from '../../i18n/language.service';
                   <span class="pt-1">Den innehåller ingen egentlig reklam. Det finns endast ett kort textuellt nämnande av vilka företag och personer som varit inblandade i utveckling av appen.</span>
                 </li>
               </ul>
+              <h2 id="the-perfect-robot" class="font-pixel text-lg text-amber-400 pt-6">The Perfect Robot (tidigare Tiny Treads)</h2>
+              <ul class="space-y-3">
+                <li class="flex items-start gap-3">
+                  <span class="shrink-0 mt-2 w-2 h-2 bg-amber-400"></span>
+                  <span>Framsteg, stjärnor och inställningar sparas på din enhet, och på Steam även i Steam Cloud. Vi får aldrig del av dem.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <span class="shrink-0 mt-2 w-2 h-2 bg-amber-400"></span>
+                  <span>Inga konton, ingen reklam och ingen spårning. Spelet frågar aldrig efter ditt namn eller din e-post.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <span class="shrink-0 mt-2 w-2 h-2 bg-amber-400"></span>
+                  <span>Onlinespel körs på Unity Gaming Services (Unity Technologies). Spelet loggar in anonymt och får ett slumpat spelar-ID och ett genererat spelarnamn. I onlinespel skickar Unity Lobby och Relay ditt spelarnamn, din robot och dina drag till de andra spelarna, och ser din IP-adress för att koppla upp dig och välja en serverregion nära dig. Lobbydata raderas när spelet är slut.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <span class="shrink-0 mt-2 w-2 h-2 bg-amber-400"></span>
+                  <span>Köp hanteras av Apple, Google och Valve (Steam). Vi ser aldrig kort- eller kontouppgifter.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <span class="shrink-0 mt-2 w-2 h-2 bg-amber-400"></span>
+                  <span>Versioner före 2.0 skickade också anonym spelstatistik till Unity Analytics (gick att stänga av i Inställningar). Version 2.0 och senare skickar ingen statistik.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <span class="shrink-0 mt-2 w-2 h-2 bg-amber-400"></span>
+                  <span>Personuppgiftsansvarig är UX Productions AB (556947-8661), Eskilstuna. Vill du att vi raderar dina uppgifter, mejla <a href="mailto:support&#64;uxproductions.se" class="text-amber-400 hover:text-amber-300 underline">support&#64;uxproductions.se</a> med spelarnamnet som visas i spelets huvudmeny. Du kan också klaga hos Integritetsskyddsmyndigheten (IMY).</span>
+                </li>
+              </ul>
             </div>
           } @else {
             <div class="space-y-6 text-amber-100/80">
@@ -66,7 +93,7 @@ import { LanguageService } from '../../i18n/language.service';
                 > We care for the user's privacy.
               </p>
 
-              <p class="font-pixel text-sm text-amber-400/80">The following is true for the apps:</p>
+              <p class="font-pixel text-sm text-amber-400/80">The following is true for the apps, unless an app has its own section below:</p>
 
               <ul class="space-y-4">
                 <li class="flex items-start gap-3">
@@ -88,6 +115,33 @@ import { LanguageService } from '../../i18n/language.service';
                 <li class="flex items-start gap-3">
                   <span class="shrink-0 w-8 h-8 border-2 border-amber-500/50 bg-amber-500/10 flex items-center justify-center text-amber-400 font-pixel">5</span>
                   <span class="pt-1">It does not contain any true form of advertising. It contains only textual information about companies and persons who have participated in the development of the app.</span>
+                </li>
+              </ul>
+              <h2 id="the-perfect-robot" class="font-pixel text-lg text-amber-400 pt-6">The Perfect Robot (formerly Tiny Treads)</h2>
+              <ul class="space-y-3">
+                <li class="flex items-start gap-3">
+                  <span class="shrink-0 mt-2 w-2 h-2 bg-amber-400"></span>
+                  <span>Progress, stars and settings are saved on your device, and on Steam also in Steam Cloud. We never receive them.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <span class="shrink-0 mt-2 w-2 h-2 bg-amber-400"></span>
+                  <span>No accounts, no ads and no tracking. The game never asks for your name or email address.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <span class="shrink-0 mt-2 w-2 h-2 bg-amber-400"></span>
+                  <span>Online play runs on Unity Gaming Services (Unity Technologies). The game signs in anonymously and gets a random player ID and a generated player name. In online games, Unity Lobby and Relay pass your player name, robot and moves to the other players, and see your IP address to connect you and pick a server region near you. Lobby data is deleted when the game ends.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <span class="shrink-0 mt-2 w-2 h-2 bg-amber-400"></span>
+                  <span>Purchases are handled by Apple, Google and Valve (Steam). We never see card or account details.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <span class="shrink-0 mt-2 w-2 h-2 bg-amber-400"></span>
+                  <span>Versions before 2.0 also sent anonymous gameplay statistics to Unity Analytics (it could be turned off in Settings). Version 2.0 and later send no statistics.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <span class="shrink-0 mt-2 w-2 h-2 bg-amber-400"></span>
+                  <span>The controller is UX Productions AB (556947-8661), Eskilstuna, Sweden. To have your data deleted, email <a href="mailto:support&#64;uxproductions.se" class="text-amber-400 hover:text-amber-300 underline">support&#64;uxproductions.se</a> with the player name shown on the game's main menu. You can also complain to the Swedish data protection authority (IMY).</span>
                 </li>
               </ul>
             </div>
