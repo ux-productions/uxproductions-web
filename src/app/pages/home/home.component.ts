@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { LanguageService } from '../../i18n/language.service';
+import { SocialLinksComponent } from '../../components/social-links/social-links.component';
 
 interface LogEntry {
   id: 'demo' | 'games' | 'tools' | 'cheat';
@@ -14,7 +15,7 @@ interface LogEntry {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, SocialLinksComponent],
   template: `
     <div class="min-h-screen bg-[#0a0a1a] relative overflow-hidden">
 
@@ -125,6 +126,17 @@ interface LogEntry {
         <div class="absolute bottom-8 left-1/2 -translate-x-1/2 text-center">
           <div class="font-pixel text-amber-500/60 text-xs mb-2 animate-pulse">SCROLL</div>
           <div class="font-pixel text-amber-400 text-2xl animate-bounce">▼</div>
+        </div>
+      </section>
+
+      <section aria-labelledby="social-heading" class="relative py-12 sm:py-16 border-t border-amber-500/30 bg-[#0d0d20]">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <p class="font-pixel text-sm text-amber-500 mb-3">[ {{ t().social.follow }} ]</p>
+          <h2 id="social-heading" class="font-pixel text-2xl sm:text-3xl text-amber-300 leading-relaxed mb-4">
+            {{ t().social.title }}
+          </h2>
+          <p class="text-amber-100/80 max-w-2xl leading-relaxed mb-8">{{ t().social.description }}</p>
+          <app-social-links />
         </div>
       </section>
 

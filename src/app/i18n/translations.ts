@@ -54,6 +54,15 @@ export interface Translations {
     gameTerms: string;
     gamePrivacy: string;
   };
+  social: {
+    follow: string;
+    title: string;
+    description: string;
+    tiktok: string;
+    instagram: string;
+    youtube: string;
+    opensNewTab: string;
+  };
   log: {
     title: string;
     demo: string;
@@ -118,6 +127,15 @@ export const translations: Record<Language, Translations> = {
       gameTerms: 'Köpvillkor (spel)',
       gamePrivacy: 'Integritetspolicy (spel)',
     },
+    social: {
+      follow: 'Följ UX Productions',
+      title: 'Se våra spel i rörelse',
+      description: 'Bluffar, svek och tajta kurvor. Se klipp från The Perfect Murder och The Perfect Race och följ vad vi bygger härnäst.',
+      tiktok: 'Korta klipp från våra spel.',
+      instagram: 'Reels och nytt från studion.',
+      youtube: 'Shorts, trailers och mer gameplay.',
+      opensNewTab: 'öppnas i en ny flik',
+    },
     log: {
       title: 'SYSTEM LOGG',
       demo: 'Demo uppdaterad',
@@ -179,6 +197,15 @@ export const translations: Record<Language, Translations> = {
       inSweden: 'in Sweden',
       gameTerms: 'Terms of Sale (Games)',
       gamePrivacy: 'Privacy Notice (Games)',
+    },
+    social: {
+      follow: 'Follow UX Productions',
+      title: 'See our games in action',
+      description: 'Bluffs, betrayals and tight corners. Watch The Perfect Murder and The Perfect Race, and follow what we build next.',
+      tiktok: 'Quick moments from our games.',
+      instagram: 'Reels and updates from the studio.',
+      youtube: 'Shorts, trailers and more gameplay.',
+      opensNewTab: 'opens in a new tab',
     },
     log: {
       title: 'SYSTEM LOG',

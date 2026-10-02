@@ -1,11 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { LanguageService } from '../../i18n/language.service';
+import { SocialLinksComponent } from '../social-links/social-links.component';
 
 @Component({
   selector: 'app-footer',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, SocialLinksComponent],
   template: `
     <footer class="bg-[#0a0a1a] border-t-2 border-amber-500/30 relative">
       <!-- Scanlines -->
@@ -22,6 +23,10 @@ import { LanguageService } from '../../i18n/language.service';
             <p class="font-pixel text-amber-100/70 text-base max-w-md leading-relaxed">
               {{ t().about.description }}
             </p>
+            <nav class="mt-6" [attr.aria-label]="t().social.follow">
+              <h3 class="font-pixel text-amber-400 text-base mb-3">{{ t().social.follow }}</h3>
+              <app-social-links [compact]="true" />
+            </nav>
           </div>
 
           <!-- Quick Links -->
