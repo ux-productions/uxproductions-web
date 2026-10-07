@@ -67,7 +67,7 @@ import { LanguageService } from '../../i18n/language.service';
                 </li>
                 <li class="flex items-start gap-3">
                   <span class="shrink-0 mt-2 w-2 h-2 bg-amber-400"></span>
-                  <span>Inga konton, ingen reklam och ingen spårning. Spelet frågar aldrig efter ditt namn eller din e-post.</span>
+                  <span>Inga konton, ingen reklam och ingen spårning mellan appar. Spelet frågar aldrig efter ditt namn eller din e-post.</span>
                 </li>
                 <li class="flex items-start gap-3">
                   <span class="shrink-0 mt-2 w-2 h-2 bg-amber-400"></span>
@@ -79,7 +79,7 @@ import { LanguageService } from '../../i18n/language.service';
                 </li>
                 <li class="flex items-start gap-3">
                   <span class="shrink-0 mt-2 w-2 h-2 bg-amber-400"></span>
-                  <span>Versioner före 2.0 skickade också anonym spelstatistik till Unity Analytics (gick att stänga av i Inställningar). Version 2.0 och senare skickar ingen statistik.</span>
+                  <span>Spelstatistik (Unity Analytics): från version 2.1 frågar spelet en gång om du vill dela spelstatistik, och inget skickas om du inte svarar ja. Med ditt samtycke skickas vilka banor du startar, klarar eller lämnar, drag, stjärnor, spellägen, robotval och hur du använder erbjudandet om hela spelet, tillsammans med det slumpade spelar-ID:t, enhetsmodell, operativsystem, spelversion och land (utifrån IP-adressen). Unity behandlar uppgifterna åt oss. Du kan stänga av det när som helst i Settings > Data > Share play stats. Version 2.0 skickade ingen statistik; versioner före 2.0 skickade anonym spelstatistik (gick att stänga av i Inställningar).</span>
                 </li>
                 <li class="flex items-start gap-3">
                   <span class="shrink-0 mt-2 w-2 h-2 bg-amber-400"></span>
@@ -125,7 +125,7 @@ import { LanguageService } from '../../i18n/language.service';
                 </li>
                 <li class="flex items-start gap-3">
                   <span class="shrink-0 mt-2 w-2 h-2 bg-amber-400"></span>
-                  <span>No accounts, no ads and no tracking. The game never asks for your name or email address.</span>
+                  <span>No accounts, no ads and no tracking across apps. The game never asks for your name or email address.</span>
                 </li>
                 <li class="flex items-start gap-3">
                   <span class="shrink-0 mt-2 w-2 h-2 bg-amber-400"></span>
@@ -137,7 +137,7 @@ import { LanguageService } from '../../i18n/language.service';
                 </li>
                 <li class="flex items-start gap-3">
                   <span class="shrink-0 mt-2 w-2 h-2 bg-amber-400"></span>
-                  <span>Versions before 2.0 also sent anonymous gameplay statistics to Unity Analytics (it could be turned off in Settings). Version 2.0 and later send no statistics.</span>
+                  <span>Play statistics (Unity Analytics): from version 2.1 the game asks once whether you want to share play statistics, and sends nothing unless you say yes. With your consent it sends which levels you start, finish or leave, turns, stars, game modes, robot picks and how you use the Full Game offer, together with the random player ID, device model, operating system, game version and a country derived from your IP address. Unity processes this data on our behalf. You can turn it off at any time in Settings > Data > Share play stats. Version 2.0 sent no statistics; versions before 2.0 sent anonymous gameplay statistics (it could be turned off in Settings).</span>
                 </li>
                 <li class="flex items-start gap-3">
                   <span class="shrink-0 mt-2 w-2 h-2 bg-amber-400"></span>
