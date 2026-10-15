@@ -88,9 +88,11 @@ p { margin: 0 0 1em; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 /* Each game's own name, as the game sets it (GameTitle.astro). Sizes come from the
-   font-size where it is used; the shadows are the games' own, in em so they keep their
-   proportions at any size (at 13 px they are exactly The Perfect Race's 1px/2px/7px). */
-.gt { white-space: nowrap; text-transform: none; letter-spacing: 0; }
+   font-size where it is used, chosen to fit one line (Murder is about 11.4em wide with
+   its glass, Race 16.6em); only a reader's own wider letter or word spacing makes it
+   wrap. The shadows are the games' own, in em so they keep their proportions at any
+   size (at 13 px they are exactly The Perfect Race's 1px/2px/7px). */
+.gt { text-transform: none; letter-spacing: 0; }
 .gt-murder { display: inline-flex; align-items: center; gap: .5em; font: 700 1em/1.15 var(--murder-face); letter-spacing: .01em; color: #c9a045; }
 .gt-glass { width: 1.05em; height: 1.05em; flex: none; opacity: .85; }
 .gt-race { font: 400 1em/1.3 var(--race-face); text-transform: uppercase; letter-spacing: .04em; color: #dfe5f2; text-shadow: 0 .077em .154em rgba(0, 0, 0, .35); }
@@ -146,9 +148,9 @@ p { margin: 0 0 1em; }
 .game-card .strip { height: 4px; background: var(--strip); }
 .game-card .body { padding: 18px 20px 22px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
 .game-card h3 { display: flex; align-items: center; min-height: 3.1rem; font-size: 1.4rem; }
-.game-card h3 .gt-murder { font-size: min(1.55rem, (100cqi - 0px) / 11.6); }
+.game-card h3 .gt-murder { font-size: min(1.55rem, 100cqi / 11.6); }
 .game-card h3 .gt-race { font-size: min(1.05rem, 100cqi / 16.8); }
-.game-card h3 .gt-robot { width: 132px; margin: -8px 0 -8px -6px; }
+.game-card h3 .gt-robot { width: 132px; margin: -6px 0 -2px -6px; }
 .game-card .body { container-type: inline-size; }
 .game-card .genre { font: 500 12px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--strip); }
 .game-card p { color: var(--text-dim); margin: 0; font-size: 15.5px; }

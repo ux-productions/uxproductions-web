@@ -96,6 +96,7 @@ const breadcrumbs = {
   imageAlt={game.name}
   jsonld={[videoGame, breadcrumbs]}
   fonts={game.theme === 'robot' ? [] : [game.theme]}
+  studioFace={false}
 >
   <div class={`game theme-${game.theme}`}>
     {/* Art narrower than a wide screen is never stretched: it keeps its own width and fades out at the sides. */}

@@ -722,11 +722,12 @@ const facts = [
        wider spacing shrinks it instead of cutting it off. */
     .tp-vname { flex: 1 1 0; min-height: 0; margin: 14px 0; position: relative; container-type: size; overflow: hidden; font-size: 16px; line-height: 1; }
     .tp-vname > .gt {
-      position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate(-90deg);
+      position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate(-90deg); white-space: nowrap;
       filter: drop-shadow(0 1px 8px color-mix(in srgb, var(--g-bg) 85%, transparent));
     }
-    .theme-murder .tp-vname > .gt { font-size: min(44px, 100cqh / 11.8, 70cqw); }
-    .theme-race .tp-vname > .gt { font-size: min(30px, 100cqh / 17, 40cqw); }
+    /* Room for the reader's own text spacing too (letters +.12em, words +.16em). */
+    .theme-murder .tp-vname > .gt { font-size: min(44px, 100cqh / 13.8, 70cqw); }
+    .theme-race .tp-vname > .gt { font-size: min(30px, 100cqh / 18.4, 40cqw); }
     .theme-robot .tp-vname > .gt-robot { width: min(300px, 100cqh, 160cqw); max-width: none; }
     .tp-foot { display: flex; flex-direction: column; align-items: stretch; gap: 10px; }
     .tp-genre { margin: 0; font: 500 11px/1.35 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--g-accent); hyphens: manual; overflow-wrap: break-word; }

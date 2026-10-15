@@ -21,6 +21,8 @@ interface Props {
   published?: Date;
   /** Game title faces the page shows on its first screen (preloaded with it). */
   fonts?: GameFace[];
+  /** False on pages that never use the studio face (the game pages), so it is not preloaded. */
+  studioFace?: boolean;
 }
 
 const {
@@ -36,6 +38,7 @@ const {
   noindex = false,
   published,
   fonts = [],
+  studioFace = true,
 } = Astro.props;
 
 const canonical = new URL(localize(path, lang), SITE.url).href;
@@ -73,7 +76,7 @@ const schemas = [organization, ...jsonld];
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <Fonts games={fonts} />
+    <Fonts games={fonts} studio={studioFace} />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
