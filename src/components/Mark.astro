@@ -6,12 +6,13 @@
  * It is decorative: name the link or heading around it.
  *   defs     the shared paths, once per page (Header renders it); every other variant reuses them with <use>
  *   ux       the "UX" letters alone
+ *   prod     "PRODUCTIONS" alone (the header's word: drawn, so it never waits for a font)
  *   wordmark "UX" and "PRODUCTIONS" on one line, at the same height
  *   stack    "UX" over "PRODUCTIONS", as in the logo, without the frame
  *   logo     the full logo in its frame
  */
 interface Props {
-  variant?: 'defs' | 'ux' | 'wordmark' | 'stack' | 'logo';
+  variant?: 'defs' | 'ux' | 'prod' | 'wordmark' | 'stack' | 'logo';
   class?: string;
 }
 const { variant = 'ux', class: className } = Astro.props;
@@ -24,6 +25,7 @@ const svg = { class: className, fill: 'currentColor', 'fill-rule': 'evenodd', 'a
   <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><path id="mk-ux" d={UX} /><path id="mk-prod" d={PROD} /><path id="mk-frame" d={FRAME} /></defs></svg>
 )}
 {variant === 'ux' && <svg viewBox="0 0 1074 684" {...svg}><use href="#mk-ux" /></svg>}
+{variant === 'prod' && <svg viewBox="0 0 1026 166" {...svg}><use href="#mk-prod" /></svg>}
 {variant === 'wordmark' && <svg viewBox="0 0 5430 684" {...svg}><use href="#mk-ux" /><use href="#mk-prod" transform="translate(1194 0) scale(4.1339)" /></svg>}
 {variant === 'stack' && <svg viewBox="0 0 1074 903" {...svg}><use href="#mk-ux" /><use href="#mk-prod" transform="translate(15 738)" /></svg>}
 {variant === 'logo' && <svg viewBox="0 0 1259 1079" {...svg}><use href="#mk-frame" /><use href="#mk-ux" transform="translate(99 79)" /><use href="#mk-prod" transform="translate(114 817)" /></svg>}

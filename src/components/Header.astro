@@ -1,5 +1,4 @@
 ---
-import '@fontsource/saira-condensed/700.css';
 import Mark from './Mark.astro';
 import { localize, t, type Lang } from '../data/site';
 
@@ -25,7 +24,8 @@ const langHref = bilingual ? localize(path, other) : localize('/', other);
   <div class="wrap">
     <a class="brand" href={localize('/', lang)}>
       <Mark variant="ux" class="brand-mark" />
-      <span class="visually-hidden">UX </span><span class="brand-word">Productions</span>
+      <Mark variant="prod" class="brand-word" />
+      <span class="visually-hidden">UX Productions</span>
     </a>
     <nav class="site-nav" aria-label={lang === 'sv' ? 'Huvudmeny' : 'Main'}>
       {items.map((i) => (

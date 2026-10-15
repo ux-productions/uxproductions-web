@@ -1,13 +1,6 @@
 ---
-import '@fontsource/familjen-grotesk/400.css';
-import '@fontsource/familjen-grotesk/500.css';
-import '@fontsource/familjen-grotesk/600.css';
-import '@fontsource/familjen-grotesk/700.css';
-import '@fontsource/ibm-plex-mono/500.css';
 import '../styles/global.css';
-// The studio face draws the header and every page title: fetch it with the page, so the
-// titles do not reflow when it arrives.
-import sairaUrl from '@fontsource/saira-condensed/files/saira-condensed-latin-700-normal.woff2?url';
+import Fonts, { type GameFace } from '../components/Fonts.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { SITE, SAME_AS, localize, t, type Lang } from '../data/site';
@@ -26,6 +19,8 @@ interface Props {
   jsonld?: object[];
   noindex?: boolean;
   published?: Date;
+  /** Game title faces the page shows on its first screen (preloaded with it). */
+  fonts?: GameFace[];
 }
 
 const {
@@ -40,6 +35,7 @@ const {
   jsonld = [],
   noindex = false,
   published,
+  fonts = [],
 } = Astro.props;
 
 const canonical = new URL(localize(path, lang), SITE.url).href;
@@ -77,6 +73,7 @@ const schemas = [organization, ...jsonld];
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <Fonts games={fonts} />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
@@ -89,7 +86,6 @@ const schemas = [organization, ...jsonld];
       </>
     )}
     <meta name="theme-color" content="#0f0e0d" />
-    <link rel="preload" href={sairaUrl} as="font" type="font/woff2" crossorigin />
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="alternate" type="application/rss+xml" title="UX Productions news" href="/news/rss.xml" />
 

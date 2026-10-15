@@ -1,6 +1,4 @@
 ---
-import '@fontsource/bodoni-moda/700.css';
-import '@fontsource/press-start-2p/400.css';
 import { Image, Picture } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
@@ -83,7 +81,7 @@ const facts = [
   { n: '0', text: sv ? 'Reklam eller prenumerationer, i något av spelen' : 'Ads or subscriptions, in any of the games' },
 ];
 ---
-<Base title={title} description={description} lang={lang} path="/" bilingual image="/og/studio.jpg" imageAlt="The Perfect Robot, The Perfect Murder and The Perfect Race" jsonld={[website]}>
+<Base title={title} description={description} lang={lang} path="/" bilingual image="/og/studio.jpg" imageAlt="The Perfect Robot, The Perfect Murder and The Perfect Race" jsonld={[website]} fonts={['murder', 'race']}>
   <script is:inline slot="head">document.documentElement.classList.add('js')</script>
 
   <section class:list={['mast', { 'has-launch': launch }]}>

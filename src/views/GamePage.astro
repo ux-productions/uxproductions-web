@@ -1,6 +1,4 @@
 ---
-import '@fontsource/bodoni-moda/700.css';
-import '@fontsource/press-start-2p/400.css';
 import { Image, Picture, getImage } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import StoreButtons from '../components/StoreButtons.astro';
@@ -96,6 +94,7 @@ const breadcrumbs = {
   image={`/og/${game.slug}.jpg`}
   imageAlt={game.name}
   jsonld={[videoGame, breadcrumbs]}
+  fonts={game.theme === 'robot' ? [] : [game.theme]}
 >
   <div class={`game theme-${game.theme}`}>
     {/* Art narrower than a wide screen is never stretched: it keeps its own width and fades out at the sides. */}

@@ -1,0 +1,99 @@
+---
+/**
+ * Every web font on the site, declared here with the exact files the build emits, so a
+ * preload and its @font-face can never point at different URLs.
+ *
+ * How a page avoids showing a heading in the wrong font and then swapping it:
+ *  - The faces every page shows on its first screen are preloaded: the studio face
+ *    (Saira Condensed 700), the body face (Familjen Grotesk 400) and the mono labels
+ *    (IBM Plex Mono 500), latin subsets. A page that shows a game's title face on its
+ *    first screen preloads that one too (the `games` prop).
+ *  - Every face uses font-display: optional. A preloaded face arrives before the first
+ *    paint (Chrome even holds that paint for it, up to 100 ms); a face already in the
+ *    cache is used at once on every later page. If a font is not there in time (a first
+ *    visit on a slow line), the page keeps the fallback for that visit instead of
+ *    swapping it under the reader, and the next page uses the real one.
+ *    (Measured by capturing every frame of page-to-page navigation in Chromium, Firefox
+ *    and WebKit, cold and warm cache, at full speed and throttled: with swap, headings
+ *    first painted in the fallback and then changed; with optional they never did.)
+ *  - The fallbacks are local fonts with their metrics matched to the web font
+ *    (size-adjust, ascent, descent and line gap, computed from the font files), so that
+ *    rare fallback paint takes almost the same room.
+ * latin covers English and Swedish (å, ä, ö); latin-ext loads only for other letters.
+ */
+import sairaLatin from '@fontsource/saira-condensed/files/saira-condensed-latin-700-normal.woff2?url';
+import sairaExt from '@fontsource/saira-condensed/files/saira-condensed-latin-ext-700-normal.woff2?url';
+import body400 from '@fontsource/familjen-grotesk/files/familjen-grotesk-latin-400-normal.woff2?url';
+import body400x from '@fontsource/familjen-grotesk/files/familjen-grotesk-latin-ext-400-normal.woff2?url';
+import body500 from '@fontsource/familjen-grotesk/files/familjen-grotesk-latin-500-normal.woff2?url';
+import body500x from '@fontsource/familjen-grotesk/files/familjen-grotesk-latin-ext-500-normal.woff2?url';
+import body600 from '@fontsource/familjen-grotesk/files/familjen-grotesk-latin-600-normal.woff2?url';
+import body600x from '@fontsource/familjen-grotesk/files/familjen-grotesk-latin-ext-600-normal.woff2?url';
+import body700 from '@fontsource/familjen-grotesk/files/familjen-grotesk-latin-700-normal.woff2?url';
+import body700x from '@fontsource/familjen-grotesk/files/familjen-grotesk-latin-ext-700-normal.woff2?url';
+import monoLatin from '@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-500-normal.woff2?url';
+import monoExt from '@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-ext-500-normal.woff2?url';
+import bodoniLatin from '@fontsource/bodoni-moda/files/bodoni-moda-latin-700-normal.woff2?url';
+import bodoniExt from '@fontsource/bodoni-moda/files/bodoni-moda-latin-ext-700-normal.woff2?url';
+import pixelLatin from '@fontsource/press-start-2p/files/press-start-2p-latin-400-normal.woff2?url';
+import pixelExt from '@fontsource/press-start-2p/files/press-start-2p-latin-ext-400-normal.woff2?url';
+
+/** A game's title face: Bodoni Moda (The Perfect Murder), Press Start 2P (The Perfect Race). */
+export type GameFace = 'murder' | 'race';
+
+interface Props {
+  /** Game title faces this page shows on its first screen: preloaded with the page. */
+  games?: GameFace[];
+}
+const { games = [] } = Astro.props;
+
+const LATIN = 'U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD';
+const LATIN_EXT = 'U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF';
+const DISPLAY = 'optional';
+
+const faces: { family: string; weight: number; latin: string; ext: string; extra?: string }[] = [
+  { family: 'Saira Condensed', weight: 700, latin: sairaLatin, ext: sairaExt },
+  { family: 'Familjen Grotesk', weight: 400, latin: body400, ext: body400x },
+  { family: 'Familjen Grotesk', weight: 500, latin: body500, ext: body500x },
+  { family: 'Familjen Grotesk', weight: 600, latin: body600, ext: body600x },
+  { family: 'Familjen Grotesk', weight: 700, latin: body700, ext: body700x },
+  { family: 'IBM Plex Mono', weight: 500, latin: monoLatin, ext: monoExt },
+  { family: 'Bodoni Moda', weight: 700, latin: bodoniLatin, ext: bodoniExt },
+  // The Perfect Race's own correction (its tokens.css): the line box runs from the
+  // baseline to the cap top, so the pixel face centres true next to anything else.
+  { family: 'Press Start 2P', weight: 400, latin: pixelLatin, ext: pixelExt, extra: 'ascent-override:100%;descent-override:0%;line-gap-override:0%;' },
+];
+
+// Fallbacks: a local font scaled to the web font's width (size-adjust, from the advance
+// widths of typical text in each face), with the web font's own vertical metrics.
+// Values from the font files with fontTools; see the README.
+const fallbacks: { family: string; weight: number; local: string[]; size: string; ascent: string; descent: string }[] = [
+  { family: 'Saira Condensed Fallback', weight: 700, local: ['Arial Narrow Bold', 'ArialNarrow-Bold', 'Arial Narrow'], size: '83.84%', ascent: '135.37%', descent: '52.36%' },
+  { family: 'Saira Condensed Fallback Wide', weight: 700, local: ['Arial Bold', 'Arial-BoldMT', 'Arial'], size: '68.75%', ascent: '165.10%', descent: '63.86%' },
+  { family: 'Familjen Grotesk Fallback', weight: 400, local: ['Arial', 'ArialMT', 'Roboto'], size: '93.90%', ascent: '109.16%', descent: '23.96%' },
+  { family: 'Familjen Grotesk Fallback', weight: 500, local: ['Arial', 'ArialMT', 'Roboto'], size: '96.37%', ascent: '106.36%', descent: '23.35%' },
+  { family: 'Familjen Grotesk Fallback', weight: 600, local: ['Arial Bold', 'Arial-BoldMT', 'Roboto Bold', 'Arial'], size: '91.35%', ascent: '112.21%', descent: '24.63%' },
+  { family: 'Familjen Grotesk Fallback', weight: 700, local: ['Arial Bold', 'Arial-BoldMT', 'Roboto Bold', 'Arial'], size: '92.45%', ascent: '110.87%', descent: '24.34%' },
+  { family: 'IBM Plex Mono Fallback', weight: 500, local: ['Consolas'], size: '109.13%', ascent: '93.92%', descent: '25.20%' },
+  { family: 'IBM Plex Mono Fallback Wide', weight: 500, local: ['Menlo Regular', 'Menlo-Regular', 'Courier New', 'CourierNewPSMT'], size: '99.98%', ascent: '102.52%', descent: '27.50%' },
+  { family: 'Bodoni Moda Fallback', weight: 700, local: ['Georgia Bold', 'Georgia-Bold', 'Georgia'], size: '94.77%', ascent: '118.71%', descent: '42.21%' },
+  { family: 'Press Start 2P Fallback', weight: 400, local: ['Courier New Bold', 'CourierNewPS-BoldMT', 'Courier New'], size: '166.64%', ascent: '60.01%', descent: '0%' },
+];
+
+const css =
+  faces
+    .flatMap((f) =>
+      [
+        [f.latin, LATIN],
+        [f.ext, LATIN_EXT],
+      ].map(([url, range]) => `@font-face{font-family:'${f.family}';font-style:normal;font-weight:${f.weight};font-display:${DISPLAY};src:url(${url}) format('woff2');unicode-range:${range};${f.extra ?? ''}}`),
+    )
+    .join('') +
+  fallbacks
+    .map((f) => `@font-face{font-family:'${f.family}';font-style:normal;font-weight:${f.weight};src:${f.local.map((n) => `local('${n}')`).join(',')};size-adjust:${f.size};ascent-override:${f.ascent};descent-override:${f.descent};line-gap-override:0%}`)
+    .join('');
+
+const preloads = [sairaLatin, body400, monoLatin, ...(games.includes('murder') ? [bodoniLatin] : []), ...(games.includes('race') ? [pixelLatin] : [])];
+---
+{preloads.map((href) => <link rel="preload" href={href} as="font" type="font/woff2" crossorigin />)}
+<style is:inline set:html={css}></style>

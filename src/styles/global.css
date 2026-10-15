@@ -24,11 +24,15 @@
   --g-cta: var(--accent);
   --g-cta-ink: var(--accent-ink);
 
-  --display: 'Familjen Grotesk', 'Helvetica Neue', Arial, sans-serif;
-  --body: 'Familjen Grotesk', 'Helvetica Neue', Arial, sans-serif;
-  --mono: 'IBM Plex Mono', ui-monospace, Consolas, monospace;
+  /* Each web font is followed by its metric-matched local fallback (Fonts.astro). */
+  --display: 'Familjen Grotesk', 'Familjen Grotesk Fallback', Arial, sans-serif;
+  --body: 'Familjen Grotesk', 'Familjen Grotesk Fallback', Arial, sans-serif;
+  --mono: 'IBM Plex Mono', 'IBM Plex Mono Fallback', 'IBM Plex Mono Fallback Wide', ui-monospace, monospace;
   /* The squared, condensed cut of PRODUCTIONS in the logo: the studio's own voice. */
-  --studio: 'Saira Condensed', 'Arial Narrow', 'Helvetica Neue', Arial, sans-serif;
+  --studio: 'Saira Condensed', 'Saira Condensed Fallback', 'Saira Condensed Fallback Wide', 'Arial Narrow', sans-serif;
+  /* The games' own title faces. */
+  --murder-face: 'Bodoni Moda', 'Bodoni Moda Fallback', Didot, Georgia, serif;
+  --race-face: 'Press Start 2P', 'Press Start 2P Fallback', 'Courier New', monospace;
 
   /* One container for every page: header, front page, inner pages and footer. */
   --wrap: 1440px;
@@ -40,6 +44,16 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
+
+/* Moving between pages: a short, calm crossfade. The header is the same on every page
+   and the crossfade adds the two pages' light, so it stands still without a name of
+   its own (naming it made WebKit drop the header for the whole transition).
+   Browsers without cross-document view transitions simply load the next page. */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+}
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: .22s; animation-timing-function: ease-out; }
+
 html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0;
@@ -94,7 +108,8 @@ p { margin: 0 0 1em; }
 .brand { display: flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none; margin-right: auto; }
 .brand:hover { color: var(--text); }
 .brand-mark { width: 41px; height: auto; flex: none; transition: color .15s; }
-.brand-word { font: 700 19px/1 var(--studio); letter-spacing: .13em; text-transform: uppercase; padding-top: 2px; }
+/* PRODUCTIONS as drawn in the logo (its traced paths), so the header never waits for a font. */
+.brand-word { width: 92px; height: auto; flex: none; margin-top: 1px; }
 .brand:hover .brand-mark { color: var(--accent); }
 .site-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 22px; font-size: 15px; }
 .site-nav a { color: var(--text-dim); text-decoration: none; padding: 6px 0; border-bottom: 2px solid transparent; }
@@ -225,8 +240,8 @@ p { margin: 0 0 1em; }
   background: var(--g-bg); color: var(--g-text);
 }
 .theme-robot { --g-bg: #0a1524; --g-plate: #10213a; --g-line: #24476b; --g-text: #e8f1ff; --g-dim: #aac0da; --g-accent: #5ce1e6; --g-cta: #ffc857; --g-cta-ink: #0a1524; }
-.theme-murder { --g-bg: #080c16; --g-plate: #0f1420; --g-line: #3b3322; --g-text: #ede5d1; --g-dim: #b9b09b; --g-accent: #c9a045; --g-cta: #c9a045; --g-cta-ink: #080c16; --g-title: 'Bodoni Moda', Didot, Georgia, serif; }
-.theme-race { --g-bg: #0a0d13; --g-plate: #111725; --g-line: #232c42; --g-text: #f4f7fd; --g-dim: #a8b1c8; --g-accent: #b46bff; --g-cta: #b46bff; --g-cta-ink: #0a0d13; --g-title: 'Press Start 2P', ui-monospace, monospace; }
+.theme-murder { --g-bg: #080c16; --g-plate: #0f1420; --g-line: #3b3322; --g-text: #ede5d1; --g-dim: #b9b09b; --g-accent: #c9a045; --g-cta: #c9a045; --g-cta-ink: #080c16; --g-title: var(--murder-face); }
+.theme-race { --g-bg: #0a0d13; --g-plate: #111725; --g-line: #232c42; --g-text: #f4f7fd; --g-dim: #a8b1c8; --g-accent: #b46bff; --g-cta: #b46bff; --g-cta-ink: #0a0d13; --g-title: var(--race-face); }
 .game a:not(.btn) { color: var(--g-accent); }
 .game .btn { border-color: var(--g-line); color: var(--g-text); }
 .game .btn:hover { border-color: var(--g-dim); }
