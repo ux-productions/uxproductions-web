@@ -89,7 +89,8 @@ const breadcrumbs = {
   jsonld={[videoGame, breadcrumbs]}
 >
   <div class={`game theme-${game.theme}`}>
-    <section class="game-hero">
+    {/* Art narrower than a wide screen is never stretched: it keeps its own width and fades out at the sides. */}
+    <section class:list={['game-hero', { contained: game.hero.width < 2400 }]} style={`--art-w:${game.hero.width}px`}>
       <Picture
         src={game.hero}
         class="art"
