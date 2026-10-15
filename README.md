@@ -20,7 +20,7 @@ npm run check      # fails on broken internal links or anchors in dist/
 | Games: text (English and Swedish), store links, facts, FAQ, screenshots, trailers | `src/data/games.ts` |
 | Each game's short genre and its one number for the front page (`genreShort`, `stat`: shown on the spines, the phone tiles and the studio facts) | `src/data/games.ts` |
 | Learning apps ("Other work") | `src/data/other.ts` |
-| Studio details, socials, Steam release date (and its wording), badges, store button labels, UI strings | `src/data/site.ts` |
+| Studio details, socials, Steam release date (and its wording), badges, the Robot panel's loop by date (`ROBOT_LOOPS`), store button labels, UI strings | `src/data/site.ts` |
 | News posts (Markdown, English) | `src/content/news/*.md` |
 | Legal texts (terms, privacy) | `src/legal/*.html` |
 | Page templates (one per page type, rendered in both languages) | `src/views/` |
@@ -33,7 +33,7 @@ npm run check      # fails on broken internal links or anchors in dist/
 | Styles: studio palette, the shared page width, and each game's palette | `src/styles/global.css` |
 | Press kit downloads (full-size files, thumbnails, zip) | `public/press/<game>/` |
 | Trailers | `public/video/` |
-| The Robot panel's muted loop: one continuous shot from the trailer (12.30-14.95 s, played at half speed from the 60 fps source, so 5.3 s), cropped to 968x508 clear of captions and HUD, dipping to the panel's navy at the seam; H.264, no audio | `public/video/robot-loop.mp4` |
+| The Robot panel's muted loops, cut from the game's raw captures, one continuous take each with no HUD, filling the open panel: `halloween` (Grave Circle, from a 4K take; used until the end of 31 October 2026, Swedish time, while the Halloween sale runs) and `clockwork` (evergreen, after that). Each at 1600x1024 and 1200x768 (the page takes the one the panel needs), VP9 webm and H.264 mp4, no audio, with its first frame as the poster. Which one plays is `ROBOT_LOOPS` in `src/data/site.ts` | `public/video/robot-loop-<name>-<width>.{webm,mp4,jpg}` |
 | Share images (1200x630) | `public/og/`, made by `python scripts/make-og.py` |
 
 ## Fonts

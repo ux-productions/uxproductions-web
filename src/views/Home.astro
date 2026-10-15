@@ -1,12 +1,13 @@
 ---
-import { Image, Picture } from 'astro:assets';
+import { Picture } from 'astro:assets';
 import Base from '../layouts/Base.astro';
+import GameTitle from '../components/GameTitle.astro';
 import Icon from '../components/Icon.astro';
 import Mark from '../components/Mark.astro';
 import Socials from '../components/Socials.astro';
 import StoreButtons from '../components/StoreButtons.astro';
 import { GAMES, MURDER, ROBOT } from '../data/games';
-import { BADGES, FEATURED_GAME, ROBOT_STEAM_RELEASE, SITE, badgeFor, formatDate, localize, robotOnSteam, steamRelease, storeLabel, t, type Lang } from '../data/site';
+import { BADGES, FEATURED_GAME, ROBOT_STEAM_RELEASE, SITE, badgeFor, formatDate, localize, robotLoops, robotOnSteam, steamRelease, storeLabel, t, type Lang } from '../data/site';
 import { freshNews } from '../data/news';
 import robotKeyArt from '../assets/robot/key-art.jpg';
 import racePanel from '../assets/race/panel.jpg';
@@ -69,6 +70,13 @@ const ART = {
   murder: { src: MURDER.hero, widths: [640, 840, 1200, 1672], sizes: '(min-width: 960px) max(960px, calc((100vh - 360px) * 1.78)), 105vw', x0: '34%', x1: '60%', y0: '50%', y1: '50%', xm: '40%', ym: '50%' },
   race: { src: racePanel, widths: [600, 1000, 1400, 1730], sizes: '(min-width: 960px) 1000px, 100vw', x0: '100%', x1: '50%', y0: '50%', y1: '60%', xm: '50%', ym: '45%' },
 } as const;
+// The Robot panel's loop (site.ts ROBOT_LOOPS): today's, and any later one, so a page
+// left open past a loop's end switches by itself.
+const loops = robotLoops().map((l) => ({
+  until: l.until?.toISOString(),
+  position: l.position,
+  files: [1200, 1600].map((w) => ({ w, webm: `/video/robot-loop-${l.name}-${w}.webm`, mp4: `/video/robot-loop-${l.name}-${w}.mp4`, poster: `/video/robot-loop-${l.name}-${w}.jpg` })),
+}));
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 const pad = (i: number) => String(i + 1).padStart(2, '0');
 
@@ -89,12 +97,13 @@ const facts = [
       <div class="mast-head">
         <p class="label">{sv ? 'Spelstudio i Eskilstuna sedan 2013' : 'Game studio in Eskilstuna, Sweden, since 2013'}</p>
         <h1>{sv ? 'Spel från UX Productions' : 'Games by UX Productions'}</h1>
+        <p class="promise">{sv ? 'Ingen reklam, inga prenumerationer.' : 'No ads, no subscriptions.'}</p>
       </div>
       {launch && (
         <div class:list={['launch theme-robot', { 'has-cd': !steamOut }]}>
           <p class="launch-top">
             <span class="badge" data-after={launch.after?.chip}>{launch.chip}</span>
-            <a class="launch-name" href={localize(`/games/${ROBOT.slug}/`, lang)}>{ROBOT.name}</a>
+            <a class="launch-name" href={localize(`/games/${ROBOT.slug}/`, lang)}><GameTitle game={ROBOT} logoSizes="120px" eager /></a>
           </p>
           <p class="launch-note" data-after={launch.after?.note}>{launch.note}</p>
           <div class="launch-row">
@@ -113,7 +122,7 @@ const facts = [
           </div>
         </div>
       )}
-      <p class="lede">{sv ? 'Tre spel som vart och ett bygger på en idé. Ingen reklam, inga prenumerationer.' : 'Three games, each built around one idea. No ads, no subscriptions.'}</p>
+      <p class="lede">{sv ? 'Tre spel som vart och ett bygger på en idé, för Steam, mobilen och webbläsaren.' : 'Three games, each built around one idea, for Steam, phones and the browser.'}</p>
       <nav class="jump" aria-label={sv ? 'Spelen' : 'The games'}>
         <ol>
           {GAMES.map((g, i) => (
@@ -139,7 +148,7 @@ const facts = [
               id={g.slug}
               class:list={['tp game', `theme-${g.theme}`, { 'is-open': lead }]}
               aria-labelledby={`${g.slug}-t`}
-              data-video={g.theme === 'robot' ? '/video/robot-loop.mp4' : undefined}
+              data-loops={g.theme === 'robot' && loops.length ? JSON.stringify(loops) : undefined}
               data-pause={sv ? 'Pausa filmen' : 'Pause the video'}
               data-play={sv ? 'Spela filmen' : 'Play the video'}
               style={`--x0:${art.x0};--x1:${art.x1};--y0:${art.y0};--y1:${art.y1};--xm:${art.xm};--ym:${art.ym}`}
@@ -161,20 +170,14 @@ const facts = [
                 </div>
               </div>
 
-              <div class="tp-body">
+              <div class="tp-body" id={`${g.slug}-body`}>
                 {badge && <p class="tp-meta"><span class="badge">{badge[lang]}</span></p>}
                 <p class="label accent"><span class="tp-idx">{pad(i)}</span>{g.genre[lang]}</p>
                 {/* The spine and the phone cover show the game's number only to the eye;
                     where the pitch does not already say it, screen readers get it here. */}
                 {!g.pitch[lang].includes(g.stat.value) && !g.pitch[lang].includes(g.stat.label[lang]) && <p class="visually-hidden">{`${g.stat.value} ${g.stat.label[lang]}`}</p>}
                 <h2 class="tp-title" id={`${g.slug}-t`}>
-                  <a href={href}>
-                    {g.theme === 'robot' && g.logo ? (
-                      <Image src={g.logo} alt={g.name} widths={[360, 720]} sizes="360px" loading={lead ? 'eager' : 'lazy'} />
-                    ) : (
-                      <>The Perfect <span>{g.shortName}</span></>
-                    )}
-                  </a>
+                  <a href={href}><GameTitle game={g} logoSizes="(min-width: 960px) clamp(230px, 21vw, 320px), 320px" eager={lead} /></a>
                 </h2>
                 <p class="tp-tag">{g.tagline[lang]}</p>
                 <p class="tp-pitch">{g.pitch[lang]}</p>
@@ -186,21 +189,24 @@ const facts = [
               </div>
 
               {/* What a closed panel shows on wide screens, like the spine of a boxed edition:
-                  number and name, then what it is, one number, its button and a way to open it. */}
+                  its number, the game's own name turned on its side, what it is, one number,
+                  its button, and "More", which opens the panel (a click or tap anywhere on
+                  the spine does the same). Only one of body and spine is visible at a time,
+                  and only the visible one is in the accessibility tree and the tab order. */}
               <div class="tp-spine">
                 <div class="tp-spine-top" aria-hidden="true">
                   <span class="tp-no">{pad(i)}</span>
                   <Mark variant="ux" class="tp-glyph" />
                 </div>
-                <p class="tp-vname" aria-hidden="true"><span>The Perfect</span><b>{g.shortName}</b></p>
+                <h2 class="tp-vname"><GameTitle game={g} logoSizes="300px" /></h2>
                 <div class="tp-foot">
-                  <p class="tp-genre" aria-hidden="true">{g.genreShort[lang]}</p>
-                  <p class="tp-fact" aria-hidden="true"><b>{g.stat.value}</b> {g.stat.label[lang]}</p>
+                  <p class="tp-genre">{g.genreShort[lang]}</p>
+                  <p class="tp-fact"><b>{g.stat.value}</b> {g.stat.label[lang]}</p>
                   <a class="btn primary tp-cta" href={main.url} rel="noopener">
                     <Icon name={main.kind} />
                     <span data-after={main.kind === 'steam' && !steamOut ? storeLabel('steam', lang, true) : undefined}>{storeLabel(main.kind, lang)}</span><span class="visually-hidden">{` (${g.name})`}</span>
                   </a>
-                  <a class="tp-more" href={`#${g.slug}`}>
+                  <a class="tp-more" href={`#${g.slug}`} aria-controls={`${g.slug}-body`}>
                     {sv ? 'Mer' : 'More'}<span class="visually-hidden">{sv ? ` om ${g.name}` : ` about ${g.name}`}</span>
                     <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
                   </a>
@@ -276,9 +282,10 @@ const facts = [
 
 <script>
   // Progressive enhancement, all of it optional: the page is complete without it.
-  //  1. The three panels on wide screens open on hover intent, focus, or a click or tap
-  //     on a spine; the last one stays open, and each game opens with its own gesture.
-  //  2. A muted loop from the trailer in the Robot panel (wide screens, after load, never
+  //  1. On wide screens one panel is open and the others are spines. A spine opens only
+  //     when it is clicked or tapped (or its "More" button pressed); pointing at it or
+  //     tabbing through it only lights it up, so nothing moves under the pointer.
+  //  2. A muted loop of the game in the open Robot panel (wide screens, after load, never
   //     with reduced motion or Save-Data), with a pause button.
   //  3. The launch countdown, and the switch to "out now" wording at the release.
   const wide = matchMedia('(min-width: 960px)');
@@ -290,29 +297,26 @@ const facts = [
     let video: HTMLVideoElement | undefined;
     let paused = false;
     let seen = true;
-    const vp = panels.find((p) => p.dataset.video);
+    const vp = panels.find((p) => p.dataset.loops);
 
     const sync = () => {
       if (!video || !vp) return;
       if (vp.classList.contains('is-open') && seen && !paused && wide.matches && !still.matches) video.play().catch(() => {});
       else video.pause();
     };
-    // An open panel's spine is hidden; its links leave the tab order at once, even
-    // while the spine is still fading out.
-    const spineLinks = (q: HTMLElement) => {
-      for (const a of q.querySelectorAll<HTMLElement>('.tp-spine a')) {
-        if (q.classList.contains('is-open')) a.tabIndex = -1;
-        else a.removeAttribute('tabindex');
-      }
-    };
-    panels.forEach(spineLinks);
-    const open = (p: HTMLElement, gesture = true) => {
+
+    // Transitions run only around a visitor's own gesture (and while pointing at or
+    // tabbing through the stage), so loading, resizing or a screenshot never catches a
+    // panel mid-move.
+    let settle = 0;
+    const open = (p: HTMLElement, how: 'pointer' | 'key' | 'hash') => {
       if (p.classList.contains('is-open')) return;
-      for (const q of panels) {
-        q.classList.toggle('is-open', q === p);
-        spineLinks(q);
-      }
-      if (gesture && wide.matches && !still.matches) {
+      tri.classList.add('anim');
+      tri.classList.toggle('kbd', how === 'key');
+      clearTimeout(settle);
+      settle = window.setTimeout(() => tri.classList.remove('anim'), 1200);
+      for (const q of panels) q.classList.toggle('is-open', q === p);
+      if (how !== 'hash' && wide.matches && !still.matches) {
         p.classList.remove('opening');
         void p.offsetWidth;
         p.classList.add('opening');
@@ -320,66 +324,64 @@ const facts = [
       sync();
     };
 
-    // Hover intent: a panel opens once the pointer has rested on it (moved less than
-    // 24 px) for 180 ms, so sweeping across the stage never switches panels, and
-    // pointing at a spine's own button never moves that button away.
-    let timer = 0;
-    let ox = 0;
-    let oy = 0;
-    const cancel = () => {
-      clearTimeout(timer);
-      timer = 0;
-    };
     for (const p of panels) {
-      p.addEventListener('pointermove', (e) => {
-        if (e.pointerType !== 'mouse') return;
-        tri.classList.remove('kbd');
-        if (!wide.matches || p.classList.contains('is-open')) return;
-        if ((e.target as Element).closest('.tp-cta')) return cancel();
-        if (timer && Math.hypot(e.clientX - ox, e.clientY - oy) < 24) return;
-        cancel();
-        ox = e.clientX;
-        oy = e.clientY;
-        timer = window.setTimeout(() => open(p), 180);
-      });
-      p.addEventListener('pointerleave', cancel);
       p.addEventListener('animationend', () => p.classList.remove('opening'));
-      // Keyboard: focus on anything in a panel's body opens it, and its copy shows at
-      // once (no hover delay) so the focus ring is never on an invisible link.
-      p.addEventListener('focusin', (e) => {
-        if ((e.target as Element).closest('.tp-spine')) return;
-        if (!p.classList.contains('is-open')) tri.classList.add('kbd');
-        open(p);
-      });
-      // A click or tap anywhere on a spine (its "More" link covers it) opens the panel.
-      p.querySelector('.tp-more')?.addEventListener('click', (e) => {
+      // "More" becomes a button that opens its panel; its hit area is the whole spine,
+      // under the spine's own links (its store button), which still go where they say.
+      const more = p.querySelector<HTMLAnchorElement>('a.tp-more');
+      if (!more) continue;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = more.className;
+      btn.innerHTML = more.innerHTML;
+      btn.setAttribute('aria-expanded', 'false');
+      btn.setAttribute('aria-controls', more.getAttribute('aria-controls')!);
+      more.replaceWith(btn);
+      btn.addEventListener('click', (e) => {
         if (!wide.matches) return;
-        e.preventDefault();
-        cancel();
-        open(p);
+        open(p, e.detail === 0 ? 'key' : 'pointer');
+        // The spine (and this button) are hidden now: carry focus to the opened panel.
         p.querySelector<HTMLElement>('.tp-title a')?.focus({ preventScroll: true });
       });
     }
 
     // A link to a game's panel (#the-perfect-race, as the phone jump chips make) opens
     // that panel, as it does without the script through :target.
-    const fromHash = (gesture: boolean) => {
+    const fromHash = () => {
       const p = panels.find((q) => location.hash === `#${q.id}`);
-      if (p && wide.matches) open(p, gesture);
+      if (p && wide.matches) open(p, 'hash');
     };
-    fromHash(false);
-    addEventListener('hashchange', () => fromHash(true));
+    fromHash();
+    addEventListener('hashchange', fromHash);
 
     const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
     if (vp && wide.matches && !still.matches && !saveData) {
+      type Loop = { until?: string; position: string; files: { w: number; webm: string; mp4: string; poster: string }[] };
+      const loops: Loop[] = JSON.parse(vp.dataset.loops!);
       const start = () => {
+        // Today's loop: the first whose end is still ahead.
+        const loop = loops.find((l) => !l.until || Date.now() < Date.parse(l.until));
+        if (!loop) return;
+        // The loop covers the open panel. Take the smaller file when it is shown at no
+        // more than 1.1 times its own pixels (at this screen's density), else the larger.
+        const box = (tri.querySelector('.tp.is-open') ?? vp).getBoundingClientRect();
+        const shown = Math.max(box.width, box.height * (1600 / 1024)) * devicePixelRatio;
+        const file = loop.files.find((f) => shown <= f.w * 1.1) ?? loop.files[loop.files.length - 1];
         const v = (video = document.createElement('video'));
         v.muted = true;
         v.loop = true;
         v.playsInline = true;
+        v.preload = 'auto';
         v.className = 'tp-video';
+        v.poster = file.poster;
+        v.style.objectPosition = loop.position;
         v.setAttribute('aria-hidden', 'true');
-        v.src = vp.dataset.video!;
+        for (const [src, type] of [[file.webm, 'video/webm'], [file.mp4, 'video/mp4']]) {
+          const so = document.createElement('source');
+          so.src = src;
+          so.type = type;
+          v.append(so);
+        }
         v.addEventListener('playing', () => vp.classList.add('has-video'));
         vp.querySelector('.tp-art')!.append(v);
 
@@ -443,7 +445,9 @@ const facts = [
   .mast-in { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px 48px; align-items: end; }
   .mast .label { margin: 0 0 12px; text-wrap: balance; }
   .mast h1 { font: 700 clamp(2.5rem, 4.6vw, 4.6rem)/.92 var(--studio); text-transform: uppercase; letter-spacing: .005em; }
-  .lede { max-width: 30em; margin: 0; color: var(--text-dim); font-size: clamp(1.05rem, 1.35vw, 1.22rem); line-height: 1.45; text-wrap: pretty; }
+  /* The studio's promise, said as plainly as the name above it. */
+  .promise { margin: 14px 0 0; font: 700 clamp(1.45rem, 2.3vw, 2.25rem)/1 var(--studio); letter-spacing: .02em; text-transform: uppercase; color: var(--accent); text-wrap: balance; }
+  .lede { max-width: 36em; margin: 0; color: var(--text-dim); font-size: clamp(1.05rem, 1.35vw, 1.22rem); line-height: 1.45; text-wrap: pretty; }
   @media (min-width: 960px) {
     /* Without a launch the lede sits on the h1's baseline, to its right. */
     .mast:not(.has-launch) .mast-in { grid-template-columns: auto minmax(0, 26em); justify-content: space-between; }
@@ -459,6 +463,7 @@ const facts = [
     .mast { padding-block: 16px 14px; }
     .mast .label { margin-bottom: 8px; }
     .mast h1 { font-size: clamp(2.3rem, 3.9vw, 3.6rem); }
+    .promise { margin-top: 10px; font-size: clamp(1.35rem, 2vw, 1.8rem); }
     .mast.has-launch .mast-in { row-gap: 12px; }
     .launch { padding: 14px 18px; }
     .launch-note { margin-top: 8px; font-size: 14.5px; line-height: 1.45; }
@@ -472,8 +477,10 @@ const facts = [
     background: linear-gradient(90deg, var(--c1) 0 20%, var(--c2) 0 40%, var(--c3) 0 60%, var(--c4) 0 80%, var(--c5) 0); }
   .launch-top { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: 0; }
   .badge { background: var(--g-cta); color: var(--g-cta-ink); font: 600 11.5px/1.2 var(--mono); letter-spacing: .08em; text-transform: uppercase; padding: 6px 9px; border-radius: 3px; }
-  .launch-name { font: 700 1.35rem/1 var(--studio); letter-spacing: .04em; text-transform: uppercase; color: var(--g-text) !important; text-decoration: none; }
-  .launch-name:hover { color: var(--c4) !important; }
+  .launch-top .badge { margin-right: auto; }
+  .launch-name { display: block; line-height: 0; border-radius: 3px; }
+  .launch-name .gt-robot { width: 104px; margin: -10px -6px -12px 0; }
+  .launch-name:hover .gt-robot { filter: brightness(1.1); }
   .launch-note { margin: 12px 0 0; color: var(--g-dim); font-size: 15.5px; line-height: 1.5; text-wrap: balance; }
   .launch-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px 20px; margin-top: 16px; }
   .launch :focus-visible { outline-color: var(--c4); }
@@ -508,6 +515,10 @@ const facts = [
   @media (max-width: 959.98px) {
     .cd { display: none !important; }
     .launch { padding: 18px 16px; }
+    /* The game's logo first, as the block's title, then the date. */
+    .launch-top { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .launch-name { order: -1; }
+    .launch-name .gt-robot { width: 132px; margin: -8px 0 -6px -8px; }
   }
 
   /* Phones and tablets: all three games named under the masthead, one tap away. */
@@ -522,12 +533,13 @@ const facts = [
 
   /* ---------- The stage: three panels, one open ---------- */
   .stage { padding-bottom: clamp(40px, 5vw, 72px); }
-  /* Transitions run only while someone is pointing at or tabbing through the stage
-     (--k: 1), so loading, resizing or a screenshot never catches a panel mid-move. */
-  .tri { --ease: cubic-bezier(.22, .8, .18, 1); --k: 0; }
-  .tri:is(:hover, :focus-within) { --k: 1; }
-  :where(.tp) { --open: 0; --pe: none; --sv: visible; }
-  :where(.tp.is-open) { --open: 1; --pe: auto; --sv: hidden; }
+  /* Panels move only around a visitor's own gesture: while the script opens one (.anim),
+     or while someone points at or tabs through the stage (--k: 1); loading, resizing or
+     a screenshot never catches a panel mid-move. --dur is how long a panel takes to open. */
+  .tri { --ease: cubic-bezier(.22, .61, .36, 1); --dur: .54s; --k: 0; }
+  .tri:is(:hover, :focus-within), .tri.anim { --k: 1; }
+  :where(.tp) { --open: 0; --pe: none; --sv: visible; --bv: hidden; }
+  :where(.tp.is-open) { --open: 1; --pe: auto; --sv: hidden; --bv: visible; }
   .tp { position: relative; isolation: isolate; overflow: hidden; min-width: 0; border-radius: 4px; scroll-margin-top: 12px; }
 
   .tp-art { position: absolute; inset: 0; z-index: -1; overflow: hidden; background: var(--g-bg); }
@@ -536,19 +548,12 @@ const facts = [
     object-position: calc(var(--x0) + (var(--x1) - var(--x0)) * var(--open)) calc(var(--y0) + (var(--y1) - var(--y0)) * var(--open));
   }
   .tp-art img {
-    --t: calc(var(--k) * .85s) var(--ease);
-    transition: opacity .8s, object-position var(--t), top var(--t), left var(--t), height var(--t), transform var(--t);
+    --t: calc(var(--k) * var(--dur)) var(--ease);
+    transition: opacity .8s, filter .35s, object-position var(--t), top var(--t), left var(--t), height var(--t), transform var(--t);
   }
-  /* The loop is a window of footage at no more than its own size (968x508), top right,
-     feathered into the panel; the still key art fades out behind it while it plays. */
-  .tp-art video {
-    inset: 0 0 auto auto; width: min(100%, 968px); height: auto; aspect-ratio: 968 / 508; object-position: 50% 50%;
-    opacity: 0; transition: opacity .8s;
-    -webkit-mask-image: linear-gradient(0deg, transparent 0, #000 34%), linear-gradient(90deg, transparent 0, #000 26%);
-    -webkit-mask-composite: source-in;
-    mask-image: linear-gradient(0deg, transparent 0, #000 34%), linear-gradient(90deg, transparent 0, #000 26%);
-    mask-composite: intersect;
-  }
+  /* The loop covers the open Robot panel (the script sets its file and object-position);
+     the still key art fades out behind it while it plays. */
+  .tp-art video { opacity: 0; transition: opacity .8s; }
   @media (min-width: 960px) {
     .tp.has-video.is-open .tp-art video { opacity: 1; }
     .tp.has-video.is-open .tp-art img { opacity: 0; }
@@ -564,7 +569,7 @@ const facts = [
       color-mix(in srgb, var(--g-bg) 88%, transparent) 64%,
       var(--g-bg) 100%);
     opacity: calc(1 - var(--open));
-    transition: opacity calc(var(--k) * .7s) var(--ease);
+    transition: opacity calc(var(--k) * .4s) ease;
   }
   .tp-art::after {
     --scrim: 50%;
@@ -572,11 +577,13 @@ const facts = [
       linear-gradient(0deg, var(--g-bg) 0%, color-mix(in srgb, var(--g-bg) 82%, transparent) 26%, transparent 60%),
       linear-gradient(90deg, color-mix(in srgb, var(--g-bg) 92%, transparent) 0%, color-mix(in srgb, var(--g-bg) var(--scrim), transparent) 34%, transparent 58%);
     opacity: var(--open);
-    transition: opacity calc(var(--k) * .7s) var(--ease);
+    transition: opacity calc(var(--k) * var(--dur)) var(--ease);
   }
   /* The Robot's laser crosses the key art at title height: a denser scrim under the copy.
      Zoomed in (open, phones), its art ends above the panel's foot, so its edge fades out. */
   .theme-robot .tp-art::after { --scrim: 78%; }
+  /* Race: the cars' name tags run under the one-line title. */
+  .theme-race .tp-art::after { --scrim: 74%; }
   .theme-robot .tp-art img { -webkit-mask-image: linear-gradient(180deg, #000 82%, transparent); mask-image: linear-gradient(180deg, #000 82%, transparent); }
   /* As a spine its top edge sits below the number, so it fades in there too. */
   @media (min-width: 960px) {
@@ -587,19 +594,17 @@ const facts = [
   }
   .tp-cover { display: none; }
 
-  .tp-body { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+  .tp-body { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; container-type: inline-size; }
   .tp-meta { margin: 0; }
   .tp-body .label { margin: 0; display: flex; gap: 12px; align-items: baseline; }
   .tp-idx { color: var(--g-dim); }
-  .tp-title { margin: 2px 0; font-family: var(--g-title); line-height: 1; letter-spacing: 0; }
-  .tp-title a { color: var(--g-text) !important; text-decoration: none; display: block; }
+  /* Each game's own name (GameTitle), on one line, as wide as the copy allows. */
+  .tp-title { margin: 2px 0; line-height: 1; letter-spacing: 0; max-width: 100%; }
+  .tp-title a { display: block; text-decoration: none; border-radius: 2px; }
   .tp-title a:hover { opacity: .9; }
-  .theme-robot .tp-title img { width: clamp(230px, 21vw, 320px); height: auto; margin: -14px 0 -12px -10px; }
-  .theme-murder .tp-title { font-size: clamp(2.5rem, 3.6vw, 3.6rem); font-weight: 700; }
-  .theme-murder .tp-title a { color: var(--g-accent) !important; }
-  .theme-murder .tp-title span { display: block; }
-  .theme-race .tp-title { font-size: clamp(1.05rem, 1.3vw, 1.3rem); line-height: 1.5; text-transform: uppercase; }
-  .theme-race .tp-title span { display: block; font-size: 2.15em; line-height: 1.15; color: var(--g-accent); text-shadow: .09em .09em 0 #5ce1e6; margin-top: .1em; }
+  .theme-robot .tp-title .gt-robot { width: clamp(230px, 21vw, 320px); margin: -14px 0 -12px -10px; }
+  .theme-murder .tp-title { font-size: min(2.9rem, 100cqi / 11.6); }
+  .theme-race .tp-title { font-size: min(1.7rem, 100cqi / 16.8); margin-block: 8px 4px; }
   .tp-tag { text-wrap: pretty; margin: 0; font-size: clamp(1.12rem, 1.4vw, 1.3rem); line-height: 1.35; font-weight: 600; color: var(--g-text); max-width: 24em; }
   .tp-pitch { text-wrap: pretty; margin: 0; color: var(--g-dim); max-width: 30em; }
   .tp-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: 6px; }
@@ -640,20 +645,18 @@ const facts = [
 
   /* Wide screens: one open panel and two spines, all three as tall as the tallest copy
      needs (every body keeps its width and its height, open or not), never shorter than
-     the stage. Works without JS through :hover, :focus-within and :target. */
+     the stage. A spine opens on a click or tap only; pointing at it or tabbing to it lights
+     it up (art, top rule and "More") without moving anything. Without the script, a
+     spine's "More" link opens its panel through :target. */
   @media (min-width: 960px) {
     .tri { --stage-h: clamp(540px, calc(100svh - 360px), 760px); display: flex; gap: 8px; min-height: var(--stage-h); }
     .tp {
       display: grid; grid-template: minmax(0, 1fr) / minmax(0, 1fr);
       flex: calc(1 + 3.4 * var(--open)) 1 0; min-width: 170px;
-      transition: flex-grow calc(var(--k) * .85s) var(--ease);
+      transition: flex-grow calc(var(--k) * var(--dur)) var(--ease);
     }
-    html:not(.js) :where(.tri:has(.tp:target) .tp) { --open: 0; --pe: none; --sv: visible; }
-    html:not(.js) :where(.tri .tp:target) { --open: 1; --pe: auto; --sv: hidden; }
-    html:not(.js) :where(.tri:has(.tp-body:focus-within) .tp) { --open: 0; --pe: none; --sv: visible; }
-    html:not(.js) :where(.tri .tp:has(.tp-body:focus-within)) { --open: 1; --pe: auto; --sv: hidden; }
-    html:not(.js) :where(.tri:has(.tp:hover) .tp) { --open: 0; --pe: none; --sv: visible; }
-    html:not(.js) :where(.tri .tp:hover) { --open: 1; --pe: auto; --sv: hidden; }
+    html:not(.js) :where(.tri:has(.tp:target) .tp) { --open: 0; --pe: none; --sv: visible; --bv: hidden; }
+    html:not(.js) :where(.tri .tp:target) { --open: 1; --pe: auto; --sv: hidden; --bv: visible; }
 
     /* The Robot's key art is a wide panorama, always drawn to the panel's height, so it
        is placed by two of its own points rather than by object-position: point --a of
@@ -675,42 +678,56 @@ const facts = [
     }
 
     .tp-body, .tp-spine { grid-area: 1 / 1; }
+    /* The open panel's copy. A closed panel's copy is hidden (out of the tab order and the
+       accessibility tree) once it has faded; its spine stands in for it. */
     .tp-body {
       align-self: end; z-index: 1;
       width: clamp(380px, 34vw, 540px); padding: clamp(28px, 3vw, 44px) clamp(28px, 3vw, 44px) clamp(28px, 2.8vw, 40px);
-      opacity: var(--open); transform: translateY(calc((1 - var(--open)) * 14px));
-      transition:
-        opacity calc(var(--k) * (.12s + var(--open) * .38s)) ease calc(var(--k) * var(--open) * .3s),
-        transform calc(var(--k) * .7s) var(--ease) calc(var(--k) * var(--open) * .3s);
-      pointer-events: var(--pe);
+      visibility: var(--bv); pointer-events: var(--pe);
+      transition: visibility 0s linear calc(var(--k) * (1 - var(--open)) * .2s);
     }
+    /* Opening, the lines come in one after another while the panel widens; closing, they
+       leave at once. */
+    .tp-body > * {
+      opacity: var(--open); transform: translateY(calc((1 - var(--open)) * 10px));
+      transition:
+        opacity calc(var(--k) * (.12s + var(--open) * .22s)) ease-out calc(var(--k) * var(--open) * (.12s + var(--i, 0) * .05s)),
+        transform calc(var(--k) * (.12s + var(--open) * .36s)) var(--ease) calc(var(--k) * var(--open) * (.12s + var(--i, 0) * .05s));
+    }
+    .tp-body > :nth-child(2) { --i: 1; }
+    .tp-body > :nth-child(3) { --i: 2; }
+    .tp-body > :nth-child(4) { --i: 3; }
+    .tp-body > :nth-child(5) { --i: 4; }
+    .tp-body > :nth-child(6) { --i: 5; }
+    .tp-body > :nth-child(n + 7) { --i: 6; }
+    /* Opened from the keyboard: the copy is there at once, so focus never lands on a line
+       that is still fading in. */
+    .tri.kbd .tp-body > * { transition-duration: .16s !important; transition-delay: 0s !important; }
 
     .tp-spine {
       z-index: 2; display: flex; flex-direction: column; min-height: 0; padding: 20px 16px 18px;
       opacity: calc(1 - var(--open)); visibility: var(--sv);
-      /* Out quickly as a panel opens; back in only once the closing body has gone. */
+      /* Out quickly as its panel opens; back in only once the closing copy has gone. */
       transition:
-        opacity calc(var(--k) * (.15s + (1 - var(--open)) * .3s)) ease calc(var(--k) * (1 - var(--open)) * .38s),
-        visibility calc(var(--k) * .15s);
+        opacity calc(var(--k) * (.14s + (1 - var(--open)) * .3s)) ease calc(var(--k) * (1 - var(--open)) * .34s),
+        visibility 0s linear calc(var(--k) * var(--open) * .14s);
     }
     .tp-spine-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
     .tp-no { font: 700 64px/.8 var(--studio); color: transparent; -webkit-text-stroke: 1.5px var(--g-accent); letter-spacing: .01em; }
     .theme-murder .tp-no { font: 700 60px/.8 var(--g-title); -webkit-text-stroke-width: 1.25px; }
     .theme-race .tp-no { font: 400 34px/1 var(--g-title); -webkit-text-stroke-width: 1px; padding-top: 4px; }
     .tp-glyph { width: 30px; height: auto; color: var(--g-accent); margin-top: 2px; }
-    /* The name reads up the spine, the game's own lettering beside THE PERFECT. It is
-       sized to the room it has (cqh: a share of its own box's height), so a short stage,
-       larger text or wider letter spacing shrinks it instead of cutting it off. */
-    .tp-vname {
-      flex: 1 1 0; min-height: 0; margin: 14px 0; overflow: hidden; container-type: size;
-      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .1em;
-      writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap;
-      text-shadow: 0 1px 14px color-mix(in srgb, var(--g-bg) 85%, transparent);
+    /* The game's own name turned on its side, reading up the spine, as large as the room
+       it has allows (cqh, cqw: shares of its own box), so a short stage, larger text or
+       wider spacing shrinks it instead of cutting it off. */
+    .tp-vname { flex: 1 1 0; min-height: 0; margin: 14px 0; position: relative; container-type: size; overflow: hidden; font-size: 16px; line-height: 1; }
+    .tp-vname > .gt {
+      position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate(-90deg);
+      filter: drop-shadow(0 1px 8px color-mix(in srgb, var(--g-bg) 85%, transparent));
     }
-    .tp-vname span { font: 700 min(15px, 8.5cqh)/1 var(--studio); letter-spacing: .3em; text-transform: uppercase; color: var(--g-text); }
-    .tp-vname b { font: 700 min(52px, 27cqh)/1 var(--studio); letter-spacing: .06em; text-transform: uppercase; color: var(--g-text); }
-    .theme-murder .tp-vname b { font: 700 min(50px, 21cqh)/1.05 var(--g-title); letter-spacing: .01em; text-transform: none; color: var(--g-accent); }
-    .theme-race .tp-vname b { font: 400 min(32px, 20cqh)/1.2 var(--g-title); letter-spacing: 0; color: var(--g-accent); text-shadow: .09em .09em 0 #5ce1e6; }
+    .theme-murder .tp-vname > .gt { font-size: min(44px, 100cqh / 11.8, 70cqw); }
+    .theme-race .tp-vname > .gt { font-size: min(30px, 100cqh / 17, 40cqw); }
+    .theme-robot .tp-vname > .gt-robot { width: min(300px, 100cqh, 160cqw); max-width: none; }
     .tp-foot { display: flex; flex-direction: column; align-items: stretch; gap: 10px; }
     .tp-genre { margin: 0; font: 500 11px/1.35 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--g-accent); hyphens: manual; overflow-wrap: break-word; }
     .tp-fact { margin: 0 0 2px; color: var(--g-dim); font-size: 14px; line-height: 1.3; }
@@ -719,19 +736,20 @@ const facts = [
     .theme-race .tp-fact b { font: 400 20px/1.3 var(--g-title); }
     .tp-cta { position: relative; z-index: 2; min-height: 44px; padding: 8px 12px; gap: 8px; font-size: 14px; line-height: 1.2; text-align: left; justify-content: flex-start; }
     .tp-cta svg { width: 18px; height: 18px; }
-    /* "More" opens the panel, and its hit area covers the whole spine. */
-    .tp-more { display: inline-flex; align-items: center; gap: 4px; align-self: flex-start; font: 600 14px/1 var(--body); color: var(--g-text) !important; text-decoration: none; padding: 4px 0; }
-    .tp-more svg { width: 14px; height: 14px; transition: transform .2s; }
+    /* "More" opens the panel; its hit area covers the whole spine, under the store button. */
+    .tp-more { display: inline-flex; align-items: center; gap: 4px; align-self: flex-start; margin: 0; padding: 4px 0; border: 0; background: none; font: 600 14px/1 var(--body); color: var(--g-text) !important; text-decoration: none; cursor: pointer; transition: color .25s; }
+    .tp-more svg { width: 14px; height: 14px; transition: transform .25s var(--ease); }
     .tp-more::after { content: ''; position: absolute; inset: 0; z-index: 1; cursor: pointer; }
-    .tp-more:hover, .tp:hover .tp-more { color: var(--g-accent) !important; }
-    .tp:hover .tp-more svg { transform: translateX(3px); }
     .tp-more:focus-visible { outline: none; }
     .tp-more:focus-visible::after { outline: 2px solid var(--g-accent); outline-offset: -5px; border-radius: 4px; }
-    .tp:not(.is-open):hover .tp-art::before { opacity: .75; }
-    .tp::after { opacity: calc(.6 + .4 * var(--open)); }
-    /* Opened by keyboard focus: the copy shows at once, so the focused link is never
-       invisible while the panel widens. */
-    .tri.kbd .tp-body { transition-duration: .2s !important; transition-delay: 0s !important; }
+    /* A closed panel answers the pointer or the keyboard without moving: its art brightens,
+       its top rule lights up and "More" takes the game's colour. */
+    .tp::after { opacity: calc(.55 + .45 * var(--open)); transition: opacity .3s; }
+    .tp:not(.is-open):is(:hover, :focus-within)::after { opacity: 1; }
+    .tp:not(.is-open):is(:hover, :focus-within) .tp-art::before { opacity: .62; }
+    .tp:not(.is-open):is(:hover, :focus-within) .tp-art img { filter: brightness(1.14) saturate(1.06); }
+    .tp:not(.is-open):is(:hover, :focus-within) .tp-more { color: var(--g-accent) !important; }
+    .tp:not(.is-open):is(:hover, :focus-within) .tp-more svg { transform: translateX(3px); }
   }
   /* Laptops: a lower stage (see the masthead). */
   @media (min-width: 960px) and (max-height: 860px) {
@@ -748,7 +766,7 @@ const facts = [
   @media (max-width: 959.98px) {
     .stage { padding-top: 6px; }
     .tri { display: grid; gap: 0; margin-inline: calc(-1 * var(--gutter)); }
-    .tp { --open: 1; --pe: auto; border-radius: 0; display: flex; flex-direction: column; }
+    .tp { --open: 1; --pe: auto; --bv: visible; border-radius: 0; display: flex; flex-direction: column; }
     .tp + .tp { border-top: 1px solid var(--line); }
     .tp-art { position: relative; inset: auto; height: clamp(220px, 58vw, 420px); }
     .tp-art :is(img, video) { object-position: var(--xm) var(--ym); }
@@ -782,7 +800,8 @@ const facts = [
     .tri { display: block; min-height: 0; margin: 0; }
     .tp { display: block; overflow: visible; border: 0; break-inside: avoid; }
     .tp + .tp { border-top: 1px solid #bbb; }
-    .tp-body { position: static; width: auto; margin: 0; padding: 18px 0; opacity: 1 !important; transform: none !important; }
+    .tp-body { position: static; width: auto; margin: 0; padding: 18px 0; visibility: visible !important; }
+    .tp-body > * { opacity: 1 !important; transform: none !important; }
     .launch { background: none; border: 1px solid #bbb; }
   }
 

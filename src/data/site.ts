@@ -59,6 +59,23 @@ export const BADGES: { game: string; en: string; sv: string; from?: Date; until?
 export const badgeFor = (game: string, now = new Date()) =>
   BADGES.find((b) => b.game === game && (!b.from || now >= b.from) && (!b.until || now < b.until));
 
+/**
+ * The Robot panel's muted loop on wide screens, by date like BADGES: each build (and the
+ * page itself, if it stays open past an `until`) uses the first loop whose `until` is
+ * still ahead. Each loop is cut from the game's own captures and lives in public/video/
+ * as robot-loop-<name>-<width>.webm and .mp4 (no audio) with its first frame as the
+ * poster, robot-loop-<name>-<width>.jpg, at 1600x1024 and 1200x768; the page picks the
+ * width the open panel needs. `position` is the open panel's object-position.
+ */
+export const ROBOT_LOOPS: { name: string; until?: Date; position: string }[] = [
+  // The Halloween world (Grave Circle, from a 4K take) while the Halloween sale runs:
+  // to the end of 31 October 2026, Swedish time.
+  { name: 'halloween', until: new Date('2026-10-31T23:00:00Z'), position: '0% 50%' },
+  // Evergreen: the Clockwork world (a robot riding the conveyor onto a turntable).
+  { name: 'clockwork', position: '0% 50%' },
+];
+export const robotLoops = (now = new Date()) => ROBOT_LOOPS.filter((l) => !l.until || now < l.until);
+
 /** The words on a store button. Steam says Wishlist until the release, then Buy. */
 export const storeLabel = (kind: string, lang: Lang, steamOut = robotOnSteam()) => {
   const sv = lang === 'sv';
