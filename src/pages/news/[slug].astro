@@ -59,24 +59,38 @@ const breadcrumbs = {
       <h1>{post.data.title}</h1>
       <p>{post.data.description}</p>
     </header>
-    <article class="prose post">
-      <Picture src={post.data.image} alt={post.data.imageAlt} widths={[720, 1440]} sizes="(max-width: 760px) 100vw, 720px" formats={['avif', 'webp']} loading="eager" fetchpriority="high" />
-      <Content />
-      {game && (
-        <aside class="post-game">
-          <b>{game.name}</b>
-          <p>{game.tagline.en}</p>
-          <StoreButtons game={game} lang="en">
-            <a class="btn" href={`/games/${game.slug}/`}>About the game</a>
-          </StoreButtons>
-        </aside>
-      )}
-    </article>
+    <div class="split post-grid">
+      <article class="prose post">
+        <Picture src={post.data.image} alt={post.data.imageAlt} widths={[720, 1440]} sizes="(max-width: 760px) 100vw, 720px" formats={['avif', 'webp']} loading="eager" fetchpriority="high" />
+        <Content />
+      </article>
+      <aside class="post-side">
+        {game ? (
+          <div class="side-box post-game">
+            <h2>{game.name}</h2>
+            <p>{game.tagline.en}</p>
+            <StoreButtons game={game} lang="en">
+              <a class="btn" href={`/games/${game.slug}/`}>About the game</a>
+            </StoreButtons>
+          </div>
+        ) : (
+          <div class="side-box post-game">
+            <h2>UX Productions</h2>
+            <p>Releases, updates and sales from the studio.</p>
+            <div class="btns"><a class="btn" href="/news/">All news</a></div>
+          </div>
+        )}
+        <p class="post-more"><a href="/news/">All news</a> · <a href="/news/rss.xml">RSS</a></p>
+      </aside>
+    </div>
   </div>
 </Base>
 
 <style>
-  .post { padding-bottom: 88px; }
-  .post-game { margin-top: 2.6em; padding: 18px 20px; background: var(--plate); border: 1px solid var(--line); border-top: 3px solid var(--accent); border-radius: var(--radius); }
-  .post-game p { margin: 4px 0 14px; }
+  .post-grid { padding-bottom: 88px; }
+  .post > :global(picture:first-child img), .post > :global(img:first-child) { margin-top: .4em; }
+  .post-side { position: sticky; top: 20px; align-self: start; margin-top: 1.4em; }
+  .post-game h2 { font: 700 1.25rem/1.2 var(--display); text-transform: none; letter-spacing: -0.01em; margin-bottom: 6px; }
+  .post-game p { margin: 0 0 14px; color: var(--text-dim); font-size: 15.5px; }
+  .post-more { margin: 14px 0 0; font-size: 15px; color: var(--text-muted); }
 </style>

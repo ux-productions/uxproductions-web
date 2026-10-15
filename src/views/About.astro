@@ -34,7 +34,7 @@ const aboutPage = {
       </p>
     </header>
 
-    <div class="about-grid">
+    <div class="split about-grid">
       <div class="prose">
         <h2>{sv ? 'Det vi gör' : 'What we make'}</h2>
         <p>
@@ -62,7 +62,7 @@ const aboutPage = {
       </div>
 
       <aside>
-        <div class="contact">
+        <div class="side-box">
           <h2>{s.contact}</h2>
           <dl>
             <dt>{sv ? 'E-post' : 'Email'}</dt>
@@ -87,13 +87,7 @@ const aboutPage = {
 </Base>
 
 <style>
-  .about-grid { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 56px; padding-block: 24px 88px; }
-  @media (max-width: 900px) { .about-grid { grid-template-columns: 1fr; gap: 36px; } }
+  .about-grid { padding-block: 24px 88px; }
   .about-grid .prose h2:first-child { margin-top: 0.4em; }
-  .contact { background: var(--plate); border: 1px solid var(--line); border-top: 3px solid var(--accent); border-radius: var(--radius); padding: 18px 20px; }
-  .contact h2, .follow-h { font-size: 1.2rem; margin-bottom: 12px; }
-  .follow-h { margin-top: 28px; }
-  .contact dl { margin: 0; }
-  .contact dt { font: 500 11px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); margin-top: 12px; }
-  .contact dd { margin: 3px 0 0; font-size: 15.5px; overflow-wrap: anywhere; }
+  .follow-h { font: 700 1.4rem/1 var(--studio); text-transform: uppercase; letter-spacing: .04em; margin: 32px 0 14px; }
 </style>

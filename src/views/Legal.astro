@@ -25,15 +25,34 @@ const sv = lang === 'sv';
       <p>{subheading}</p>
       {updated && <p class="muted" style="font-size:15px">{sv ? 'Senast uppdaterad' : 'Last updated'}: {updated}</p>}
     </header>
-    <article class="prose legal">
-      <Fragment set:html={html} />
-      <p class="muted" style="margin-top:2.4em">
-        {sv ? 'Frågor? Kontakta oss på ' : 'Questions? Contact us at '}<a href={`mailto:${contact}`}>{contact}</a>.
-      </p>
-    </article>
+    <div class="split legal-grid">
+      <article class="prose legal">
+        <Fragment set:html={html} />
+        <p class="muted" style="margin-top:2.4em">
+          {sv ? 'Frågor? Kontakta oss på ' : 'Questions? Contact us at '}<a href={`mailto:${contact}`}>{contact}</a>.
+        </p>
+      </article>
+      <aside>
+        <div class="side-box legal-side">
+          <h2>{sv ? 'Kontakt' : 'Contact'}</h2>
+          <dl>
+            <dt>{sv ? 'Frågor' : 'Questions'}</dt>
+            <dd><a href={`mailto:${contact}`}>{contact}</a></dd>
+            <dt>{sv ? 'Företag' : 'Company'}</dt>
+            <dd>{SITE.legalName}</dd>
+            <dt>{sv ? 'Org.nummer' : 'Registration number'}</dt>
+            <dd>{SITE.orgNumber}</dd>
+            <dt>{sv ? 'Adress' : 'Address'}</dt>
+            <dd>{SITE.street}<br />{SITE.postalCode} {SITE.city}<br />{sv ? 'Sverige' : 'Sweden'}</dd>
+          </dl>
+        </div>
+      </aside>
+    </div>
   </div>
 </Base>
 
 <style>
-  .legal { padding-bottom: 88px; }
+  .legal-grid { padding-bottom: 88px; }
+  .legal > :global(:first-child) { margin-top: .4em; }
+  .legal-side { position: sticky; top: 20px; }
 </style>

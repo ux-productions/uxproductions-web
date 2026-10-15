@@ -1,6 +1,7 @@
 ---
-import { Image } from 'astro:assets';
-import logo from '../assets/logo.png';
+import '@fontsource/saira-condensed/600.css';
+import '@fontsource/saira-condensed/700.css';
+import Mark from './Mark.astro';
 import { localize, t, type Lang } from '../data/site';
 
 interface Props {
@@ -20,11 +21,12 @@ const items = [
 const other: Lang = lang === 'sv' ? 'en' : 'sv';
 const langHref = bilingual ? localize(path, other) : localize('/', other);
 ---
+<Mark variant="defs" />
 <header class="site-header">
   <div class="wrap">
     <a class="brand" href={localize('/', lang)}>
-      <Image src={logo} alt="" width={34} height={34} loading="eager" />
-      UX Productions
+      <Mark variant="ux" class="brand-mark" />
+      <span class="visually-hidden">UX </span><span class="brand-word">Productions</span>
     </a>
     <nav class="site-nav" aria-label={lang === 'sv' ? 'Huvudmeny' : 'Main'}>
       {items.map((i) => (

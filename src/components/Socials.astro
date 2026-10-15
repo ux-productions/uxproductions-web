@@ -1,12 +1,31 @@
 ---
 import Icon from './Icon.astro';
 import { SOCIALS } from '../data/site';
+
+interface Props {
+  /** "icons": a compact row of square icon buttons, named for screen readers. */
+  variant?: 'list' | 'icons';
+}
+const { variant = 'list' } = Astro.props;
 ---
-<div class="socials">
-  {SOCIALS.map((s) => (
-    <a class="social" href={s.url} rel="noopener me">
-      <Icon name={s.id} />
-      <span>{s.name}<small>{s.handle}</small></span>
-    </a>
-  ))}
-</div>
+{variant === 'icons' ? (
+  <ul class="social-icons">
+    {SOCIALS.map((s) => (
+      <li>
+        <a href={s.url} rel="noopener me" title={`${s.name} ${s.handle}`}>
+          <Icon name={s.id} />
+          <span class="visually-hidden">{s.name} {s.handle}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+) : (
+  <div class="socials">
+    {SOCIALS.map((s) => (
+      <a class="social" href={s.url} rel="noopener me">
+        <Icon name={s.id} />
+        <span>{s.name}<small>{s.handle}</small></span>
+      </a>
+    ))}
+  </div>
+)}

@@ -44,7 +44,7 @@ const videoFiles = game.videos.map((v) => ({
       </div>
     </header>
 
-    <div class="kit-grid">
+    <div class="split kit-grid">
       <div class="prose">
         <h2>Description</h2>
         {game.intro.en.map((p) => <p>{p}</p>)}
@@ -61,7 +61,7 @@ const videoFiles = game.videos.map((v) => ({
         <p>Click to download the full-size file.</p>
       </div>
       <aside>
-        <div class="facts-box">
+        <div class="side-box">
           <h2>Fact sheet</h2>
           <dl>
             <dt>Developer and publisher</dt><dd>{SITE.legalName}, {SITE.city}, Sweden</dd>
@@ -86,14 +86,8 @@ const videoFiles = game.videos.map((v) => ({
 </Base>
 
 <style>
-  .kit-grid { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 56px; padding-top: 24px; }
-  @media (max-width: 900px) { .kit-grid { grid-template-columns: 1fr; gap: 28px; } }
+  .kit-grid { padding-top: 24px; }
   .kit-grid .prose h2:first-child { margin-top: .4em; }
-  .facts-box { background: var(--plate); border: 1px solid var(--line); border-top: 3px solid var(--accent); border-radius: var(--radius); padding: 18px 20px; }
-  .facts-box h2 { font-size: 1.2rem; margin-bottom: 8px; }
-  .facts-box dl { margin: 0; }
-  .facts-box dt { font: 500 11px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); margin-top: 12px; }
-  .facts-box dd { margin: 3px 0 0; font-size: 15px; }
   .downloads { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); gap: 10px; padding-block: 8px 88px; }
   .dl { display: flex; flex-direction: column; gap: 8px; padding: 10px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--plate); color: var(--text); text-decoration: none; font-size: 15px; text-transform: none; }
   .dl:hover { border-color: var(--accent); color: var(--text); }

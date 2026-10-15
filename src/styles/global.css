@@ -1,18 +1,23 @@
-/* Warm studio shelf: a warm brown-black ground and the studio's amber, quiet enough
-   that each game's own art and colours carry its card and its page. */
+/* Screening room: a deep, slightly warm black and the paper-and-ink of the studio's
+   own logo, so each game's art and colours carry its panel and its page.
+   The amber stays as the studio accent for links and focus. */
 :root {
-  --ground: #17120d;
-  --ground-2: #1d1610;
-  --plate: #241c14;
-  --plate-2: #2c2218;
-  --line: #3a2e21;
-  --line-strong: #56452f;
-  --text: #f3e9d8;
-  --text-dim: #cdbca2;
-  --text-muted: #a8977d;
+  --ground: #0f0e0d;
+  --ground-2: #151413;
+  --plate: #1c1a18;
+  --plate-2: #242120;
+  --line: #2e2b28;
+  --line-strong: #4a4540;
+  --text: #f2eee6;
+  --text-dim: #c9c2b6;
+  --text-muted: #a39b8e;
   --accent: #f2a93b;
   --accent-hover: #f7bd62;
   --accent-ink: #1a1209;
+  /* The logo's paper and ink. */
+  --paper: #efece5;
+  --ink: #2a2826;
+  --ink-dim: #57524b;
 
   /* Game pages override these three. */
   --g-accent: var(--accent);
@@ -22,9 +27,13 @@
   --display: 'Familjen Grotesk', 'Helvetica Neue', Arial, sans-serif;
   --body: 'Familjen Grotesk', 'Helvetica Neue', Arial, sans-serif;
   --mono: 'IBM Plex Mono', ui-monospace, Consolas, monospace;
+  /* The squared, condensed cut of PRODUCTIONS in the logo: the studio's own voice. */
+  --studio: 'Saira Condensed', 'Arial Narrow', 'Helvetica Neue', Arial, sans-serif;
 
-  --wrap: 1200px;
+  /* One container for every page: header, front page, inner pages and footer. */
+  --wrap: 1440px;
   --gutter: clamp(16px, 4vw, 32px);
+  --measure: 720px;
   --radius: 6px;
 
   color-scheme: dark;
@@ -50,7 +59,7 @@ h2 { font-size: clamp(1.6rem, 3.4vw, 2.2rem); font-weight: 700; }
 h3 { font-size: 1.25rem; font-weight: 600; }
 p { margin: 0 0 1em; }
 .wrap { max-width: var(--wrap); margin: 0 auto; padding-inline: var(--gutter); }
-.narrow { max-width: 760px; }
+.narrow { max-width: calc(var(--measure) + 40px); }
 .label {
   font: 500 12px/1.2 var(--mono);
   letter-spacing: 0.12em;
@@ -79,12 +88,14 @@ p { margin: 0 0 1em; }
 .btn.primary:hover { filter: brightness(1.08); color: var(--g-cta-ink); }
 .btns { display: flex; flex-wrap: wrap; gap: 10px; }
 
-/* Header */
+/* Header: the UX of the logo, then PRODUCTIONS in the studio face. */
 .site-header { border-bottom: 1px solid var(--line); background: var(--ground); }
-.site-header .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 24px; min-height: 68px; padding-block: 10px; }
-.brand { display: flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none; font: 700 18px/1 var(--display); margin-right: auto; }
-.brand img { width: 34px; height: 34px; border-radius: 2px; }
+.site-header .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 24px; min-height: 64px; padding-block: 10px; }
+.brand { display: flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none; margin-right: auto; }
 .brand:hover { color: var(--text); }
+.brand-mark { width: 41px; height: auto; flex: none; transition: color .15s; }
+.brand-word { font: 600 19px/1 var(--studio); letter-spacing: .14em; text-transform: uppercase; padding-top: 2px; }
+.brand:hover .brand-mark { color: var(--accent); }
 .site-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 22px; font-size: 15px; }
 .site-nav a { color: var(--text-dim); text-decoration: none; padding: 6px 0; border-bottom: 2px solid transparent; }
 .site-nav a:hover { color: var(--text); }
@@ -99,6 +110,7 @@ p { margin: 0 0 1em; }
 .section { padding-block: clamp(48px, 7vw, 88px); }
 .section + .section { border-top: 1px solid var(--line); }
 .section-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; margin-bottom: 28px; }
+.section-head h2 { font: 700 clamp(1.9rem, 2.8vw, 2.6rem)/.95 var(--studio); text-transform: uppercase; letter-spacing: .01em; }
 .section-head a { font-size: 15px; }
 
 /* Game cards (games index, 404) */
@@ -124,36 +136,51 @@ p { margin: 0 0 1em; }
 .news-item p { color: var(--text-dim); font-size: 15.5px; margin: 0; }
 .news-item:hover h3 { color: var(--accent); }
 
-/* Studio band */
-.studio { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 40px; align-items: start; }
-.studio p { color: var(--text-dim); }
-@media (max-width: 760px) { .studio { grid-template-columns: 1fr; } }
+/* Socials */
 .socials { display: grid; gap: 10px; }
 .social { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius); color: var(--text); text-decoration: none; background: var(--ground-2); }
 .social:hover { border-color: var(--line-strong); color: var(--text); }
 .social svg { width: 22px; height: 22px; color: var(--accent); flex: none; }
 .social span, .social small { display: block; }
 .social small { color: var(--text-muted); font-size: 13px; }
+.social-icons { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; }
+.social-icons a { display: grid; place-items: center; width: 52px; height: 52px; border: 1.5px solid currentColor; border-radius: 4px; color: inherit; transition: background-color .15s, color .15s; }
+.social-icons a:hover { background: currentColor; }
+.social-icons a:hover svg { color: var(--paper); }
+.social-icons svg { width: 22px; height: 22px; }
 
-/* Footer */
-.site-footer { border-top: 1px solid var(--line); background: var(--ground-2); padding-block: 48px 32px; font-size: 15px; color: var(--text-dim); }
-.footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 28px; }
+/* Footer: link columns, then the studio's name as wide as the page. */
+.site-footer { border-top: 1px solid var(--line); background: var(--ground-2); padding-block: clamp(44px, 5vw, 64px) 28px; font-size: 15px; color: var(--text-dim); overflow: hidden; }
+.footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 32px 28px; }
 .site-footer h2 { font: 500 12px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; }
 .site-footer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
 .site-footer a { color: var(--text-dim); text-decoration: none; }
 .site-footer a:hover { color: var(--text); text-decoration: underline; }
-.footer-base { margin-top: 36px; padding-top: 20px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; color: var(--text-muted); font-size: 13.5px; }
+.footer-mark { color: var(--paper); margin-top: clamp(44px, 6vw, 88px); }
+.footer-mark svg { display: block; width: 100%; height: auto; }
+.footer-mark .fm-stack { display: none; }
+.footer-base { margin-top: clamp(20px, 2.4vw, 32px); padding-top: 18px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 6px 24px; justify-content: space-between; color: var(--text-muted); font-size: 13.5px; }
+@media (max-width: 640px) {
+  .footer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 20px; }
+  .footer-mark { width: min(100%, 300px); }
+  .footer-mark .fm-wide { display: none; }
+  .footer-mark .fm-stack { display: block; }
+}
 
-/* Page head (inner pages) */
+/* Page head (inner pages): the mono label, then the title in the studio face. */
 .page-head { padding-block: clamp(40px, 6vw, 72px) 8px; }
-.page-head h1 { margin: 10px 0 14px; }
+.page-head h1 { margin: 12px 0 16px; font: 700 clamp(2.5rem, 5vw, 4.25rem)/.95 var(--studio); text-transform: uppercase; letter-spacing: .005em; max-width: 18em; }
 .page-head p { color: var(--text-dim); font-size: 1.12rem; max-width: 40em; }
 .crumbs { font: 500 12px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); }
 .crumbs a { color: var(--text-muted); text-decoration: none; }
 .crumbs a:hover { color: var(--text); }
+/* A page's main column and its side column: the text keeps its measure, the side
+   column sits on the container's right edge, under the language switch. */
+.split { display: grid; grid-template-columns: minmax(0, var(--measure)) minmax(280px, 340px); justify-content: space-between; gap: 40px 56px; }
+@media (max-width: 900px) { .split { grid-template-columns: minmax(0, 1fr); gap: 36px; } }
 
 /* Prose (news posts, legal) */
-.prose { max-width: 720px; }
+.prose { max-width: var(--measure); }
 .prose h2 { font-size: 1.55rem; margin: 1.8em 0 .6em; scroll-margin-top: 20px; }
 .prose h3 { font-size: 1.2rem; margin: 1.5em 0 .5em; scroll-margin-top: 20px; }
 .prose p, .prose li { color: var(--text-dim); }
@@ -182,6 +209,13 @@ p { margin: 0 0 1em; }
 .card .btns { margin-top: auto; padding-top: 10px; }
 .meta-list { margin: 0; font-size: 14.5px; color: var(--text-muted); }
 .meta-list b { color: var(--text-dim); font-weight: 500; }
+/* A side box with a rule on top: contact details, fact sheets. */
+.side-box { background: var(--plate); border: 1px solid var(--line); border-top: 3px solid var(--accent); border-radius: var(--radius); padding: 18px 20px; }
+.side-box h2 { font: 700 1.4rem/1 var(--studio); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 12px; }
+.side-box dl { margin: 0; }
+.side-box dt { font: 500 11px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); margin-top: 12px; }
+.side-box dt:first-child { margin-top: 0; }
+.side-box dd { margin: 3px 0 0; font-size: 15.5px; overflow-wrap: anywhere; }
 
 /* Game pages: each wears its own game's palette and title face. */
 .game {
@@ -217,7 +251,7 @@ p { margin: 0 0 1em; }
   .game-hero .copy { position: relative; bottom: auto; margin-top: -30px; }
 }
 
-.game-body { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 48px; padding-block: 40px 80px; }
+.game-body { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 48px 64px; padding-block: 40px 80px; }
 @media (max-width: 900px) { .game-body { grid-template-columns: 1fr; gap: 36px; } }
 .game-body section + section { margin-top: 56px; }
 .game-body h2 { font-size: 1.6rem; margin-bottom: 18px; }

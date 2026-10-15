@@ -1,4 +1,5 @@
 ---
+import Mark from './Mark.astro';
 import { GAMES } from '../data/games';
 import { SITE, SOCIALS, localize, t, type Lang } from '../data/site';
 
@@ -43,6 +44,11 @@ const year = new Date().getFullYear();
           <li><a href="/games/terms/">{s.gameTerms}</a></li>
         </ul>
       </div>
+    </div>
+    {/* The studio's name signs off every page: one line wide, UX over PRODUCTIONS on phones. */}
+    <div class="footer-mark" aria-hidden="true">
+      <Mark variant="wordmark" class="fm-wide" />
+      <Mark variant="stack" class="fm-stack" />
     </div>
     <div class="footer-base">
       <span>&copy; 2013&ndash;{year} {SITE.legalName}. {s.rights}</span>
