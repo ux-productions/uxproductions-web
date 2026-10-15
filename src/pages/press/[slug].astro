@@ -17,6 +17,8 @@ const files = fs.readdirSync(dir).sort();
 const sizeOf = (f: string) => `${(fs.statSync(path.join(dir, f)).size / 1048576).toFixed(1)} MB`;
 const zip = files.find((f) => f.endsWith('.zip'));
 const images = files.filter((f) => /\.(jpe?g|png)$/i.test(f));
+// On wide screens, a column count that divides the number of files: no half-empty last row.
+const cols = [4, 3, 6].find((c) => images.length % c === 0);
 const nice = (f: string) =>
   f.replace(/\.(jpe?g|png)$/i, '').replace(/^screenshot-\d*[-_]?/, 'Screenshot: ').replace(/[-_]/g, ' ');
 
@@ -74,7 +76,7 @@ const videoFiles = game.videos.map((v) => ({
       </aside>
     </div>
 
-    <div class="downloads">
+    <div class="downloads" style={cols ? `--cols:${cols}` : undefined}>
       {images.map((f) => (
         <a href={`/press/${game.slug}/${f}`} download class="dl">
           <img src={`/press/${game.slug}/thumbs/${f.replace(/\.(jpe?g|png)$/i, '.jpg')}`} alt="" loading="lazy" decoding="async" />
@@ -87,8 +89,9 @@ const videoFiles = game.videos.map((v) => ({
 
 <style>
   .kit-grid { padding-top: 24px; }
-  .kit-grid .prose h2:first-child { margin-top: .4em; }
+  .kit-grid .prose h2:first-child { margin-top: 0; }
   .downloads { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); gap: 10px; padding-block: 8px 88px; }
+  @media (min-width: 1100px) { .downloads[style*="--cols"] { grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); } }
   .dl { display: flex; flex-direction: column; gap: 8px; padding: 10px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--plate); color: var(--text); text-decoration: none; font-size: 15px; text-transform: none; }
   .dl:hover { border-color: var(--accent); color: var(--text); }
   .dl img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 3px; background: var(--ground); }

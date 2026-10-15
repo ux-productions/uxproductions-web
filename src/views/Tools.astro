@@ -51,12 +51,12 @@ const app = {
       <div class="btns" style="margin-top:20px"><a class="btn primary" href={url} rel="noopener">{sv ? 'Visa på Asset Store' : 'View on the Asset Store'}</a></div>
     </header>
     <div class="tool-grid">
-      <Picture src={cover} alt="SpriteForge" widths={[640, 1200]} sizes="(max-width: 900px) 100vw, 640px" formats={['avif', 'webp']} />
+      <Picture src={cover} alt="SpriteForge" widths={[640, 960, 1280, 1512].filter((w) => w <= cover.width)} sizes="(max-width: 900px) 100vw, 756px" formats={['avif', 'webp']} />
       <div>
         <h2>{sv ? 'Passar för' : 'Made for'}</h2>
         <ul class="uses">{uses.map((u) => <li>{u}</li>)}</ul>
       </div>
-      <Picture src={showcase} alt={sv ? 'Exempel på sprites gjorda med SpriteForge' : 'Example sprites made with SpriteForge'} widths={[640, 1200]} sizes="(max-width: 900px) 100vw, 640px" formats={['avif', 'webp']} />
+      <Picture src={showcase} alt={sv ? 'Exempel på sprites gjorda med SpriteForge' : 'Example sprites made with SpriteForge'} widths={[640, 960, 1280, 1512].filter((w) => w <= showcase.width)} sizes="(max-width: 900px) 100vw, 756px" formats={['avif', 'webp']} />
     </div>
   </div>
 </Base>

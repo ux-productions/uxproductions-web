@@ -45,7 +45,7 @@ OTHER_WORK.forEach((w) => (redirects[w.id] = localize(`/games/other-work/#${w.id
       <div class="cards">
         {OTHER_WORK.map((w) => (
           <article class="card">
-            {w.image && <Picture src={w.image} alt="" widths={[400, 720]} sizes="(max-width: 700px) 100vw, 380px" formats={['avif', 'webp']} />}
+            {w.image && <Picture src={w.image} alt="" widths={[480, 720, 1080, 1350].filter((x) => x <= w.image!.width)} sizes="(max-width: 700px) 100vw, (max-width: 1440px) 48vw, 676px" formats={['avif', 'webp']} />}
             <div class="body">
               <h3>{w.title}</h3>
               <p>{w.short[lang]}</p>

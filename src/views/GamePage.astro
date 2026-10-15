@@ -31,6 +31,15 @@ const posters = await Promise.all(
 );
 
 const title = `${game.name}: ${game.genre[lang]}`;
+
+// The hero art covers a 100vw-wide band (240 px tall on phones, else 320-560 px), so a wide panorama is drawn
+// wider than the screen: ask for the width it is drawn at, up to the file's own width.
+const heroAspect = (game.hero.width / game.hero.height).toFixed(2);
+const heroWidths = [...new Set([720, 1280, 1920, 2400, game.hero.width])].filter((w) => w <= game.hero.width);
+// Screenshots on wide screens: a column count that divides their number, so the last
+// row is never a lone tile (eight across four, six portrait shots across six, five
+// across five).
+const shotCols = (game.shotsPortrait ? [6, 5, 4, 3] : [4, 3, 2]).find((c) => game.shots.length % c === 0);
 const steamPending = game.slug === 'the-perfect-robot' && !robotOnSteam();
 
 const videoGame = {
@@ -95,8 +104,8 @@ const breadcrumbs = {
         src={game.hero}
         class="art"
         alt=""
-        widths={[720, 1280, 1920, 2400].filter((w) => w <= game.hero.width)}
-        sizes="100vw"
+        widths={heroWidths}
+        sizes={`(max-width: 640px) max(100vw, ${Math.round(240 * Number(heroAspect))}px), max(100vw, calc(clamp(320px, 46vw, 560px) * ${heroAspect}))`}
         formats={['avif', 'webp']}
         loading="eager"
         fetchpriority="high"
@@ -157,14 +166,14 @@ const breadcrumbs = {
 
         <section>
           <h2>{s.screenshots}</h2>
-          <div class:list={['shots', { portrait: game.shotsPortrait }]}>
+          <div class:list={['shots', { portrait: game.shotsPortrait }]} style={shotCols ? `--cols:${shotCols}` : undefined}>
             {shots.map((sh) => (
               <a href={sh.full.src} aria-label={sh.alt[lang]}>
                 <Picture
                   src={sh.src}
                   alt={sh.alt[lang]}
                   widths={game.shotsPortrait ? [240, 400] : [400, 720]}
-                  sizes={game.shotsPortrait ? '(max-width: 600px) 50vw, 200px' : '(max-width: 600px) 100vw, 300px'}
+                  sizes={game.shotsPortrait ? '(max-width: 600px) 50vw, 200px' : '(max-width: 600px) 100vw, 320px'}
                   formats={['avif', 'webp']}
                 />
               </a>

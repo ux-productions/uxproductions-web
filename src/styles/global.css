@@ -94,7 +94,7 @@ p { margin: 0 0 1em; }
 .brand { display: flex; align-items: center; gap: 10px; color: var(--text); text-decoration: none; margin-right: auto; }
 .brand:hover { color: var(--text); }
 .brand-mark { width: 41px; height: auto; flex: none; transition: color .15s; }
-.brand-word { font: 600 19px/1 var(--studio); letter-spacing: .14em; text-transform: uppercase; padding-top: 2px; }
+.brand-word { font: 700 19px/1 var(--studio); letter-spacing: .13em; text-transform: uppercase; padding-top: 2px; }
 .brand:hover .brand-mark { color: var(--accent); }
 .site-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 22px; font-size: 15px; }
 .site-nav a { color: var(--text-dim); text-decoration: none; padding: 6px 0; border-bottom: 2px solid transparent; }
@@ -162,7 +162,7 @@ p { margin: 0 0 1em; }
 .footer-base { margin-top: clamp(20px, 2.4vw, 32px); padding-top: 18px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 6px 24px; justify-content: space-between; color: var(--text-muted); font-size: 13.5px; }
 @media (max-width: 640px) {
   .footer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 20px; }
-  .footer-mark { width: min(100%, 300px); }
+  .footer-mark { width: min(100%, 440px); }
   .footer-mark .fm-wide { display: none; }
   .footer-mark .fm-stack { display: block; }
 }
@@ -211,7 +211,8 @@ p { margin: 0 0 1em; }
 .meta-list b { color: var(--text-dim); font-weight: 500; }
 /* A side box with a rule on top: contact details, fact sheets. */
 .side-box { background: var(--plate); border: 1px solid var(--line); border-top: 3px solid var(--accent); border-radius: var(--radius); padding: 18px 20px; }
-.side-box h2 { font: 700 1.4rem/1 var(--studio); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 12px; }
+/* Side headings share the main column's voice (the body face, sentence case), a step smaller. */
+.side-box h2 { font: 600 1.25rem/1.2 var(--display); letter-spacing: -0.01em; margin-bottom: 12px; }
 .side-box dl { margin: 0; }
 .side-box dt { font: 500 11px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); margin-top: 12px; }
 .side-box dt:first-child { margin-top: 0; }
@@ -264,19 +265,23 @@ p { margin: 0 0 1em; }
 .video video { width: 100%; aspect-ratio: 16 / 9; background: #000; border-radius: var(--radius); border: 1px solid var(--g-line); }
 .video figcaption { font-size: 14px; color: var(--g-dim); margin-top: 8px; }
 
-.features { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin: 0; padding: 0; list-style: none; }
+/* At most three across, so six features always make full rows. */
+.features { display: grid; grid-template-columns: repeat(auto-fit, minmax(max(220px, calc((100% - 28px) / 3)), 1fr)); gap: 14px; margin: 0; padding: 0; list-style: none; }
 .features li { background: var(--g-plate); border: 1px solid var(--g-line); border-radius: var(--radius); padding: 16px 18px; }
 .features b { display: block; font: 600 1.05rem var(--display); margin-bottom: 4px; color: var(--g-text); }
 .features span { color: var(--g-dim); font-size: 15px; }
 
 .shots { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 12px; }
-.shots.portrait { grid-template-columns: repeat(auto-fill, minmax(min(100%, 170px), 1fr)); }
+.shots.portrait { grid-template-columns: repeat(auto-fill, minmax(min(100%, 150px), 1fr)); }
+/* Wide screens: a column count that divides the number of shots (set by the page), so
+   the last row is never a lone tile. */
+@media (min-width: 1240px) { .shots[style*="--cols"] { grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); } }
 .shots a { display: block; border-radius: 4px; overflow: hidden; border: 1px solid var(--g-line); }
 .shots a:hover { border-color: var(--g-accent); }
 .shots img { width: 100%; height: auto; }
 
 .faq details { border-bottom: 1px solid var(--g-line); padding: 14px 0; }
-.faq summary { cursor: pointer; font: 600 1.05rem var(--display); color: var(--g-text); list-style-position: outside; }
+.faq summary { cursor: pointer; font: 600 1.05rem var(--display); color: var(--g-text); list-style-position: inside; }
 .faq details p { color: var(--g-dim); margin: 10px 0 0; max-width: 40em; }
 
 .facts { background: var(--g-plate); border: 1px solid var(--g-line); border-top: 3px solid var(--g-accent); border-radius: var(--radius); padding: 18px 20px; }
@@ -289,3 +294,17 @@ p { margin: 0 0 1em; }
 .aside-sticky { position: sticky; top: 20px; }
 .game .news-item h3 { color: var(--g-text); }
 .game .news-item p { color: var(--g-dim); }
+
+/* Print: black text on white paper, without the screen's shadows and sign-off. */
+@media print {
+  :root, .game, .theme-robot, .theme-murder, .theme-race {
+    --ground: #fff; --ground-2: #fff; --plate: #fff; --plate-2: #fff; --line: #bbb; --line-strong: #888;
+    --text: #000; --text-dim: #222; --text-muted: #444; --accent: #000; --paper: #fff; --ink: #000; --ink-dim: #222;
+    --g-bg: #fff; --g-plate: #fff; --g-line: #bbb; --g-text: #000; --g-dim: #222; --g-accent: #000;
+  }
+  *, *::before, *::after { text-shadow: none !important; box-shadow: none !important; }
+  body { background: #fff; color: #000; }
+  .footer-mark, .skip, .game-hero::after, .game-hero img.art { display: none !important; }
+  /* A game page's title stands on the paper, not on its (dark) key art. */
+  .game-hero .copy { position: static; margin: 0; padding-top: 24px; }
+}

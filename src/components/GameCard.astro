@@ -15,8 +15,8 @@ const strip = { robot: '#5ce1e6', murder: '#c9a045', race: '#b46bff' }[game.them
   <Picture
     src={game.card}
     alt={game.name}
-    widths={[400, 640, 960]}
-    sizes="(max-width: 700px) 100vw, 380px"
+    widths={[400, 640, 960, 1280].filter((w) => w <= game.card.width)}
+    sizes="(max-width: 700px) 100vw, (max-width: 1440px) 33vw, 476px"
     formats={['avif', 'webp']}
     loading={eager ? 'eager' : 'lazy'}
   />

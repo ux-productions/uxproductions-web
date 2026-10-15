@@ -5,6 +5,9 @@ import '@fontsource/familjen-grotesk/600.css';
 import '@fontsource/familjen-grotesk/700.css';
 import '@fontsource/ibm-plex-mono/500.css';
 import '../styles/global.css';
+// The studio face draws the header and every page title: fetch it with the page, so the
+// titles do not reflow when it arrives.
+import sairaUrl from '@fontsource/saira-condensed/files/saira-condensed-latin-700-normal.woff2?url';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { SITE, SAME_AS, localize, t, type Lang } from '../data/site';
@@ -86,6 +89,7 @@ const schemas = [organization, ...jsonld];
       </>
     )}
     <meta name="theme-color" content="#0f0e0d" />
+    <link rel="preload" href={sairaUrl} as="font" type="font/woff2" crossorigin />
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="alternate" type="application/rss+xml" title="UX Productions news" href="/news/rss.xml" />
 
