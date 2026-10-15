@@ -1,24 +1,5 @@
-# robots.txt for UX Productions
 # https://uxproductions.se
-
 User-agent: *
 Allow: /
 
-# Sitemap location
 Sitemap: https://uxproductions.se/sitemap.xml
-
-# Allow AI crawlers
-User-agent: GPTBot
-Allow: /
-
-User-agent: ChatGPT-User
-Allow: /
-
-User-agent: Claude-Web
-Allow: /
-
-User-agent: Anthropic-AI
-Allow: /
-
-User-agent: Google-Extended
-Allow: /

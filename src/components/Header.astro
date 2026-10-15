@@ -1,0 +1,36 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/logo.png';
+import { localize, t, type Lang } from '../data/site';
+
+interface Props {
+  lang: Lang;
+  path: string;
+  bilingual: boolean;
+}
+const { lang, path, bilingual } = Astro.props;
+const s = t(lang);
+// News and press are written in English only, so they always link to the English pages.
+const items = [
+  { href: localize('/games/', lang), match: '/games/', label: s.nav.games },
+  { href: '/news/', match: '/news/', label: s.nav.news },
+  { href: '/press/', match: '/press/', label: s.nav.press },
+  { href: localize('/about/', lang), match: '/about/', label: s.nav.about },
+];
+const other: Lang = lang === 'sv' ? 'en' : 'sv';
+const langHref = bilingual ? localize(path, other) : localize('/', other);
+---
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href={localize('/', lang)}>
+      <Image src={logo} alt="" width={34} height={34} loading="eager" />
+      UX Productions
+    </a>
+    <nav class="site-nav" aria-label={lang === 'sv' ? 'Huvudmeny' : 'Main'}>
+      {items.map((i) => (
+        <a href={i.href} aria-current={path.startsWith(i.match) ? 'page' : undefined}>{i.label}</a>
+      ))}
+      <a class="lang" href={langHref} hreflang={other} lang={other}>{other.toUpperCase()}</a>
+    </nav>
+  </div>
+</header>

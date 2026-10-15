@@ -1,0 +1,39 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE, type Lang } from '../data/site';
+
+interface Props {
+  title: string;
+  heading: string;
+  subheading: string;
+  updated?: string;
+  description: string;
+  path: string;
+  lang: Lang;
+  bilingual?: boolean;
+  html: string;
+  contact: string;
+}
+const { title, heading, subheading, updated, description, path, lang, bilingual = false, html, contact } = Astro.props;
+const sv = lang === 'sv';
+---
+<Base title={title} description={description} lang={lang} path={path} bilingual={bilingual}>
+  <div class="wrap">
+    <header class="page-head">
+      <span class="label">{SITE.legalName}</span>
+      <h1>{heading}</h1>
+      <p>{subheading}</p>
+      {updated && <p class="muted" style="font-size:15px">{sv ? 'Senast uppdaterad' : 'Last updated'}: {updated}</p>}
+    </header>
+    <article class="prose legal">
+      <Fragment set:html={html} />
+      <p class="muted" style="margin-top:2.4em">
+        {sv ? 'Frågor? Kontakta oss på ' : 'Questions? Contact us at '}<a href={`mailto:${contact}`}>{contact}</a>.
+      </p>
+    </article>
+  </div>
+</Base>
+
+<style>
+  .legal { padding-bottom: 88px; }
+</style>

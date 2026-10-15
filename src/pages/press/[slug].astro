@@ -1,0 +1,103 @@
+---
+import fs from 'node:fs';
+import path from 'node:path';
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import { GAMES, type Game } from '../../data/games';
+import { SITE } from '../../data/site';
+
+export function getStaticPaths() {
+  return GAMES.map((game) => ({ params: { slug: game.slug }, props: { game } }));
+}
+const { game } = Astro.props as { game: Game };
+
+// The kit's files live in public/press/<slug>/; list them as they are.
+const dir = path.join(process.cwd(), 'public', 'press', game.slug);
+const files = fs.readdirSync(dir).sort();
+const sizeOf = (f: string) => `${(fs.statSync(path.join(dir, f)).size / 1048576).toFixed(1)} MB`;
+const zip = files.find((f) => f.endsWith('.zip'));
+const images = files.filter((f) => /\.(jpe?g|png)$/i.test(f));
+const nice = (f: string) =>
+  f.replace(/\.(jpe?g|png)$/i, '').replace(/^screenshot-\d*[-_]?/, 'Screenshot: ').replace(/[-_]/g, ' ');
+
+const videoFiles = game.videos.map((v) => ({
+  ...v,
+  size: `${(fs.statSync(path.join(process.cwd(), 'public', v.file)).size / 1048576).toFixed(1)} MB`,
+}));
+---
+<Base
+  title={`${game.name} press kit`}
+  description={`Press kit for ${game.name}: fact sheet, description, features, screenshots, trailers, logos and key art to download, and press contact.`}
+  lang="en"
+  path={`/press/${game.slug}/`}
+  image={`/og/${game.slug}.jpg`}
+  imageAlt={game.name}
+>
+  <div class="wrap">
+    <header class="page-head">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="/press/">Press</a> / {game.name}</nav>
+      <h1>{game.name} press kit</h1>
+      <p>{game.tagline.en}</p>
+      <div class="btns" style="margin-top:20px">
+        {zip && <a class="btn primary" href={`/press/${game.slug}/${zip}`} download><Icon name="download" />Download everything ({sizeOf(zip)})</a>}
+        <a class="btn" href={`/games/${game.slug}/`}>Game page</a>
+      </div>
+    </header>
+
+    <div class="kit-grid">
+      <div class="prose">
+        <h2>Description</h2>
+        {game.intro.en.map((p) => <p>{p}</p>)}
+        <h2>Features</h2>
+        <ul>{game.features.en.map((f) => <li><strong>{f.title}:</strong> {f.text}</li>)}</ul>
+        {videoFiles.length > 0 && (
+          <>
+            <h2>Trailers</h2>
+            <ul>{videoFiles.map((v) => <li><a href={v.file} download>{v.title.en}</a> (MP4, 1280x720, {v.seconds} s, {v.size})</li>)}</ul>
+            <p>Need them at 1920x1080? Email <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.</p>
+          </>
+        )}
+        <h2>Images</h2>
+        <p>Click to download the full-size file.</p>
+      </div>
+      <aside>
+        <div class="facts-box">
+          <h2>Fact sheet</h2>
+          <dl>
+            <dt>Developer and publisher</dt><dd>{SITE.legalName}, {SITE.city}, Sweden</dd>
+            {game.facts.en.filter((f) => f.label !== 'Developer').map((f) => (<><dt>{f.label}</dt><dd>{f.value}</dd></>))}
+            <dt>Store pages</dt>
+            <dd>{game.stores.map((s, i) => (<>{i > 0 && ', '}<a href={s.url} rel="noopener">{{ steam: 'Steam', appstore: 'App Store', googleplay: 'Google Play', web: 'Website' }[s.kind]}</a></>))}</dd>
+            <dt>Press contact</dt><dd><a href={`mailto:${SITE.email}`}>{SITE.email}</a></dd>
+          </dl>
+        </div>
+      </aside>
+    </div>
+
+    <div class="downloads">
+      {images.map((f) => (
+        <a href={`/press/${game.slug}/${f}`} download class="dl">
+          <img src={`/press/${game.slug}/thumbs/${f.replace(/\.(jpe?g|png)$/i, '.jpg')}`} alt="" loading="lazy" decoding="async" />
+          <span class="name">{nice(f)} <small>{sizeOf(f)}</small></span>
+        </a>
+      ))}
+    </div>
+  </div>
+</Base>
+
+<style>
+  .kit-grid { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 56px; padding-top: 24px; }
+  @media (max-width: 900px) { .kit-grid { grid-template-columns: 1fr; gap: 28px; } }
+  .kit-grid .prose h2:first-child { margin-top: .4em; }
+  .facts-box { background: var(--plate); border: 1px solid var(--line); border-top: 3px solid var(--accent); border-radius: var(--radius); padding: 18px 20px; }
+  .facts-box h2 { font-size: 1.2rem; margin-bottom: 8px; }
+  .facts-box dl { margin: 0; }
+  .facts-box dt { font: 500 11px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); margin-top: 12px; }
+  .facts-box dd { margin: 3px 0 0; font-size: 15px; }
+  .downloads { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); gap: 10px; padding-block: 8px 88px; }
+  .dl { display: flex; flex-direction: column; gap: 8px; padding: 10px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--plate); color: var(--text); text-decoration: none; font-size: 15px; text-transform: none; }
+  .dl:hover { border-color: var(--accent); color: var(--text); }
+  .dl img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 3px; background: var(--ground); }
+  .dl .name::first-letter { text-transform: uppercase; }
+  .dl small { color: var(--text-muted); margin-left: 6px; }
+</style>

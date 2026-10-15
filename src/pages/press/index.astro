@@ -1,0 +1,68 @@
+---
+import { Picture } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import { GAMES } from '../../data/games';
+import { SITE } from '../../data/site';
+---
+<Base
+  title="Press kit"
+  description="Press kit for UX Productions and its games The Perfect Robot, The Perfect Murder and The Perfect Race: fact sheets, screenshots, trailers, logos and contact."
+  lang="en"
+  path="/press/"
+>
+  <div class="wrap">
+    <header class="page-head">
+      <span class="label">For press and creators</span>
+      <h1>Press kit</h1>
+      <p>Everything you need to write about or stream our games. All screenshots, trailers and logos may be used in coverage of the games.</p>
+    </header>
+
+    <div class="press-grid">
+      <section class="prose">
+        <h2>Studio fact sheet</h2>
+        <table>
+          <tbody>
+            <tr><th scope="row">Studio</th><td>{SITE.legalName}</td></tr>
+            <tr><th scope="row">Based in</th><td>{SITE.city}, Sweden</td></tr>
+            <tr><th scope="row">Founded</th><td>{SITE.founded}</td></tr>
+            <tr><th scope="row">Games</th><td>{GAMES.map((g) => g.name).join(', ')}</td></tr>
+            <tr><th scope="row">Platforms</th><td>Steam (Windows), iOS, Android, web browser</td></tr>
+            <tr><th scope="row">Website</th><td><a href="/">uxproductions.se</a></td></tr>
+            <tr><th scope="row">Press contact</th><td><a href={`mailto:${SITE.email}`}>{SITE.email}</a></td></tr>
+          </tbody>
+        </table>
+        <h2>About the studio</h2>
+        <p>UX Productions is a small game studio in Eskilstuna, Sweden, founded in 2013. It has made games, learning apps for Swedish schools and tools for Unity developers. Today it makes the Perfect games: three games that each do one thing as well as the studio can make it, with no ads and no subscriptions.</p>
+        <h2>Studio logo</h2>
+        <p><a href="/press/ux-productions-logo.png" download>UX Productions logo (PNG, 1300x1300)</a></p>
+        <h2>Keys and interviews</h2>
+        <p>For review keys, interviews or anything else, email <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.</p>
+      </section>
+
+      <section>
+        <h2 class="kits-h">Game press kits</h2>
+        <div class="kits">
+          {GAMES.map((g) => (
+            <a class="kit" href={`/press/${g.slug}/`}>
+              <Picture src={g.card} alt="" widths={[360, 640]} sizes="320px" formats={['avif', 'webp']} />
+              <span><b>{g.name}</b><small>{g.genre.en}</small></span>
+            </a>
+          ))}
+        </div>
+      </section>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .press-grid { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 56px; padding-block: 24px 88px; }
+  @media (max-width: 900px) { .press-grid { grid-template-columns: 1fr; gap: 36px; } }
+  .press-grid .prose h2:first-child, .kits-h { margin-top: .4em; }
+  .kits-h { font-size: 1.4rem; margin-bottom: 16px; }
+  .kits { display: grid; gap: 16px; }
+  .kit { display: block; background: var(--plate); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; color: var(--text); text-decoration: none; }
+  .kit:hover { border-color: var(--line-strong); color: var(--text); }
+  .kit img { aspect-ratio: 16 / 9; object-fit: cover; width: 100%; }
+  .kit span { display: block; padding: 12px 16px 14px; }
+  .kit small { display: block; color: var(--text-muted); font-size: 14px; }
+</style>

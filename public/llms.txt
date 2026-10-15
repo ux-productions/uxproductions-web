@@ -1,39 +1,25 @@
-# UX Productions AB
+# UX Productions
 
-> Swedish game studio creating handcrafted game experiences since 2013.
+> UX Productions AB is a small game studio in Eskilstuna, Sweden, founded in 2013. It makes The Perfect Robot, The Perfect Murder and The Perfect Race.
 
-## About
+## Games
 
-UX Productions AB is an independent game development studio based in Mälardalen, Sweden. Founded in 2013, we specialize in creating educational games, classic adventure experiences, and developer tools for Unity.
+- [The Perfect Robot](https://uxproductions.se/games/the-perfect-robot/): a programming puzzle game. Program a literal-minded robot four move cards at a time across 57 hand-made levels in six worlds. Steam (Windows, from 22 October 2026), iOS, Android. Formerly Tiny Treads.
+- [The Perfect Murder](https://uxproductions.se/games/the-perfect-murder/): a noir social deduction party game for 4 to 20 players, like Mafia or Werewolf, with no game master. Browser (the-perfect-murder.com), iOS, Android.
+- [The Perfect Race](https://uxproductions.se/games/the-perfect-race/): a top-down arcade racer built around time attack and server-verified ghost laps. Browser (the-perfect-race.com), iOS, Android.
+- [Other work](https://uxproductions.se/games/other-work/): learning apps for Swedish schools made with Alfamax (Skattjakten, AHA - en eller ett?) and a browser demo.
 
-## What We Do
+## Studio
 
-### Games
-We develop games for multiple platforms including Web, iOS, and Android. Our focus is on quality over quantity, creating meaningful and engaging experiences.
+- [About and contact](https://uxproductions.se/about/)
+- [News](https://uxproductions.se/news/) ([RSS](https://uxproductions.se/news/rss.xml))
+- [Press kit](https://uxproductions.se/press/)
+- [Unity tools](https://uxproductions.se/tools/): SpriteForge, a 3D to 2D sprite sheet baker on the Unity Asset Store.
 
-### Developer Tools
-We create tools and assets for Unity developers, available on the Unity Asset Store. Our tools help other developers build better games faster.
+## Legal
 
-## Contact
+- [Privacy policy](https://uxproductions.se/privacy/)
+- [Privacy notice for the games](https://uxproductions.se/games/privacy/)
+- [Terms of sale for the games](https://uxproductions.se/games/terms/)
 
-- Website: https://uxproductions.se
-- Email: info@uxproductions.se
-- Location: Mälardalen, Sweden
-
-## Pages
-
-- Home: https://uxproductions.se/
-- Games: https://uxproductions.se/games
-- Tools: https://uxproductions.se/tools
-- About: https://uxproductions.se/about
-- Demo: https://uxproductions.se/demo
-- Privacy Policy: https://uxproductions.se/privacy
-- Terms of Sale (games sold by UX Productions AB): https://uxproductions.se/games/terms
-- Privacy Notice (games by UX Productions AB): https://uxproductions.se/games/privacy
-
-## Company Information
-
-- Company Name: UX Productions AB
-- Organization Number: 556947-8661
-- Founded: 2013
-- Country: Sweden
+Company: UX Productions AB, org. nr 556947-8661, Lyckåsgatan 3, 633 58 Eskilstuna, Sweden. Email: info@uxproductions.se

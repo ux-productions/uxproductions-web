@@ -1,0 +1,35 @@
+---
+import Icon from './Icon.astro';
+import type { Game } from '../data/games';
+import { robotOnSteam, type Lang } from '../data/site';
+
+interface Props {
+  game: Game;
+  lang: Lang;
+}
+const { game, lang } = Astro.props;
+const sv = lang === 'sv';
+const steamOut = robotOnSteam();
+
+const label = (kind: string) => {
+  switch (kind) {
+    case 'steam':
+      return steamOut ? (sv ? 'Köp på Steam' : 'Buy on Steam') : sv ? 'Önskelista på Steam' : 'Wishlist on Steam';
+    case 'appstore':
+      return 'App Store';
+    case 'googleplay':
+      return 'Google Play';
+    default:
+      return sv ? 'Spela i webbläsaren' : 'Play in your browser';
+  }
+};
+---
+<div class="btns">
+  {game.stores.map((s, i) => (
+    <a class:list={['btn', { primary: i === 0 }]} href={s.url} rel="noopener">
+      <Icon name={s.kind} />
+      {label(s.kind)}
+    </a>
+  ))}
+  <slot />
+</div>

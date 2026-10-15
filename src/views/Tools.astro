@@ -1,0 +1,70 @@
+---
+import { Picture } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import cover from '../assets/other/sprite-forge-cover.jpg';
+import showcase from '../assets/other/sprite-forge-showcase.jpg';
+import { type Lang } from '../data/site';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const sv = lang === 'sv';
+const title = sv ? 'SpriteForge och verktyg för Unity' : 'SpriteForge and tools for Unity';
+const description = sv
+  ? 'SpriteForge gör om 3D-modeller till spelklara 2D-sprite sheets i Unity med några klick. Ett verktyg från UX Productions på Unity Asset Store.'
+  : 'SpriteForge turns your 3D models into game-ready 2D sprite sheets in Unity with a few clicks. A tool by UX Productions on the Unity Asset Store.';
+const url = 'https://assetstore.unity.com/packages/slug/348280';
+const uses = sv ? [
+  'Top-down-RPG:er med figurer i 4 eller 8 riktningar',
+  'Retrospel som använder 3D-modeller som källa för sprites',
+  'Fungerar med populära paket som Synty',
+  'Snabba prototyper med tillfälliga sprites från 3D-modeller',
+  'Proffsiga sprites utan att kunna pixelgrafik',
+] : [
+  'Top-down RPGs with 4 or 8-directional characters',
+  'Retro-style games using 3D models as sprite sources',
+  'Works with popular asset packs like Synty',
+  'Rapid prototyping with placeholder sprites from 3D assets',
+  'Professional sprites without pixel art skills',
+];
+const app = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'SpriteForge: 3D to 2D Baker',
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Unity Editor',
+  url,
+  author: { '@id': 'https://uxproductions.se/#organization' },
+};
+---
+<Base title={title} description={description} lang={lang} path="/tools/" bilingual image="/og/studio.jpg" jsonld={[app]}>
+  <div class="wrap">
+    <header class="page-head">
+      <span class="label">{sv ? 'För Unity-utvecklare' : 'For Unity developers'}</span>
+      <h1>SpriteForge: 3D to 2D Baker</h1>
+      <p>
+        {sv
+          ? 'SpriteForge gör om dina 3D-modeller till spelklara 2D-sprite sheets med bara några klick. Perfekt för retrospel, top-down-RPG:er eller projekt som behöver charmen hos 2D-sprites med flexibiliteten hos 3D. Verktyget sköter hela arbetsflödet, från att fånga flera riktningar och animationsrutor till att skära och ordna ditt sprite sheet.'
+          : 'SpriteForge transforms your 3D models into game-ready 2D sprite sheets with just a few clicks. Perfect for retro-style games, top-down RPGs, or any project that needs the charm of 2D sprites with the flexibility of 3D assets. It automates the whole workflow, from capturing multiple directions and animation frames to slicing and organising your sprite sheet.'}
+      </p>
+      <div class="btns" style="margin-top:20px"><a class="btn primary" href={url} rel="noopener">{sv ? 'Visa på Asset Store' : 'View on the Asset Store'}</a></div>
+    </header>
+    <div class="tool-grid">
+      <Picture src={cover} alt="SpriteForge" widths={[640, 1200]} sizes="(max-width: 900px) 100vw, 640px" formats={['avif', 'webp']} />
+      <div>
+        <h2>{sv ? 'Passar för' : 'Made for'}</h2>
+        <ul class="uses">{uses.map((u) => <li>{u}</li>)}</ul>
+      </div>
+      <Picture src={showcase} alt={sv ? 'Exempel på sprites gjorda med SpriteForge' : 'Example sprites made with SpriteForge'} widths={[640, 1200]} sizes="(max-width: 900px) 100vw, 640px" formats={['avif', 'webp']} />
+    </div>
+  </div>
+</Base>
+
+<style>
+  .tool-grid { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 28px 40px; padding-block: 32px 88px; align-items: start; }
+  .tool-grid img { border-radius: var(--radius); border: 1px solid var(--line); }
+  .uses { padding-left: 1.2em; color: var(--text-dim); }
+  .uses li { margin: 6px 0; }
+  @media (max-width: 900px) { .tool-grid { grid-template-columns: 1fr; } }
+</style>

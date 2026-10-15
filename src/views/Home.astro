@@ -1,0 +1,117 @@
+---
+import { Picture } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import GameCard from '../components/GameCard.astro';
+import NewsList from '../components/NewsList.astro';
+import Socials from '../components/Socials.astro';
+import StoreButtons from '../components/StoreButtons.astro';
+import { GAMES, ROBOT } from '../data/games';
+import { SITE, localize, robotOnSteam, t, type Lang } from '../data/site';
+import { publishedNews } from '../data/news';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const s = t(lang);
+const sv = lang === 'sv';
+const steamOut = robotOnSteam();
+const news = (await publishedNews()).slice(0, 3);
+
+const title = sv ? 'UX Productions: The Perfect Robot, Murder och Race' : 'UX Productions: The Perfect Robot, Murder and Race';
+const description = sv
+  ? 'UX Productions är en spelstudio i Eskilstuna. Vi gör The Perfect Robot, The Perfect Murder och The Perfect Race för Steam, mobilen och webbläsaren.'
+  : 'UX Productions is a game studio in Eskilstuna, Sweden. We make The Perfect Robot, The Perfect Murder and The Perfect Race for Steam, phones and the browser.';
+
+const website = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': `${SITE.url}/#website`,
+  name: 'UX Productions',
+  url: `${SITE.url}/`,
+  inLanguage: ['en', 'sv'],
+  publisher: { '@id': `${SITE.url}/#organization` },
+};
+---
+<Base title={title} description={description} lang={lang} path="/" bilingual image="/og/home.jpg" imageAlt="The Perfect Robot key art" jsonld={[website]}>
+  <section class="hero">
+    <Picture
+      src={ROBOT.hero}
+      class="hero-art"
+      alt={sv ? 'Robotar på en upplyst testbana, en sprängs av en laser' : 'Robots on a lit test board, one blown apart by a laser'}
+      widths={[720, 1280, 1920, 2400]}
+      sizes="100vw"
+      formats={['avif', 'webp']}
+      loading="eager"
+      fetchpriority="high"
+    />
+    <div class="hero-copy">
+      <div class="wrap">
+        <h1 class="label accent">{sv ? 'UX Productions, spelstudio i Sverige' : 'UX Productions, game studio in Sweden'}</h1>
+        <h2 class="hero-title">
+          {steamOut
+            ? sv ? 'The Perfect Robot finns nu på Steam' : 'The Perfect Robot is out now on Steam'
+            : sv ? 'The Perfect Robot kommer till Steam den 22 oktober' : 'The Perfect Robot comes to Steam on 22 October'}
+        </h2>
+        <p>{ROBOT.tagline[lang]} {sv ? 'Ett programmeringspussel med 57 handgjorda banor i sex världar.' : 'A programming puzzle game with 57 hand-made levels in six worlds.'}</p>
+        <StoreButtons game={ROBOT} lang={lang}>
+          <a class="btn" href={localize('/games/the-perfect-robot/', lang)}>{s.aboutGame}</a>
+        </StoreButtons>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>{s.ourGames}</h2>
+        <a href={localize('/games/', lang)}>{s.allGames}</a>
+      </div>
+      <div class="game-grid">
+        {GAMES.map((g) => <GameCard game={g} lang={lang} />)}
+      </div>
+    </div>
+  </section>
+
+  {news.length > 0 && (
+    <section class="section">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>{s.latestNews}</h2>
+          <a href="/news/">{s.allNews}</a>
+        </div>
+        <NewsList posts={news} lang={lang} />
+      </div>
+    </section>
+  )}
+
+  <section class="section">
+    <div class="wrap studio">
+      <div>
+        <h2>{sv ? 'En liten studio i Eskilstuna' : 'A small studio in Eskilstuna'}</h2>
+        <p style="margin-top:16px">
+          {sv
+            ? 'UX Productions har gjort spel och lärappar sedan 2013, i Mälardalen. I dag gör vi Perfect-spelen: tre spel som var och ett gör en sak så bra vi kan få till den, utan reklam och utan prenumerationer.'
+            : 'UX Productions has made games and learning apps in Sweden’s Mälardalen region since 2013. Today we make the Perfect games: three games that each do one thing as well as we can make it, with no ads and no subscriptions.'}
+        </p>
+        <p>
+          {sv ? 'Vi gör också ' : 'We also make '}
+          <a href={localize('/tools/', lang)}>{sv ? 'verktyg för Unity-utvecklare' : 'tools for Unity developers'}</a>
+          {sv ? ' och ' : ' and '}
+          <a href={localize('/games/other-work/', lang)}>{sv ? 'lärappar för svenska skolor' : 'learning apps for Swedish schools'}</a>.
+        </p>
+        <p><a href={localize('/about/', lang)}>{sv ? 'Mer om studion' : 'More about the studio'}</a></p>
+      </div>
+      <div>
+        <h3 style="margin-bottom:6px">{s.follow}</h3>
+        <p>{s.followText}</p>
+        <Socials />
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero-title { font-size: clamp(2rem, 5vw, 3.4rem); margin: 10px 0 14px; max-width: 15em; }
+  .hero-copy .label { margin: 0; }
+</style>

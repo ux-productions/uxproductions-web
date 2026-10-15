@@ -1,0 +1,30 @@
+---
+import { Picture } from 'astro:assets';
+import type { Game } from '../data/games';
+import { localize, type Lang } from '../data/site';
+
+interface Props {
+  game: Game;
+  lang: Lang;
+  eager?: boolean;
+}
+const { game, lang, eager = false } = Astro.props;
+const strip = { robot: '#5ce1e6', murder: '#c9a045', race: '#b46bff' }[game.theme];
+---
+<a class="game-card" href={localize(`/games/${game.slug}/`, lang)} style={`--strip:${strip}`}>
+  <Picture
+    src={game.card}
+    alt={game.name}
+    widths={[400, 640, 960]}
+    sizes="(max-width: 700px) 100vw, 380px"
+    formats={['avif', 'webp']}
+    loading={eager ? 'eager' : 'lazy'}
+  />
+  <div class="strip"></div>
+  <div class="body">
+    <span class="genre">{game.genre[lang]}</span>
+    <h3>{game.name}</h3>
+    <p>{game.pitch[lang]}</p>
+    <div class="chips">{game.platforms.map((p) => <span>{p}</span>)}</div>
+  </div>
+</a>

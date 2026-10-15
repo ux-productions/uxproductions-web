@@ -1,0 +1,116 @@
+---
+import '@fontsource/familjen-grotesk/400.css';
+import '@fontsource/familjen-grotesk/500.css';
+import '@fontsource/familjen-grotesk/600.css';
+import '@fontsource/familjen-grotesk/700.css';
+import '@fontsource/ibm-plex-mono/500.css';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE, SAME_AS, localize, t, type Lang } from '../data/site';
+
+interface Props {
+  title: string;
+  description: string;
+  lang: Lang;
+  /** The page's path without the /sv prefix, e.g. '/games/'. */
+  path: string;
+  /** Whether the page exists in the other language too. */
+  bilingual?: boolean;
+  image?: string;
+  imageAlt?: string;
+  type?: 'website' | 'article';
+  jsonld?: object[];
+  noindex?: boolean;
+  published?: Date;
+}
+
+const {
+  title,
+  description,
+  lang,
+  path,
+  bilingual = false,
+  image = '/og/studio.jpg',
+  imageAlt = 'UX Productions',
+  type = 'website',
+  jsonld = [],
+  noindex = false,
+  published,
+} = Astro.props;
+
+const canonical = new URL(localize(path, lang), SITE.url).href;
+const enUrl = new URL(path, SITE.url).href;
+const svUrl = new URL(localize(path, 'sv'), SITE.url).href;
+const imageUrl = new URL(image, SITE.url).href;
+const fullTitle = path === '/' ? title : `${title} | UX Productions`;
+
+const organization = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  '@id': `${SITE.url}/#organization`,
+  name: SITE.name,
+  legalName: SITE.legalName,
+  url: `${SITE.url}/`,
+  logo: `${SITE.url}/press/ux-productions-logo.png`,
+  foundingDate: SITE.founded,
+  email: SITE.email,
+  taxID: SITE.orgNumber,
+  vatID: SITE.vat,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: SITE.street,
+    postalCode: SITE.postalCode,
+    addressLocality: SITE.city,
+    addressRegion: SITE.region,
+    addressCountry: SITE.country,
+  },
+  sameAs: SAME_AS,
+};
+const schemas = [organization, ...jsonld];
+---
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+    {bilingual && (
+      <>
+        <link rel="alternate" hreflang="en" href={enUrl} />
+        <link rel="alternate" hreflang="sv" href={svUrl} />
+        <link rel="alternate" hreflang="x-default" href={enUrl} />
+      </>
+    )}
+    <meta name="theme-color" content="#17120d" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="alternate" type="application/rss+xml" title="UX Productions news" href="/news/rss.xml" />
+
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content="UX Productions" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={imageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={imageAlt} />
+    <meta property="og:locale" content={lang === 'sv' ? 'sv_SE' : 'en_GB'} />
+    {published && <meta property="article:published_time" content={published.toISOString()} />}
+    <meta name="twitter:card" content="summary_large_image" />
+
+    {schemas.map((s) => <script type="application/ld+json" set:html={JSON.stringify(s)} />)}
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip" href="#main">{t(lang).skip}</a>
+    <Header lang={lang} path={path} bilingual={bilingual} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer lang={lang} />
+  </body>
+</html>

@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro';
+import GameCard from '../components/GameCard.astro';
+import { GAMES } from '../data/games';
+---
+<Base title="Page not found" description="This page does not exist on uxproductions.se." lang="en" path="/404/" noindex>
+  <div class="wrap">
+    <header class="page-head">
+      <span class="label">404</span>
+      <h1>This page does not exist</h1>
+      <p>It may have moved when we rebuilt the site. Here are our games, or go to the <a href="/">home page</a>.</p>
+      <p lang="sv" class="muted">Sidan finns inte. Gå till <a href="/sv/">startsidan på svenska</a>.</p>
+    </header>
+    <div class="game-grid" style="padding-block: 24px 88px">
+      {GAMES.map((g) => <GameCard game={g} lang="en" />)}
+    </div>
+  </div>
+</Base>

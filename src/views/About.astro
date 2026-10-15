@@ -1,0 +1,99 @@
+---
+import Base from '../layouts/Base.astro';
+import Socials from '../components/Socials.astro';
+import { GAMES } from '../data/games';
+import { SITE, localize, t, type Lang } from '../data/site';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const s = t(lang);
+const sv = lang === 'sv';
+const title = sv ? 'Om UX Productions' : 'About UX Productions';
+const description = sv
+  ? 'UX Productions AB är en spelstudio i Eskilstuna, grundad 2013. Vi gör The Perfect Robot, The Perfect Murder och The Perfect Race. Kontakt och företagsuppgifter.'
+  : 'UX Productions AB is a game studio in Eskilstuna, Sweden, founded in 2013. We make The Perfect Robot, The Perfect Murder and The Perfect Race. Contact and company details.';
+const aboutPage = {
+  '@context': 'https://schema.org',
+  '@type': 'AboutPage',
+  name: title,
+  url: new URL(localize('/about/', lang), SITE.url).href,
+  about: { '@id': `${SITE.url}/#organization` },
+};
+---
+<Base title={title} description={description} lang={lang} path="/about/" bilingual jsonld={[aboutPage]}>
+  <div class="wrap">
+    <header class="page-head">
+      <span class="label">{sv ? 'Sedan 2013' : 'Since 2013'}</span>
+      <h1>{title}</h1>
+      <p>
+        {sv
+          ? 'UX Productions är en liten spelstudio i Eskilstuna, i Mälardalen. Vi har gjort spel, lärappar och verktyg för utvecklare sedan 2013.'
+          : 'UX Productions is a small game studio in Eskilstuna, in the Mälardalen region of Sweden. We have made games, learning apps and developer tools since 2013.'}
+      </p>
+    </header>
+
+    <div class="about-grid">
+      <div class="prose">
+        <h2>{sv ? 'Det vi gör' : 'What we make'}</h2>
+        <p>
+          {sv
+            ? 'I dag gör vi Perfect-spelen. Varje spel bygger på en enda idé som vi försöker få helt rätt: en robot som gör exakt det du säger, en stad där någon vid bordet är mördaren, ett varv som kan bli lite renare. Spelen finns på Steam, mobilen och i webbläsaren, och inget av dem har reklam eller prenumeration.'
+            : 'Today we make the Perfect games. Each one is built on a single idea we try to get exactly right: a robot that does exactly what you say, a town where someone at the table is the killer, a lap that can always be a little cleaner. They run on Steam, phones and in the browser, and none of them has ads or a subscription.'}
+        </p>
+        <ul>
+          {GAMES.map((g) => <li><a href={localize(`/games/${g.slug}/`, lang)}>{g.name}</a>: {g.pitch[lang]}</li>)}
+        </ul>
+        <p>
+          {sv ? 'Tidigare har vi bland annat gjort ' : 'Before that we made, among other things, '}
+          <a href={localize('/games/other-work/', lang)}>{sv ? 'lärappar för svenska skolor' : 'learning apps for Swedish schools'}</a>
+          {sv ? ' tillsammans med Alfamax, och vi gör ' : ' together with Alfamax, and we make '}
+          <a href={localize('/tools/', lang)}>{sv ? 'verktyg för Unity-utvecklare' : 'tools for Unity developers'}</a>.
+        </p>
+        <h2>{sv ? 'Vårt löfte' : 'Our promise'}</h2>
+        <p>{sv ? 'Vi släpper aldrig något som inte är väl genomarbetat. Kvalitet före kvantitet.' : 'We never release anything that is not well made. Quality over quantity.'}</p>
+        <h2>{sv ? 'Press' : 'Press'}</h2>
+        <p>
+          {sv ? 'Skriver du om våra spel? I ' : 'Writing about our games? The '}
+          <a href="/press/" hreflang="en">{sv ? 'presskitet' : 'press kit'}</a>
+          {sv ? ' finns faktablad, bilder, trailers och logotyper.' : ' has fact sheets, screenshots, trailers and logos.'}
+        </p>
+      </div>
+
+      <aside>
+        <div class="contact">
+          <h2>{s.contact}</h2>
+          <dl>
+            <dt>{sv ? 'E-post' : 'Email'}</dt>
+            <dd><a href={`mailto:${SITE.email}`}>{SITE.email}</a></dd>
+            <dt>{sv ? 'Support för spelen' : 'Game support'}</dt>
+            <dd><a href={`mailto:${SITE.supportEmail}`}>{SITE.supportEmail}</a></dd>
+            <dt>{sv ? 'Företag' : 'Company'}</dt>
+            <dd>{SITE.legalName}</dd>
+            <dt>{sv ? 'Adress' : 'Address'}</dt>
+            <dd>{SITE.street}<br />{SITE.postalCode} {SITE.city}<br />{sv ? 'Sverige' : 'Sweden'}</dd>
+            <dt>{sv ? 'Org.nummer' : 'Registration number'}</dt>
+            <dd>{SITE.orgNumber}</dd>
+            <dt>{sv ? 'Momsnummer' : 'VAT number'}</dt>
+            <dd>{SITE.vat}</dd>
+          </dl>
+        </div>
+        <h2 class="follow-h">{s.follow}</h2>
+        <Socials />
+      </aside>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .about-grid { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 56px; padding-block: 24px 88px; }
+  @media (max-width: 900px) { .about-grid { grid-template-columns: 1fr; gap: 36px; } }
+  .about-grid .prose h2:first-child { margin-top: 0.4em; }
+  .contact { background: var(--plate); border: 1px solid var(--line); border-top: 3px solid var(--accent); border-radius: var(--radius); padding: 18px 20px; }
+  .contact h2, .follow-h { font-size: 1.2rem; margin-bottom: 12px; }
+  .follow-h { margin-top: 28px; }
+  .contact dl { margin: 0; }
+  .contact dt { font: 500 11px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); margin-top: 12px; }
+  .contact dd { margin: 3px 0 0; font-size: 15.5px; overflow-wrap: anywhere; }
+</style>

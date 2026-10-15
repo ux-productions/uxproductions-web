@@ -1,0 +1,94 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base
+  title="Generic Climber: play the demo"
+  description="Play Generic Climber, a small Unity game by UX Productions, right in your browser. No install needed; it runs best on a computer."
+  lang="en"
+  path="/demo/"
+>
+  <div class="wrap">
+    <header class="page-head">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="/games/">Games</a> / <a href="/games/other-work/">Other work</a> / Generic Climber</nav>
+      <h1>Generic Climber</h1>
+      <p>A small Unity game you can play right here in the browser. It downloads about 28 MB the first time, and runs best on a computer.</p>
+    </header>
+    <div class="player">
+      <canvas id="unity-canvas" width="960" height="600" tabindex="-1"></canvas>
+      <div id="loader" class="overlay">
+        <button id="start" class="btn primary" type="button">Start the demo</button>
+        <p id="status" class="muted" aria-live="polite"></p>
+      </div>
+    </div>
+    <div class="btns" style="padding-block: 16px 88px">
+      <button id="fullscreen" class="btn" type="button" hidden>Full screen</button>
+    </div>
+  </div>
+</Base>
+
+<script>
+  const BUILD = '/games/generic-climber/Build';
+  const canvas = document.getElementById('unity-canvas') as HTMLCanvasElement;
+  const overlay = document.getElementById('loader')!;
+  const status = document.getElementById('status')!;
+  const start = document.getElementById('start') as HTMLButtonElement;
+  const fullscreen = document.getElementById('fullscreen') as HTMLButtonElement;
+
+  // GitHub Pages can't send Content-Encoding for .gz files, so unpack them here.
+  async function unpack(url: string, type: string) {
+    const res = await fetch(url);
+    if (!res.ok || !res.body) throw new Error(`${url}: ${res.status}`);
+    const stream = res.body.pipeThrough(new DecompressionStream('gzip'));
+    return URL.createObjectURL(new Blob([await new Response(stream).arrayBuffer()], { type }));
+  }
+
+  function loadScript(src: string) {
+    return new Promise<void>((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = src;
+      s.onload = () => resolve();
+      s.onerror = () => reject(new Error(src));
+      document.body.appendChild(s);
+    });
+  }
+
+  start.addEventListener('click', async () => {
+    start.hidden = true;
+    status.textContent = 'Loading...';
+    try {
+      await loadScript(`${BUILD}/WebGL.loader.js`);
+      const [dataUrl, frameworkUrl, codeUrl] = await Promise.all([
+        unpack(`${BUILD}/WebGL.data.gz`, 'application/octet-stream'),
+        unpack(`${BUILD}/WebGL.framework.js.gz`, 'text/javascript'),
+        unpack(`${BUILD}/WebGL.wasm.gz`, 'application/wasm'),
+      ]);
+      const instance = await (window as any).createUnityInstance(
+        canvas,
+        {
+          dataUrl,
+          frameworkUrl,
+          codeUrl,
+          streamingAssetsUrl: '/games/generic-climber/StreamingAssets',
+          companyName: 'UX Productions',
+          productName: 'Generic Climber',
+          productVersion: '1.0',
+        },
+        (p: number) => (status.textContent = `Loading ${Math.round(p * 100)}%`),
+      );
+      overlay.hidden = true;
+      fullscreen.hidden = false;
+      fullscreen.addEventListener('click', () => instance.SetFullscreen(1));
+      canvas.focus();
+    } catch (e) {
+      console.error(e);
+      status.textContent = 'The demo could not load. Try reloading the page, or another browser.';
+    }
+  });
+</script>
+
+<style>
+  .player { position: relative; aspect-ratio: 16 / 10; max-width: 960px; background: #000; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+  .player canvas { width: 100%; height: 100%; display: block; }
+  .overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: var(--plate); }
+  .overlay p { margin: 0; }
+</style>

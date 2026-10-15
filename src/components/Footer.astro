@@ -1,0 +1,52 @@
+---
+import { GAMES } from '../data/games';
+import { SITE, SOCIALS, localize, t, type Lang } from '../data/site';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const s = t(lang);
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <h2>{s.nav.games}</h2>
+        <ul>
+          {GAMES.map((g) => <li><a href={localize(`/games/${g.slug}/`, lang)}>{g.name}</a></li>)}
+          <li><a href={localize('/games/other-work/', lang)}>{s.otherWork}</a></li>
+          <li><a href={localize('/tools/', lang)}>{s.tools}</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>UX Productions</h2>
+        <ul>
+          <li><a href="/news/">{s.nav.news}</a></li>
+          <li><a href="/press/">{s.nav.press}</a></li>
+          <li><a href={localize('/about/', lang)}>{s.nav.about}</a></li>
+          <li><a href={`mailto:${SITE.email}`}>{SITE.email}</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>{s.follow}</h2>
+        <ul>
+          {SOCIALS.map((so) => <li><a href={so.url} rel="noopener me">{so.name}</a></li>)}
+        </ul>
+      </div>
+      <div>
+        <h2>{s.footerLegal}</h2>
+        <ul>
+          <li><a href={localize('/privacy/', lang)}>{s.privacy}</a></li>
+          <li><a href="/games/privacy/">{s.gamePrivacy}</a></li>
+          <li><a href="/games/terms/">{s.gameTerms}</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-base">
+      <span>&copy; 2013&ndash;{year} {SITE.legalName}. {s.rights}</span>
+      <span>Org. nr {SITE.orgNumber} &middot; {SITE.city}, {lang === 'sv' ? 'Sverige' : 'Sweden'}</span>
+    </div>
+  </div>
+</footer>

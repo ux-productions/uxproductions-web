@@ -1,0 +1,219 @@
+---
+import '@fontsource/bodoni-moda/700.css';
+import '@fontsource/press-start-2p/400.css';
+import { Image, Picture, getImage } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import StoreButtons from '../components/StoreButtons.astro';
+import NewsList from '../components/NewsList.astro';
+import type { Game } from '../data/games';
+import { SITE, localize, robotOnSteam, t, type Lang } from '../data/site';
+import { publishedNews } from '../data/news';
+
+interface Props {
+  game: Game;
+  lang: Lang;
+}
+const { game, lang } = Astro.props;
+const s = t(lang);
+const sv = lang === 'sv';
+const path = `/games/${game.slug}/`;
+const url = new URL(localize(path, lang), SITE.url).href;
+const news = (await publishedNews(game.slug)).slice(0, 3);
+
+const shots = await Promise.all(
+  game.shots.map(async (shot) => ({
+    ...shot,
+    full: await getImage({ src: shot.src, format: 'webp', width: Math.min(shot.src.width, 1920) }),
+  })),
+);
+const posters = await Promise.all(
+  game.videos.map((v) => getImage({ src: v.poster, format: 'webp', width: 1280 })),
+);
+
+const title = `${game.name}: ${game.genre[lang]}`;
+const steamPending = game.slug === 'the-perfect-robot' && !robotOnSteam();
+
+const videoGame = {
+  '@context': 'https://schema.org',
+  '@type': 'VideoGame',
+  '@id': `${SITE.url}${path}#game`,
+  name: game.name,
+  ...(game.schema.alternateName ? { alternateName: game.schema.alternateName } : {}),
+  url,
+  description: game.metaDescription[lang],
+  image: new URL(`/og/${game.slug}.jpg`, SITE.url).href,
+  screenshot: shots.slice(0, 4).map((sh) => new URL(sh.full.src, SITE.url).href),
+  genre: game.schema.genre,
+  playMode: game.schema.playMode,
+  gamePlatform: game.schema.gamePlatform,
+  operatingSystem: game.schema.operatingSystem,
+  applicationCategory: 'Game',
+  inLanguage: 'en',
+  ...(game.schema.numberOfPlayers
+    ? { numberOfPlayers: { '@type': 'QuantitativeValue', minValue: game.schema.numberOfPlayers.min, maxValue: game.schema.numberOfPlayers.max } }
+    : {}),
+  author: { '@id': `${SITE.url}/#organization` },
+  publisher: { '@id': `${SITE.url}/#organization` },
+  sameAs: game.stores.map((st) => st.url),
+  ...(game.videos.length
+    ? {
+        trailer: game.videos.map((v, i) => ({
+          '@type': 'VideoObject',
+          name: v.title.en,
+          description: v.description,
+          thumbnailUrl: new URL(posters[i].src, SITE.url).href,
+          contentUrl: new URL(v.file, SITE.url).href,
+          uploadDate: v.uploaded,
+          duration: `PT${v.seconds}S`,
+        })),
+      }
+    : {}),
+};
+const breadcrumbs = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: s.nav.games, item: new URL(localize('/games/', lang), SITE.url).href },
+    { '@type': 'ListItem', position: 2, name: game.name, item: url },
+  ],
+};
+---
+<Base
+  title={title}
+  description={game.metaDescription[lang]}
+  lang={lang}
+  path={path}
+  bilingual
+  image={`/og/${game.slug}.jpg`}
+  imageAlt={game.name}
+  jsonld={[videoGame, breadcrumbs]}
+>
+  <div class={`game theme-${game.theme}`}>
+    <section class="game-hero">
+      <Picture
+        src={game.hero}
+        class="art"
+        alt=""
+        widths={[720, 1280, 1920, 2400].filter((w) => w <= game.hero.width)}
+        sizes="100vw"
+        formats={['avif', 'webp']}
+        loading="eager"
+        fetchpriority="high"
+      />
+      <div class="copy">
+        <div class="wrap">
+          <nav class="crumbs" aria-label={sv ? 'Brödsmulor' : 'Breadcrumb'}>
+            <a href={localize('/games/', lang)}>{s.nav.games}</a> / {game.name}
+          </nav>
+          {game.logo ? (
+            <h1>
+              <Image src={game.logo} class="logo" alt={game.name} widths={[440, 880]} sizes="440px" loading="eager" />
+            </h1>
+          ) : (
+            <h1>{game.name}</h1>
+          )}
+          <p class="tagline">{game.tagline[lang]}</p>
+          <StoreButtons game={game} lang={lang} />
+        </div>
+      </div>
+    </section>
+
+    <div class="wrap game-body">
+      <div>
+        <section class="intro">
+          <span class="label accent">{game.genre[lang]}</span>
+          <h2 style="margin-top:8px">{s.aboutGame}</h2>
+          {game.intro[lang].map((p) => <p>{p}</p>)}
+          {steamPending && (
+            <p><strong>{sv ? 'Släpps på Steam den 22 oktober 2026.' : 'Out on Steam on 22 October 2026.'}</strong> {sv ? 'Lägg det på din önskelista så säger Steam till när det är ute.' : 'Wishlist it and Steam will tell you when it is out.'}</p>
+          )}
+        </section>
+
+        {game.videos.length > 0 && (
+          <section>
+            <h2>{s.trailer}</h2>
+            <div class:list={['videos', { two: game.videos.length > 1 }]}>
+              {game.videos.map((v, i) => (
+                <div class="video">
+                  <figure>
+                    <video controls preload="none" playsinline poster={posters[i].src} width="1280" height="720">
+                      <source src={v.file} type="video/mp4" />
+                    </video>
+                    <figcaption>{v.title[lang]}</figcaption>
+                  </figure>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        <section>
+          <h2>{game.slug === 'the-perfect-robot' ? (sv ? 'Sex världar' : 'Six worlds') : s.features}</h2>
+          <ul class="features">
+            {game.features[lang].map((f) => <li><b>{f.title}</b><span>{f.text}</span></li>)}
+          </ul>
+        </section>
+
+        <section>
+          <h2>{s.screenshots}</h2>
+          <div class:list={['shots', { portrait: game.shotsPortrait }]}>
+            {shots.map((sh) => (
+              <a href={sh.full.src} aria-label={sh.alt[lang]}>
+                <Picture
+                  src={sh.src}
+                  alt={sh.alt[lang]}
+                  widths={game.shotsPortrait ? [240, 400] : [400, 720]}
+                  sizes={game.shotsPortrait ? '(max-width: 600px) 50vw, 200px' : '(max-width: 600px) 100vw, 300px'}
+                  formats={['avif', 'webp']}
+                />
+              </a>
+            ))}
+          </div>
+        </section>
+
+        <section class="faq">
+          <h2>{s.faq}</h2>
+          {game.faq[lang].map((f) => (
+            <details>
+              <summary>{f.q}</summary>
+              <p>{f.a}</p>
+            </details>
+          ))}
+        </section>
+
+        {news.length > 0 && (
+          <section>
+            <h2>{s.newsRelated} {game.name}</h2>
+            <NewsList posts={news} lang={lang} />
+          </section>
+        )}
+      </div>
+
+      <aside>
+        <div class="aside-sticky">
+          <div class="facts">
+            <h2 class="visually-hidden">{s.facts}</h2>
+            <dl>
+              {game.facts[lang].map((f) => (
+                <>
+                  <dt>{f.label}</dt>
+                  <dd>{f.value}</dd>
+                </>
+              ))}
+            </dl>
+          </div>
+          <div class="aside-block">
+            <b>{s.getIt}</b>
+            <p>{game.website ? (sv ? 'Spela direkt i webbläsaren eller på mobilen.' : 'Play right in your browser or on your phone.') : sv ? 'På Steam, iOS och Android.' : 'On Steam, iOS and Android.'}</p>
+            <StoreButtons game={game} lang={lang} />
+          </div>
+          <div class="aside-block">
+            <b>{s.pressKit}</b>
+            <p>{s.pressKitText}</p>
+            <a href={`/press/${game.slug}/`} hreflang="en">{sv ? 'Till presskitet' : 'Open the press kit'}</a>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</Base>

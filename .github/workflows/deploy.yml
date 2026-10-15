@@ -3,6 +3,11 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  # Rebuild daily so news posts dated in the future go live on their day,
+  # and pages that change with a date (the Steam release) switch over.
+  # 16:05 UTC is 18:05 in Sweden in summer time, just after a launch at 18:00.
+  schedule:
+    - cron: '5 16 * * *'
   workflow_dispatch:
 
 permissions:
@@ -24,34 +29,22 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
 
       - name: Build
-        run: npm run build -- --base-href /
+        run: npm run build
 
-      - name: Copy CNAME to dist
-        run: cp src/CNAME dist/uxproductions-web/browser/CNAME
-
-      - name: Copy index.html to 404.html for SPA routing
-        run: cp dist/uxproductions-web/browser/index.html dist/uxproductions-web/browser/404.html
-
-      # The legal pages are linked from Stripe Checkout, so they must answer 200
-      # rather than the 404-with-fallback that GitHub Pages gives every other route.
-      - name: Serve the game legal pages as real files
-        run: |
-          for route in games/terms games/privacy; do
-            mkdir -p "dist/uxproductions-web/browser/$route"
-            cp dist/uxproductions-web/browser/index.html "dist/uxproductions-web/browser/$route/index.html"
-          done
+      - name: Check links
+        run: npm run check
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist/uxproductions-web/browser
+          path: dist
 
   deploy:
     environment:

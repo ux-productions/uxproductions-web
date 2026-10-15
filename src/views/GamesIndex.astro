@@ -1,0 +1,59 @@
+---
+import { Picture } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import GameCard from '../components/GameCard.astro';
+import { GAMES } from '../data/games';
+import { OTHER_WORK } from '../data/other';
+import { localize, t, type Lang } from '../data/site';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const s = t(lang);
+const sv = lang === 'sv';
+const title = sv ? 'Våra spel' : 'Our games';
+const description = sv
+  ? 'Spelen från UX Productions: programmeringspusslet The Perfect Robot, sällskapsspelet The Perfect Murder och racingspelet The Perfect Race, plus lärappar för skolan.'
+  : 'Games by UX Productions: the programming puzzle The Perfect Robot, the social deduction game The Perfect Murder and the arcade racer The Perfect Race.';
+// Old links pointed at cards on one page (/games#the-perfect-robot); send them to the game's own page.
+const redirects = Object.fromEntries(GAMES.map((g) => [g.slug, localize(`/games/${g.slug}/`, lang)]));
+OTHER_WORK.forEach((w) => (redirects[w.id] = localize(`/games/other-work/#${w.id}`, lang)));
+---
+<Base title={title} description={description} lang={lang} path="/games/" bilingual>
+  <script is:inline define:vars={{ redirects }}>
+    const to = redirects[location.hash.slice(1)];
+    if (to) location.replace(to);
+  </script>
+  <div class="wrap">
+    <header class="page-head">
+      <span class="label">UX Productions</span>
+      <h1>{title}</h1>
+      <p>{sv ? 'Tre spel som var och ett gör en sak riktigt bra. Inga annonser, inga prenumerationer.' : 'Three games that each do one thing really well. No ads, no subscriptions.'}</p>
+    </header>
+    <div class="game-grid" style="margin-top:28px">
+      {GAMES.map((g, i) => <GameCard game={g} lang={lang} eager={i === 0} />)}
+    </div>
+  </div>
+
+  <section class="section" style="margin-top:48px">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>{s.otherWork}</h2>
+        <a href={localize('/games/other-work/', lang)}>{sv ? 'Alla projekt' : 'See all'}</a>
+      </div>
+      <div class="cards">
+        {OTHER_WORK.map((w) => (
+          <article class="card">
+            {w.image && <Picture src={w.image} alt="" widths={[400, 720]} sizes="(max-width: 700px) 100vw, 380px" formats={['avif', 'webp']} />}
+            <div class="body">
+              <h3>{w.title}</h3>
+              <p>{w.short[lang]}</p>
+              <div class="btns"><a class="btn" href={localize(`/games/other-work/#${w.id}`, lang)}>{s.readMore}</a></div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>

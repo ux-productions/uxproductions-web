@@ -1,0 +1,24 @@
+---
+import Base from '../../layouts/Base.astro';
+import NewsList from '../../components/NewsList.astro';
+import { publishedNews } from '../../data/news';
+
+const posts = await publishedNews();
+---
+<Base
+  title="News and devlog"
+  description="News from UX Productions: releases, updates, sales and behind-the-scenes notes on The Perfect Robot, The Perfect Murder and The Perfect Race."
+  lang="en"
+  path="/news/"
+>
+  <div class="wrap">
+    <header class="page-head">
+      <span class="label">UX Productions</span>
+      <h1>News</h1>
+      <p>Releases, updates and sales from the studio. <a href="/news/rss.xml">Follow by RSS</a>.</p>
+    </header>
+    <div style="padding-block: 28px 88px">
+      <NewsList posts={posts} lang="en" />
+    </div>
+  </div>
+</Base>

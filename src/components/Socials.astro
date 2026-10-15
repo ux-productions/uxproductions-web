@@ -1,0 +1,12 @@
+---
+import Icon from './Icon.astro';
+import { SOCIALS } from '../data/site';
+---
+<div class="socials">
+  {SOCIALS.map((s) => (
+    <a class="social" href={s.url} rel="noopener me">
+      <Icon name={s.id} />
+      <span>{s.name}<small>{s.handle}</small></span>
+    </a>
+  ))}
+</div>

@@ -1,0 +1,82 @@
+---
+import { Picture } from 'astro:assets';
+import { render, type CollectionEntry } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import StoreButtons from '../../components/StoreButtons.astro';
+import { gameBySlug } from '../../data/games';
+import { publishedNews } from '../../data/news';
+import { SITE, formatDate } from '../../data/site';
+
+export async function getStaticPaths() {
+  const posts = await publishedNews();
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props as { post: CollectionEntry<'news'> };
+const { Content } = await render(post);
+const game = post.data.game ? gameBySlug(post.data.game) : undefined;
+// Share images are 1200x630 crops made by scripts/make-og.py.
+const og = post.data.og ?? `/og/news-${post.id}.jpg`;
+const url = new URL(`/news/${post.id}/`, SITE.url).href;
+
+const article = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: post.data.title,
+  description: post.data.description,
+  datePublished: post.data.date.toISOString(),
+  image: new URL(og, SITE.url).href,
+  url,
+  mainEntityOfPage: url,
+  inLanguage: 'en',
+  author: { '@id': `${SITE.url}/#organization` },
+  publisher: { '@id': `${SITE.url}/#organization` },
+  ...(game ? { about: { '@id': `${SITE.url}/games/${game.slug}/#game` } } : {}),
+};
+const breadcrumbs = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'News', item: `${SITE.url}/news/` },
+    { '@type': 'ListItem', position: 2, name: post.data.title, item: url },
+  ],
+};
+---
+<Base
+  title={post.data.title}
+  description={post.data.description}
+  lang="en"
+  path={`/news/${post.id}/`}
+  type="article"
+  image={og}
+  imageAlt={post.data.imageAlt}
+  published={post.data.date}
+  jsonld={[article, breadcrumbs]}
+>
+  <div class="wrap">
+    <header class="page-head narrow">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="/news/">News</a> / <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date, 'en')}</time></nav>
+      <h1>{post.data.title}</h1>
+      <p>{post.data.description}</p>
+    </header>
+    <article class="prose post">
+      <Picture src={post.data.image} alt={post.data.imageAlt} widths={[720, 1440]} sizes="(max-width: 760px) 100vw, 720px" formats={['avif', 'webp']} loading="eager" fetchpriority="high" />
+      <Content />
+      {game && (
+        <aside class="post-game">
+          <b>{game.name}</b>
+          <p>{game.tagline.en}</p>
+          <StoreButtons game={game} lang="en">
+            <a class="btn" href={`/games/${game.slug}/`}>About the game</a>
+          </StoreButtons>
+        </aside>
+      )}
+    </article>
+  </div>
+</Base>
+
+<style>
+  .post { padding-bottom: 88px; }
+  .post-game { margin-top: 2.6em; padding: 18px 20px; background: var(--plate); border: 1px solid var(--line); border-top: 3px solid var(--accent); border-radius: var(--radius); }
+  .post-game p { margin: 4px 0 14px; }
+</style>

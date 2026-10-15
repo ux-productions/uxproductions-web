@@ -1,0 +1,21 @@
+---
+import { Picture } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { formatDate, type Lang } from '../data/site';
+
+interface Props {
+  posts: CollectionEntry<'news'>[];
+  lang: Lang;
+}
+const { posts, lang } = Astro.props;
+---
+<div class="news-list">
+  {posts.map((p) => (
+    <a class="news-item" href={`/news/${p.id}/`} hreflang="en">
+      <Picture src={p.data.image} alt="" widths={[400, 720]} sizes="(max-width: 700px) 100vw, 380px" formats={['avif', 'webp']} />
+      <time datetime={p.data.date.toISOString()}>{formatDate(p.data.date, lang)}</time>
+      <h3 lang="en">{p.data.title}</h3>
+      <p lang="en">{p.data.description}</p>
+    </a>
+  ))}
+</div>
