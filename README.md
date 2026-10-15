@@ -30,7 +30,7 @@ npm run check      # fails on broken internal links or anchors in dist/
 | Styles: studio palette, the shared page width, and each game's palette | `src/styles/global.css` |
 | Press kit downloads (full-size files, thumbnails, zip) | `public/press/<game>/` |
 | Trailers | `public/video/` |
-| The Robot panel's muted loop: one 3-second shot from the trailer (12.35-15.85 s, cropped to 968x504 clear of captions and HUD, its seam crossfaded), H.264, no audio | `public/video/robot-loop.mp4` |
+| The Robot panel's muted loop: one continuous shot from the trailer (12.30-14.95 s, played at half speed from the 60 fps source, so 5.3 s), cropped to 968x508 clear of captions and HUD, dipping to the panel's navy at the seam; H.264, no audio | `public/video/robot-loop.mp4` |
 | Share images (1200x630) | `public/og/`, made by `python scripts/make-og.py` |
 
 ## Adding a news post
