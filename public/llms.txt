@@ -7,7 +7,7 @@
 - [The Perfect Robot](https://uxproductions.se/games/the-perfect-robot/): a programming puzzle game. Program a literal-minded robot four move cards at a time across 57 hand-made levels in six worlds. Steam (Windows, from 22 October 2026), iOS, Android. Formerly Tiny Treads.
 - [The Perfect Murder](https://uxproductions.se/games/the-perfect-murder/): a noir social deduction party game for 4 to 20 players, like Mafia or Werewolf, with no game master. Browser (the-perfect-murder.com), iOS, Android.
 - [The Perfect Race](https://uxproductions.se/games/the-perfect-race/): a top-down arcade racer built around time attack and server-verified ghost laps. Browser (the-perfect-race.com), iOS, Android.
-- [Other work](https://uxproductions.se/games/other-work/): learning apps for Swedish schools made with Alfamax (Skattjakten, AHA - en eller ett?) and a browser demo.
+- [Other work](https://uxproductions.se/games/other-work/): learning apps for Swedish schools made with Alfamax (Skattjakten, AHA - en eller ett?).
 
 ## Studio
 

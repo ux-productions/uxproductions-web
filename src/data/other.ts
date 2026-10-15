@@ -68,17 +68,4 @@ export const OTHER_WORK: Work[] = [
       { label: { en: 'Google Play', sv: 'Google Play' }, url: 'https://play.google.com/store/apps/details?id=se.alfamax.aha' },
     ],
   },
-  {
-    id: 'generic-climber',
-    title: 'Generic Climber',
-    short: {
-      en: 'A small climbing game you can play right here in the browser.',
-      sv: 'Ett litet klätterspel som du kan spela direkt här i webbläsaren.',
-    },
-    text: {
-      en: 'A small Unity game we made as a web demo. It loads right in your browser, no install needed.',
-      sv: 'Ett litet Unity-spel som vi gjorde som webbdemo. Det laddas direkt i webbläsaren, ingen installation behövs.',
-    },
-    links: [{ label: { en: 'Play the demo', sv: 'Spela demot' }, url: '/demo/' }],
-  },
 ];

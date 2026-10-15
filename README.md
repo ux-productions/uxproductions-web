@@ -18,7 +18,7 @@ npm run check      # fails on broken internal links or anchors in dist/
 | What | Where |
 | --- | --- |
 | Games: text (English and Swedish), store links, facts, FAQ, screenshots, trailers | `src/data/games.ts` |
-| Learning apps and the browser demo ("Other work") | `src/data/other.ts` |
+| Learning apps ("Other work") | `src/data/other.ts` |
 | Studio details, socials, Steam release date, UI strings | `src/data/site.ts` |
 | News posts (Markdown, English) | `src/content/news/*.md` |
 | Legal texts (terms, privacy) | `src/legal/*.html` |
@@ -38,7 +38,7 @@ English is the main site at `/`, Swedish copies of the home, games, game pages, 
 
 ## Addresses that must keep working
 
-`/games/terms/` and `/games/privacy/` are linked from Stripe Checkout, and `/privacy/` from the app store listings. `/integritetspolicy` forwards to `/sv/privacy/`, and old `/games#<game>` links forward to each game's page.
+`/games/terms/` and `/games/privacy/` are linked from Stripe Checkout, and `/privacy/` from the app store listings. `/integritetspolicy` forwards to `/sv/privacy/`, `/demo` to `/games/`, and old `/games#<game>` links forward to each game's page.
 
 ## License
 
