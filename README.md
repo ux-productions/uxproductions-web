@@ -18,14 +18,19 @@ npm run check      # fails on broken internal links or anchors in dist/
 | What | Where |
 | --- | --- |
 | Games: text (English and Swedish), store links, facts, FAQ, screenshots, trailers | `src/data/games.ts` |
+| Each game's short genre and its one number for the front page (`genreShort`, `stat`: shown on the spines, the phone tiles and the studio facts) | `src/data/games.ts` |
 | Learning apps ("Other work") | `src/data/other.ts` |
-| Studio details, socials, Steam release date, UI strings | `src/data/site.ts` |
+| Studio details, socials, Steam release date (and its wording), badges, store button labels, UI strings | `src/data/site.ts` |
 | News posts (Markdown, English) | `src/content/news/*.md` |
 | Legal texts (terms, privacy) | `src/legal/*.html` |
 | Page templates (one per page type, rendered in both languages) | `src/views/` |
-| Styles: studio palette and each game's palette | `src/styles/global.css` |
+| Front page: launch block, the three game panels, news strip, studio band | `src/views/Home.astro` |
+| The UX Productions mark as vector paths (traced from `public/press/ux-productions-logo.png`), used in the header, the studio band and the footer | `src/components/Mark.astro` |
+| Front page art: the Robot key art at full size, and the Race panel (a crop of its night-circuit press screenshot) | `src/assets/robot/key-art.jpg`, `src/assets/race/panel.jpg` |
+| Styles: studio palette, the shared page width, and each game's palette | `src/styles/global.css` |
 | Press kit downloads (full-size files, thumbnails, zip) | `public/press/<game>/` |
 | Trailers | `public/video/` |
+| The Robot panel's muted loop: one 3-second shot from the trailer (12.35-15.85 s, cropped to 968x504 clear of captions and HUD, its seam crossfaded), H.264, no audio | `public/video/robot-loop.mp4` |
 | Share images (1200x630) | `public/og/`, made by `python scripts/make-og.py` |
 
 ## Adding a news post
