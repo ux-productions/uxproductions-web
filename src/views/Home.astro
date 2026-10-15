@@ -8,10 +8,14 @@ import Mark from '../components/Mark.astro';
 import Socials from '../components/Socials.astro';
 import StoreButtons from '../components/StoreButtons.astro';
 import { GAMES, MURDER, ROBOT } from '../data/games';
-import { BADGES, FEATURED_GAME, ROBOT_STEAM_RELEASE, SITE, badgeFor, formatDate, localize, robotLoops, robotOnSteam, steamRelease, storeLabel, t, type Lang } from '../data/site';
+import PanelArt from '../components/PanelArt.astro';
+import { BADGES, FEATURED_GAME, ROBOT_STEAM_RELEASE, SITE, badgeFor, formatDate, localize, loopsFor, robotOnSteam, steamRelease, storeLabel, t, type Lang } from '../data/site';
 import { freshNews } from '../data/news';
 import robotKeyArt from '../assets/robot/key-art.jpg';
-import racePanel from '../assets/race/panel.jpg';
+import murderNight from '../assets/murder/harbour-night.jpg';
+import murderNightPhone from '../assets/murder/harbour-night-phone.jpg';
+import raceNight from '../assets/race/harbour-street-night.jpg';
+import raceNightPhone from '../assets/race/harbour-street-night-phone.jpg';
 
 interface Props {
   lang: Lang;
@@ -59,25 +63,42 @@ const steam = ROBOT.stores.find((st) => st.kind === 'steam')!;
 const units = sv ? ['Dagar', 'Timmar', 'Min'] : ['Days', 'Hours', 'Min'];
 
 // ---- The three panels. How each game's art sits on wide screens: x and y as a spine
-// (x0, y0) and open (x1, y1); and on phones (xm, ym). The Robot places its key art by
+// (x0, y0) and open (x1, y1); and on tablets (xm, ym). The Robot places its key art by
 // two of its own points instead (see the stage CSS): the floating head centred on its
-// spine, and the green robot right of the copy when open. Race uses one crop of a night
-// circuit from its press screenshot, large enough never to be upscaled: its spine runs
-// along the circuit's straight, clear of the cars, and the open panel keeps the whole
-// car pack in frame. Each `sizes` is the width the art is drawn at (the stage is
-// 540-760 px tall; phone tiles 58vw, at most 420 px).
+// spine, and the green robot right of the copy when open. Murder and Race show the first
+// frame of their loops (rendered by the games themselves, at their native size), so the
+// still, the loop's poster and the loop line up: Murder's night harbour with its quay
+// lantern on the spine, Race's pack in the park S-bend on Harbour Street, its spine a
+// slice through the pack. Phones get a crop of the same frame made for the phone tile
+// (`phone`, in which the cars stay large). Each `sizes` is the width the art is drawn at:
+// open, the panel's width (at most 935 px; Race's art 1.4 times that, see the stage CSS)
+// or its height (540-760 px) times the art's aspect, whichever is more; tablet tiles are
+// 58vw tall, at most 420 px.
+const PHONE = '(max-width: 559.98px)';
 const ART = {
-  robot: { src: robotKeyArt, widths: [1100, 1600, 2400, 3200, 3840], sizes: '(min-width: 960px) clamp(1820px, calc((100vh - 340px) * 3.9), 2950px), (min-width: 724px) 1960px, 270vw', x0: '50%', x1: '50%', y0: '50%', y1: '50%', xm: '30%', ym: '50%' },
-  murder: { src: MURDER.hero, widths: [640, 840, 1200, 1672], sizes: '(min-width: 960px) max(960px, calc((100vh - 360px) * 1.78)), 105vw', x0: '34%', x1: '60%', y0: '50%', y1: '50%', xm: '40%', ym: '50%' },
-  race: { src: racePanel, widths: [600, 1000, 1400, 1730], sizes: '(min-width: 960px) 1000px, 100vw', x0: '100%', x1: '50%', y0: '50%', y1: '60%', xm: '50%', ym: '45%' },
+  robot: { src: robotKeyArt, widths: [1100, 1600, 2400, 3200, 3840], sizes: '(min-width: 960px) clamp(1820px, calc((100vh - 340px) * 3.9), 2950px), (min-width: 724px) 1960px, 270vw', x0: '50%', x1: '50%', y0: '50%', y1: '50%', xm: '30%', ym: '50%', phone: undefined },
+  murder: {
+    src: murderNight, widths: [640, 960, 1280, 1672],
+    sizes: '(min-width: 960px) max(min(935px, 70vw), calc(clamp(540px, 100vh - 360px, 760px) * 1.78)), max(100vw, calc(clamp(220px, 58vw, 420px) * 1.78))',
+    x0: '0%', x1: '0%', y0: '50%', y1: '50%', xm: '30%', ym: '50%',
+    phone: { src: murderNightPhone, widths: [600, 900, 1170], sizes: '100vw', media: PHONE },
+  },
+  race: {
+    src: raceNight, widths: [800, 1200, 1600, 2000, 2560],
+    sizes: '(min-width: 960px) max(min(1310px, 97vw), calc(clamp(540px, 100vh - 360px, 760px) * 1.6)), max(100vw, calc(clamp(220px, 58vw, 420px) * 1.6))',
+    x0: '54%', x1: '50%', y0: '50%', y1: '50%', xm: '50%', ym: '0%',
+    phone: { src: raceNightPhone, widths: [600, 900, 1170], sizes: '100vw', media: PHONE },
+  },
 } as const;
-// The Robot panel's loop (site.ts ROBOT_LOOPS): today's, and any later one, so a page
-// left open past a loop's end switches by itself.
-const loops = robotLoops().map((l) => ({
-  until: l.until?.toISOString(),
-  position: l.position,
-  files: [1200, 1600].map((w) => ({ w, webm: `/video/robot-loop-${l.name}-${w}.webm`, mp4: `/video/robot-loop-${l.name}-${w}.mp4`, poster: `/video/robot-loop-${l.name}-${w}.jpg` })),
-}));
+// Each panel's loop (site.ts LOOPS): today's, and any later one, so a page left open
+// past a loop's end switches by itself.
+const loopsOf = (slug: string) =>
+  loopsFor(slug).map((l) => ({
+    until: l.until?.toISOString(),
+    position: l.position,
+    aspect: +(1600 / l.height).toFixed(4),
+    files: [1200, 1600].map((w) => ({ w, webm: `/video/${l.name}-${w}.webm`, mp4: `/video/${l.name}-${w}.mp4`, poster: l.stillIsPoster ? undefined : `/video/${l.name}-${w}.jpg` })),
+  }));
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 // A game's one fact as it reads at a glance: the number and its unit together, never apart.
@@ -146,26 +167,19 @@ const facts = [
           const art = ART[g.theme];
           const lead = g.slug === FEATURED_GAME;
           const main = g.stores[0];
+          const loops = loopsOf(g.slug);
           return (
             <article
               id={g.slug}
-              class:list={['tp game', `theme-${g.theme}`, { 'is-open': lead }]}
+              class:list={['tp game', `theme-${g.theme}`, { 'is-open': lead, 'has-phone-art': art.phone }]}
               aria-labelledby={`${g.slug}-t`}
-              data-loops={g.theme === 'robot' && loops.length ? JSON.stringify(loops) : undefined}
+              data-loops={loops.length ? JSON.stringify(loops) : undefined}
               data-pause={sv ? 'Pausa filmen' : 'Pause the video'}
               data-play={sv ? 'Spela filmen' : 'Play the video'}
               style={`--x0:${art.x0};--x1:${art.x1};--y0:${art.y0};--y1:${art.y1};--xm:${art.xm};--ym:${art.ym}`}
             >
               <div class="tp-art">
-                <Picture
-                  src={art.src}
-                  alt=""
-                  widths={art.widths.filter((w) => w <= art.src.width)}
-                  sizes={art.sizes}
-                  formats={['avif', 'webp']}
-                  loading={lead ? 'eager' : 'lazy'}
-                  fetchpriority={lead ? 'high' : 'auto'}
-                />
+                <PanelArt src={art.src} widths={[...art.widths]} sizes={art.sizes} phone={art.phone && { ...art.phone, widths: [...art.phone.widths] }} eager={lead} />
               </div>
               {/* Phones: the game's app icon and its one fact on its art, like a box front. */}
               <div class="tp-cover" aria-hidden="true">
@@ -288,8 +302,10 @@ const facts = [
   //  1. On wide screens one panel is open and the others are spines. A spine opens only
   //     when it is clicked or tapped (or its "More" button pressed); pointing at it or
   //     tabbing through it only lights it up, so nothing moves under the pointer.
-  //  2. A muted loop of the game in the open Robot panel (wide screens, after load, never
-  //     with reduced motion or Save-Data), with a pause button.
+  //  2. A muted loop of the game in the open panel (wide screens, never with reduced motion
+  //     or Save-Data), with a pause button. Each panel's video is made the first time the
+  //     panel opens (the Robot's, open from the start, once the page has loaded), so a loop
+  //     is downloaded only when someone opens its game; phones never get one.
   //  3. The launch countdown, and the switch to "out now" wording at the release.
   const wide = matchMedia('(min-width: 960px)');
   const still = matchMedia('(prefers-reduced-motion: reduce)');
@@ -297,15 +313,78 @@ const facts = [
 
   if (tri) {
     const panels = [...tri.querySelectorAll<HTMLElement>('.tp')];
-    let video: HTMLVideoElement | undefined;
+    const videos = new Map<HTMLElement, HTMLVideoElement>();
+    const pauseButtons: HTMLButtonElement[] = [];
+    // One pause for every loop: someone who stopped the motion does not get it back by
+    // opening another game.
     let paused = false;
     let seen = true;
-    const vp = panels.find((p) => p.dataset.loops);
+    let loaded = document.readyState === 'complete';
+    const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
 
     const sync = () => {
-      if (!video || !vp) return;
-      if (vp.classList.contains('is-open') && seen && !paused && wide.matches && !still.matches) video.play().catch(() => {});
-      else video.pause();
+      for (const [p, v] of videos) {
+        if (p.classList.contains('is-open') && seen && !paused && wide.matches && !still.matches) v.play().catch(() => {});
+        else v.pause();
+      }
+    };
+
+    type Loop = { until?: string; position: string; aspect: number; files: { w: number; webm: string; mp4: string; poster?: string }[] };
+    // `box` is the size of an open panel, measured before this one starts to widen.
+    const addVideo = (p: HTMLElement, box: DOMRect) => {
+      if (videos.has(p) || !p.dataset.loops || !loaded || !wide.matches || still.matches || saveData) return;
+      // Today's loop: the first whose end is still ahead.
+      const loop = (JSON.parse(p.dataset.loops) as Loop[]).find((l) => !l.until || Date.now() < Date.parse(l.until));
+      if (!loop) return;
+      // The loop covers the open panel (Race's at --art-zoom times its width). Take the
+      // smaller file when it is never enlarged (at this screen's density), else the larger:
+      // the games' fine detail (Race's pixel-art cars, Murder's windows) stays sharp.
+      const zoom = parseFloat(getComputedStyle(p).getPropertyValue('--art-zoom')) || 1;
+      const shown = Math.max(box.width * zoom, box.height * loop.aspect) * devicePixelRatio;
+      const file = loop.files.find((f) => shown <= f.w) ?? loop.files[loop.files.length - 1];
+      const v = document.createElement('video');
+      videos.set(p, v);
+      v.muted = true;
+      v.loop = true;
+      v.playsInline = true;
+      v.preload = 'auto';
+      v.className = 'tp-video';
+      // The poster is the loop's first frame: its own file, or the panel's still, which is
+      // that frame and already loaded.
+      v.poster = file.poster ?? p.querySelector<HTMLImageElement>('.tp-art img')?.currentSrc ?? '';
+      v.style.objectPosition = loop.position;
+      v.setAttribute('aria-hidden', 'true');
+      for (const [src, type] of [[file.webm, 'video/webm'], [file.mp4, 'video/mp4']]) {
+        const so = document.createElement('source');
+        so.src = src;
+        so.type = type;
+        v.append(so);
+      }
+      v.addEventListener('playing', () => p.classList.add('has-video'), { once: true });
+      p.querySelector('.tp-art')!.append(v);
+
+      const pb = document.createElement('button');
+      pb.type = 'button';
+      pb.className = 'tp-pause';
+      pb.addEventListener('click', () => {
+        paused = !paused;
+        for (const b of pauseButtons) label(b);
+        sync();
+      });
+      p.append(pb);
+      pauseButtons.push(pb);
+      label(pb);
+    };
+    const label = (b: HTMLButtonElement) => {
+      const p = b.closest<HTMLElement>('.tp')!;
+      b.classList.toggle('is-paused', paused);
+      b.setAttribute('aria-label', paused ? p.dataset.play! : p.dataset.pause!);
+    };
+    const current = () => panels.find((q) => q.classList.contains('is-open'));
+    const videoForOpen = () => {
+      const p = current();
+      if (p) addVideo(p, p.getBoundingClientRect());
+      sync();
     };
 
     // Transitions run only around a visitor's own gesture (and while pointing at or
@@ -314,6 +393,7 @@ const facts = [
     let settle = 0;
     const open = (p: HTMLElement, how: 'pointer' | 'key' | 'hash') => {
       if (p.classList.contains('is-open')) return;
+      const box = (current() ?? p).getBoundingClientRect();
       tri.classList.add('anim');
       tri.classList.toggle('kbd', how === 'key');
       clearTimeout(settle);
@@ -324,6 +404,7 @@ const facts = [
         void p.offsetWidth;
         p.classList.add('opening');
       }
+      addVideo(p, box);
       sync();
     };
 
@@ -357,60 +438,26 @@ const facts = [
     fromHash();
     addEventListener('hashchange', fromHash);
 
-    const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
-    if (vp && wide.matches && !still.matches && !saveData) {
-      type Loop = { until?: string; position: string; files: { w: number; webm: string; mp4: string; poster: string }[] };
-      const loops: Loop[] = JSON.parse(vp.dataset.loops!);
-      const start = () => {
-        // Today's loop: the first whose end is still ahead.
-        const loop = loops.find((l) => !l.until || Date.now() < Date.parse(l.until));
-        if (!loop) return;
-        // The loop covers the open panel. Take the smaller file when it is shown at no
-        // more than 1.1 times its own pixels (at this screen's density), else the larger.
-        const box = (tri.querySelector('.tp.is-open') ?? vp).getBoundingClientRect();
-        const shown = Math.max(box.width, box.height * (1600 / 1024)) * devicePixelRatio;
-        const file = loop.files.find((f) => shown <= f.w * 1.1) ?? loop.files[loop.files.length - 1];
-        const v = (video = document.createElement('video'));
-        v.muted = true;
-        v.loop = true;
-        v.playsInline = true;
-        v.preload = 'auto';
-        v.className = 'tp-video';
-        v.poster = file.poster;
-        v.style.objectPosition = loop.position;
-        v.setAttribute('aria-hidden', 'true');
-        for (const [src, type] of [[file.webm, 'video/webm'], [file.mp4, 'video/mp4']]) {
-          const so = document.createElement('source');
-          so.src = src;
-          so.type = type;
-          v.append(so);
-        }
-        v.addEventListener('playing', () => vp.classList.add('has-video'));
-        vp.querySelector('.tp-art')!.append(v);
-
-        const pb = document.createElement('button');
-        pb.type = 'button';
-        pb.className = 'tp-pause';
-        pb.setAttribute('aria-label', vp.dataset.pause!);
-        pb.addEventListener('click', () => {
-          paused = !paused;
-          pb.classList.toggle('is-paused', paused);
-          pb.setAttribute('aria-label', paused ? vp.dataset.play! : vp.dataset.pause!);
-          sync();
-        });
-        vp.append(pb);
-
-        new IntersectionObserver(([e]) => {
-          seen = e.isIntersecting;
-          sync();
-        }).observe(tri);
-        wide.addEventListener('change', sync);
-        still.addEventListener('change', sync);
-        sync();
-      };
-      if (document.readyState === 'complete') start();
-      else addEventListener('load', start, { once: true });
-    }
+    // The loops play only while the stage is on screen, and stop when the window narrows
+    // below 960 px or the visitor asks for reduced motion.
+    new IntersectionObserver(([e]) => {
+      seen = e.isIntersecting;
+      sync();
+    }).observe(tri);
+    wide.addEventListener('change', videoForOpen);
+    still.addEventListener('change', videoForOpen);
+    // The open panel's loop (the Robot's, unless a link opened another game) waits for the
+    // page itself to finish loading.
+    if (loaded) videoForOpen();
+    else
+      addEventListener(
+        'load',
+        () => {
+          loaded = true;
+          videoForOpen();
+        },
+        { once: true },
+      );
   }
 
   // The countdown: whole minutes left, as three move cards. At the release every
@@ -554,16 +601,15 @@ const facts = [
 
   .tp-art { position: absolute; inset: 0; z-index: -1; overflow: hidden; background: var(--g-bg); }
   .tp-art :is(img, video) {
+    --t: calc(var(--k) * var(--dur)) var(--ease);
     position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover;
     object-position: calc(var(--x0) + (var(--x1) - var(--x0)) * var(--open)) calc(var(--y0) + (var(--y1) - var(--y0)) * var(--open));
   }
-  .tp-art img {
-    --t: calc(var(--k) * var(--dur)) var(--ease);
-    transition: opacity .8s, filter .35s, object-position var(--t), top var(--t), left var(--t), height var(--t), transform var(--t);
-  }
-  /* The loop covers the open Robot panel (the script sets its file and object-position);
-     the still key art fades out behind it while it plays. */
-  .tp-art video { opacity: 0; transition: opacity .8s; }
+  .tp-art img { transition: opacity .8s, filter .35s, object-position var(--t), top var(--t), left var(--t), height var(--t), transform var(--t); }
+  /* The loop covers the open panel (the script sets its file and object-position); the
+     still art fades out behind it while it plays. Where the still is that loop's first
+     frame (Murder, Race), both are drawn alike and move alike. */
+  .tp-art video { opacity: 0; transition: opacity .8s, top var(--t), left var(--t), height var(--t), transform var(--t); }
   @media (min-width: 960px) {
     .tp.has-video.is-open .tp-art video { opacity: 1; }
     .tp.has-video.is-open .tp-art img { opacity: 0; }
@@ -592,8 +638,10 @@ const facts = [
   /* The Robot's laser crosses the key art at title height: a denser scrim under the copy.
      Zoomed in (open, phones), its art ends above the panel's foot, so its edge fades out. */
   .theme-robot .tp-art::after { --scrim: 78%; }
-  /* Race: the cars' name tags run under the one-line title. */
-  .theme-race .tp-art::after { --scrim: 74%; }
+  /* Murder's loop passes through a bright day: a denser scrim under the copy. */
+  .theme-murder .tp-art::after { --scrim: 70%; }
+  /* Race: lit cars cross the copy's edge now and then. */
+  .theme-race .tp-art::after { --scrim: 66%; }
   .theme-robot .tp-art img { -webkit-mask-image: linear-gradient(180deg, #000 82%, transparent); mask-image: linear-gradient(180deg, #000 82%, transparent); }
   /* As a spine its top edge sits below the number, so it fades in there too. */
   @media (min-width: 960px) {
@@ -686,6 +734,20 @@ const facts = [
       height: calc(var(--h0) + (var(--h1) - var(--h0)) * var(--open));
       left: calc(var(--r0) + (var(--r1) - var(--r0)) * var(--open));
       transform: translateX(calc(-1 * (var(--a0) + (var(--a1) - var(--a0)) * var(--open))));
+    }
+    /* Race: the game's camera keeps the pack mid-frame, so the open panel draws its loop
+       (and the still, the loop's first frame) at least --art-zoom times the panel's width
+       and puts the frame's middle 70% across: the pack races right of the copy, its cars
+       larger. As a spine it is drawn to the panel's height with its 54% line, through the
+       pack, in the middle. The script reads --art-zoom to pick the loop's file. */
+    .theme-race { --art-zoom: 1.4; }
+    .theme-race .tp-art { container-type: size; }
+    .theme-race .tp-art :is(img, video) {
+      --h: calc(100cqh + (max(100cqw * var(--art-zoom) / 1.6, 100cqh) - 100cqh) * var(--open));
+      inset: auto; width: auto; max-width: none; height: var(--h);
+      top: calc((100cqh - var(--h)) / 2);
+      left: calc(54% + 16% * var(--open));
+      transform: translateX(calc(-54% + 4% * var(--open)));
     }
 
     .tp-body, .tp-spine { grid-area: 1 / 1; }
@@ -780,6 +842,10 @@ const facts = [
     .tp + .tp { border-top: 1px solid var(--line); }
     .tp-art { position: relative; inset: auto; height: clamp(220px, 58vw, 420px); }
     .tp-art :is(img, video) { object-position: var(--xm) var(--ym); }
+    /* Phones: Murder and Race show a crop of their art made for this tile. */
+    @media (max-width: 559.98px) {
+      .has-phone-art .tp-art img { object-position: 50% 50%; }
+    }
     /* The Robot's panorama is cropped in so the green robot stands clear above the copy. */
     .theme-robot .tp-art img { top: -55%; height: 150%; }
     .tp-art::before { opacity: 1; background: linear-gradient(180deg, color-mix(in srgb, var(--g-bg) 80%, transparent) 0, transparent 46%); }

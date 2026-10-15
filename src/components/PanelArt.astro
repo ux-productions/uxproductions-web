@@ -1,0 +1,47 @@
+---
+/**
+ * A front-page panel's still art: AVIF and WebP at the widths the panel draws it at, with a
+ * JPEG fallback, like astro:assets' Picture, plus an optional second picture for phones
+ * (`phone`, under its `media` query): a crop made for the phone tile, so what matters in it
+ * (Race's cars) stays large on a small screen. Decorative: the panel's copy names the game.
+ */
+import { getImage } from 'astro:assets';
+
+interface Art {
+  src: ImageMetadata;
+  widths: number[];
+  sizes: string;
+}
+interface Props extends Art {
+  phone?: Art & { media: string };
+  eager?: boolean;
+}
+const { src, widths, sizes, phone, eager = false } = Astro.props;
+const FORMATS = ['avif', 'webp'] as const;
+const fit = (a: Art) => a.widths.filter((w) => w <= a.src.width);
+const sources = async (a: Art) =>
+  Promise.all(
+    FORMATS.map(async (format) => ({
+      type: `image/${format}`,
+      srcset: (await getImage({ src: a.src, widths: fit(a), format })).srcSet.attribute,
+    })),
+  );
+const main = await sources({ src, widths, sizes });
+const small = phone ? await sources(phone) : [];
+const fallback = await getImage({ src, widths: fit({ src, widths, sizes }), format: 'jpg' });
+---
+<picture>
+  {phone && small.map((s) => <source media={phone.media} type={s.type} srcset={s.srcset} sizes={phone.sizes} width={phone.src.width} height={phone.src.height} />)}
+  {main.map((s) => <source type={s.type} srcset={s.srcset} sizes={sizes} />)}
+  <img
+    src={fallback.src}
+    srcset={fallback.srcSet.attribute}
+    sizes={sizes}
+    alt=""
+    width={src.width}
+    height={src.height}
+    loading={eager ? 'eager' : 'lazy'}
+    fetchpriority={eager ? 'high' : 'auto'}
+    decoding="async"
+  />
+</picture>

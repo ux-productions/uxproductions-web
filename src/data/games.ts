@@ -24,7 +24,7 @@ import murder03 from '../assets/murder/03-day.jpg';
 import murder04 from '../assets/murder/04-dawn.jpg';
 import murder05 from '../assets/murder/05-gameover.jpg';
 import murder06 from '../assets/murder/06-lobby.jpg';
-import raceHero from '../assets/race/hero.jpg';
+import raceHero from '../assets/race/harbour-street-night.jpg';
 import raceCard from '../assets/race/card.jpg';
 import raceIcon from '../assets/race/icon.png';
 import race01 from '../assets/race/01-breaker-bay.jpg';

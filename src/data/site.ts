@@ -60,21 +60,29 @@ export const badgeFor = (game: string, now = new Date()) =>
   BADGES.find((b) => b.game === game && (!b.from || now >= b.from) && (!b.until || now < b.until));
 
 /**
- * The Robot panel's muted loop on wide screens, by date like BADGES: each build (and the
- * page itself, if it stays open past an `until`) uses the first loop whose `until` is
- * still ahead. Each loop is cut from the game's own captures and lives in public/video/
- * as robot-loop-<name>-<width>.webm and .mp4 (no audio) with its first frame as the
- * poster, robot-loop-<name>-<width>.jpg, at 1600x1024 and 1200x768; the page picks the
- * width the open panel needs. `position` is the open panel's object-position.
+ * Each game panel's muted loop on wide screens, by date like BADGES: each build (and the
+ * page itself, if it stays open past an `until`) plays a game's first loop whose `until`
+ * is still ahead. Every loop is footage from the game itself and lives in public/video/
+ * as <name>-1200 and <name>-1600 (the width in pixels; `height` is the 1600 file's), each
+ * a .webm and an .mp4 with no audio; the page takes the width the open panel needs. Its
+ * poster, the loop's first frame, is <name>-<width>.jpg, or with `stillIsPoster` the
+ * panel's own still art, which is that same frame (so it costs no extra download).
+ * `position` is the open panel's object-position, the same as its still's.
  */
-export const ROBOT_LOOPS: { name: string; until?: Date; position: string }[] = [
-  // The Halloween world (Grave Circle, from a 4K take) while the Halloween sale runs:
-  // to the end of 31 October 2026, Swedish time.
-  { name: 'halloween', until: new Date('2026-10-31T23:00:00Z'), position: '0% 50%' },
+export const LOOPS: { game: string; name: string; height: number; until?: Date; position: string; stillIsPoster?: boolean }[] = [
+  // The Robot's Halloween world (Grave Circle, from a 4K take) while the Halloween sale
+  // runs: to the end of 31 October 2026, Swedish time.
+  { game: 'the-perfect-robot', name: 'robot-loop-halloween', height: 1024, until: new Date('2026-10-31T23:00:00Z'), position: '0% 50%' },
   // Evergreen: the Clockwork world (a robot riding the conveyor onto a turntable).
-  { name: 'clockwork', position: '0% 50%' },
+  { game: 'the-perfect-robot', name: 'robot-loop-clockwork', height: 1024, position: '0% 50%' },
+  // Murder: a round's night and day on the harbour, night → dawn → day → dusk → night,
+  // rendered by the game's own engine from its four paintings of the harbour (16 s).
+  { game: 'the-perfect-murder', name: 'murder-loop-daynight', height: 900, position: '0% 50%', stillIsPoster: true },
+  // Race: a real Quick Race against seven Ace bots on Harbour Street, the city circuit the
+  // game only runs at night: the whole pack through the park S-bends (6.5 s).
+  { game: 'the-perfect-race', name: 'race-loop-harbour', height: 1000, position: '50% 50%', stillIsPoster: true },
 ];
-export const robotLoops = (now = new Date()) => ROBOT_LOOPS.filter((l) => !l.until || now < l.until);
+export const loopsFor = (game: string, now = new Date()) => LOOPS.filter((l) => l.game === game && (!l.until || now < l.until));
 
 /** The words on a store button. Steam says Wishlist until the release, then Buy. */
 export const storeLabel = (kind: string, lang: Lang, steamOut = robotOnSteam()) => {
