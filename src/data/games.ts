@@ -57,6 +57,10 @@ export interface Game {
   shortName: string;
   /** Store subtitle: the genre in a few words. */
   genre: L;
+  /** The genre in two or three words, for tight spots like the front page spines. */
+  genreShort: L;
+  /** One concrete number about the game, for the front page spines and tiles and the studio facts. */
+  stat: { value: string; label: L };
   tagline: L;
   /** One line for cards. */
   pitch: L;
@@ -92,6 +96,8 @@ export const ROBOT: Game = {
   name: 'The Perfect Robot',
   shortName: 'Robot',
   genre: { en: 'Programming puzzles and races', sv: 'Programmeringspussel och race' },
+  genreShort: { en: 'Programming puzzles', sv: 'Programmeringspussel' },
+  stat: { value: '57', label: { en: 'hand-made levels in six worlds', sv: 'handgjorda banor i sex världar' } },
   tagline: {
     en: "Your robot does exactly what you tell it. That's the problem.",
     sv: 'Din robot gör exakt det du säger åt den. Det är det som är problemet.',
@@ -222,6 +228,8 @@ export const MURDER: Game = {
   name: 'The Perfect Murder',
   shortName: 'Murder',
   genre: { en: 'Noir social deduction game', sv: 'Mörkt sällskapsspel' },
+  genreShort: { en: 'Social deduction', sv: 'Sällskapsspel' },
+  stat: { value: '4–20', label: { en: 'players, in one room or online', sv: 'spelare, i samma rum eller online' } },
   tagline: {
     en: 'Someone at this table is a killer. Trust no one.',
     sv: 'Någon vid det här bordet är en mördare. Lita på ingen.',
@@ -324,6 +332,8 @@ export const RACE: Game = {
   name: 'The Perfect Race',
   shortName: 'Race',
   genre: { en: 'Top-down arcade racing', sv: 'Arkadracing uppifrån' },
+  genreShort: { en: 'Arcade racing', sv: 'Arkadracing' },
+  stat: { value: '4', label: { en: 'circuits and three car classes', sv: 'banor och tre bilklasser' } },
   tagline: {
     en: 'One more corner. One cleaner line. One perfect lap.',
     sv: 'En kurva till. En renare linje. Ett perfekt varv.',

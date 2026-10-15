@@ -1,7 +1,7 @@
 ---
 import Icon from './Icon.astro';
 import type { Game } from '../data/games';
-import { robotOnSteam, type Lang } from '../data/site';
+import { robotOnSteam, storeLabel, type Lang } from '../data/site';
 
 interface Props {
   game: Game;
@@ -10,27 +10,15 @@ interface Props {
   mainOnly?: boolean;
 }
 const { game, lang, mainOnly = false } = Astro.props;
-const sv = lang === 'sv';
-const steamOut = robotOnSteam();
-
-const label = (kind: string) => {
-  switch (kind) {
-    case 'steam':
-      return steamOut ? (sv ? 'Köp på Steam' : 'Buy on Steam') : sv ? 'Önskelista på Steam' : 'Wishlist on Steam';
-    case 'appstore':
-      return 'App Store';
-    case 'googleplay':
-      return 'Google Play';
-    default:
-      return sv ? 'Spela i webbläsaren' : 'Play in your browser';
-  }
-};
+// Before the release the Steam label carries its "Buy" wording in data-after, so the
+// front page can switch it the moment the game comes out (see Home.astro).
+const steamPending = !robotOnSteam();
 ---
 <div class="btns">
   {(mainOnly ? game.stores.slice(0, 1) : game.stores).map((s, i) => (
     <a class:list={['btn', { primary: i === 0 }]} href={s.url} rel="noopener">
       <Icon name={s.kind} />
-      {label(s.kind)}
+      {s.kind === 'steam' && steamPending ? <span data-after={storeLabel('steam', lang, true)}>{storeLabel('steam', lang)}</span> : storeLabel(s.kind, lang)}
     </a>
   ))}
   <slot />

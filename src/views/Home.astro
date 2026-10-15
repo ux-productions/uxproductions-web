@@ -1,14 +1,17 @@
 ---
 import '@fontsource/bodoni-moda/700.css';
 import '@fontsource/press-start-2p/400.css';
-import { Picture } from 'astro:assets';
+import { Image, Picture } from 'astro:assets';
 import Base from '../layouts/Base.astro';
-import NewsList from '../components/NewsList.astro';
+import Icon from '../components/Icon.astro';
+import Mark from '../components/Mark.astro';
 import Socials from '../components/Socials.astro';
 import StoreButtons from '../components/StoreButtons.astro';
-import { GAMES, gameBySlug } from '../data/games';
-import { FEATURED_GAME, SITE, badgeFor, localize, t, type Lang } from '../data/site';
+import { GAMES, MURDER, ROBOT } from '../data/games';
+import { BADGES, FEATURED_GAME, ROBOT_STEAM_RELEASE, SITE, badgeFor, formatDate, localize, robotOnSteam, steamRelease, storeLabel, t, type Lang } from '../data/site';
 import { freshNews } from '../data/news';
+import robotKeyArt from '../assets/robot/key-art.jpg';
+import racePanel from '../assets/race/panel.jpg';
 
 interface Props {
   lang: Lang;
@@ -17,8 +20,6 @@ const { lang } = Astro.props;
 const s = t(lang);
 const sv = lang === 'sv';
 const news = await freshNews();
-const featured = gameBySlug(FEATURED_GAME)!;
-const featuredBadge = badgeFor(featured.slug);
 
 const title = sv ? 'UX Productions: The Perfect Robot, Murder och Race' : 'UX Productions: The Perfect Robot, Murder and Race';
 const description = sv
@@ -34,60 +35,166 @@ const website = {
   inLanguage: ['en', 'sv'],
   publisher: { '@id': `${SITE.url}/#organization` },
 };
+
+// ---- The Steam launch block in the masthead, while The Perfect Robot has a badge.
+// Static text first; the script adds the countdown and switches the words at release.
+const launchBadge = badgeFor(ROBOT.slug);
+const steamOut = robotOnSteam();
+const release = steamRelease(lang);
+const outBadge = BADGES.find((b) => b.game === ROBOT.slug && b.from?.getTime() === ROBOT_STEAM_RELEASE.getTime());
+const outNote = sv ? 'Ute nu på Steam. Finns också på iOS och Android.' : 'Out now on Steam. Also on iOS and Android.';
+const launch = launchBadge && {
+  chip: steamOut ? launchBadge[lang] : `${launchBadge[lang]} · ${release.time}`,
+  note: steamOut
+    ? outNote
+    : sv ? `Släpps på Steam ${release.day} ${release.time}. Finns redan på iOS och Android.` : `Comes to Steam on ${release.day} at ${release.time}. Already out on iOS and Android.`,
+  // What the words become at the release, for a page that is open at that moment.
+  after: steamOut ? undefined : { chip: outBadge?.[lang], note: outNote },
+};
+const steam = ROBOT.stores.find((st) => st.kind === 'steam')!;
+const units = sv ? ['Dagar', 'Timmar', 'Min'] : ['Days', 'Hours', 'Min'];
+
+// ---- The three panels. How each game's art sits: x as a spine, x when open, y on wide
+// screens, and x and y on phones. The Robot spine shows the floating robot head rather
+// than the laser; the open Robot (and phones) zoom in on the full-size key art so the
+// green robot stands beside the copy. Race uses one crop of a night circuit from its
+// press screenshot, large enough never to be upscaled.
+const ART = {
+  robot: { src: robotKeyArt, widths: [1100, 1600, 2400, 3200, 3840], sizes: '(min-width: 960px) 2800px, 1100px', x0: '78%', x1: '24%', y: '50%', xm: '40%', ym: '50%' },
+  murder: { src: MURDER.hero, widths: [800, 1200, 1672], sizes: '(min-width: 960px) 1400px, 640px', x0: '34%', x1: '60%', y: '50%', xm: '40%', ym: '50%' },
+  race: { src: racePanel, widths: [600, 1000, 1400, 1730], sizes: '(min-width: 960px) 1000px, 100vw', x0: '39%', x1: '50%', y: '100%', xm: '50%', ym: '45%' },
+} as const;
+const pad = (i: number) => String(i + 1).padStart(2, '0');
+
+// ---- The studio band's facts, with the game numbers taken from games.ts.
+const facts = [
+  { n: SITE.founded, text: sv ? 'Grundad i Eskilstuna' : 'Founded in Eskilstuna' },
+  { n: String(GAMES.length), text: sv ? 'Spel, vart och ett kring en idé' : 'Games, each built around one idea' },
+  { n: ROBOT.stat.value, text: ROBOT.stat.label[lang], game: ROBOT.name },
+  { n: MURDER.stat.value, text: MURDER.stat.label[lang], game: MURDER.name },
+  { n: '0', text: sv ? 'Reklam eller prenumerationer, i något av spelen' : 'Ads or subscriptions, in any of the games' },
+];
 ---
 <Base title={title} description={description} lang={lang} path="/" bilingual image="/og/studio.jpg" imageAlt="The Perfect Robot, The Perfect Murder and The Perfect Race" jsonld={[website]}>
-  <section class="front">
-    <div class="front-art">
-      <Picture
-        src={featured.hero}
-        alt=""
-        widths={[720, 1280, 1920, 2400].filter((w) => w <= featured.hero.width)}
-        sizes="100vw"
-        formats={['avif', 'webp']}
-        loading="eager"
-        fetchpriority="high"
-      />
-    </div>
-    <div class="wrap">
-      <div class="front-head">
-        <p class="label accent">{sv ? 'Spelstudio i Eskilstuna sedan 2013' : 'Game studio in Eskilstuna, Sweden, since 2013'}</p>
+  <script is:inline slot="head">document.documentElement.classList.add('js')</script>
+
+  <section class:list={['mast', { 'has-launch': launch }]}>
+    <div class="wrap mast-in">
+      <div class="mast-head">
+        <p class="label">{sv ? 'Spelstudio i Eskilstuna sedan 2013' : 'Game studio in Eskilstuna, Sweden, since 2013'}</p>
         <h1>{sv ? 'Spel från UX Productions' : 'Games by UX Productions'}</h1>
-        <p class="lede">{sv ? 'Tre spel som vart och ett bygger på en idé. Ingen reklam, inga prenumerationer.' : 'Three games, each built around one idea. No ads, no subscriptions.'}</p>
-        {featuredBadge && (
-          <a class="featured" href={localize(`/games/${featured.slug}/`, lang)}>
-            <span>{featuredBadge[lang]}</span>{featured.name}
-          </a>
-        )}
       </div>
-      <div class="panels">
+      {launch && (
+        <div class="launch theme-robot">
+          <p class="launch-top">
+            <span class="badge" data-after={launch.after?.chip}>{launch.chip}</span>
+            <a class="launch-name" href={localize(`/games/${ROBOT.slug}/`, lang)}>{ROBOT.name}</a>
+          </p>
+          <p class="launch-note" data-after={launch.after?.note}>{launch.note}</p>
+          <div class="launch-row">
+            <a class="btn primary" href={steam.url} rel="noopener">
+              <Icon name="steam" />
+              <span data-after={steamOut ? undefined : storeLabel('steam', lang, true)}>{storeLabel('steam', lang)}</span>
+            </a>
+            {!steamOut && (
+              <p class="cd" role="timer" data-countdown={ROBOT_STEAM_RELEASE.toISOString()} data-lang={lang} hidden>
+                <span class="visually-hidden" data-cd-text></span>
+                {units.map((u, i) => (
+                  <span class="cd-card" aria-hidden="true"><b data-cd={i}>00</b><span>{u}</span></span>
+                ))}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+      <p class="lede">{sv ? 'Tre spel som vart och ett bygger på en idé. Ingen reklam, inga prenumerationer.' : 'Three games, each built around one idea. No ads, no subscriptions.'}</p>
+      <nav class="jump" aria-label={sv ? 'Spelen' : 'The games'}>
+        <ol>
+          {GAMES.map((g, i) => (
+            <li class={`theme-${g.theme}`}><a href={`#${g.slug}`}><span aria-hidden="true">{pad(i)}</span>{g.name}</a></li>
+          ))}
+        </ol>
+      </nav>
+    </div>
+  </section>
+
+  <section class="stage" aria-label={s.ourGames}>
+    <div class="wrap">
+      <div class="tri" data-tri>
         {GAMES.map((g, i) => {
           const href = localize(`/games/${g.slug}/`, lang);
-          // The featured game's badge already shows in the hero.
-          const badge = g.slug === featured.slug ? undefined : badgeFor(g.slug);
+          // The Robot's launch already has its own block in the masthead.
+          const badge = g.slug === ROBOT.slug && launch ? undefined : badgeFor(g.slug);
+          const art = ART[g.theme];
+          const lead = g.slug === FEATURED_GAME;
+          const main = g.stores[0];
           return (
-            <article class={`game panel theme-${g.theme}`}>
-              <a class="panel-art" href={href} tabindex="-1" aria-hidden="true">
+            <article
+              id={g.slug}
+              class:list={['tp game', `theme-${g.theme}`, { 'is-open': lead }]}
+              aria-labelledby={`${g.slug}-t`}
+              data-video={g.theme === 'robot' ? '/video/robot-loop.mp4' : undefined}
+              data-pause={sv ? 'Pausa filmen' : 'Pause the video'}
+              data-play={sv ? 'Spela filmen' : 'Play the video'}
+              style={`--x0:${art.x0};--x1:${art.x1};--y:${art.y};--xm:${art.xm};--ym:${art.ym}`}
+            >
+              <div class="tp-art">
                 <Picture
-                  src={g.card}
+                  src={art.src}
                   alt=""
-                  widths={[400, 640, 960]}
-                  sizes="(max-width: 900px) 100vw, 380px"
+                  widths={art.widths.filter((w) => w <= art.src.width)}
+                  sizes={art.sizes}
                   formats={['avif', 'webp']}
-                  loading="eager"
-                  fetchpriority="auto"
+                  loading={lead ? 'eager' : 'lazy'}
+                  fetchpriority={lead ? 'high' : 'auto'}
                 />
-              </a>
-              <div class="panel-body">
-                {badge && <span class="badge">{badge[lang]}</span>}
-                <span class="label accent">{g.genre[lang]}</span>
-                <h2 class="panel-title"><a href={href}>{g.name}</a></h2>
-                <p>{g.pitch[lang]}</p>
-                <div class="panel-foot">
-                  <div class="panel-actions">
-                    <StoreButtons game={g} lang={lang} mainOnly />
-                    <a class="more" href={href}>{s.aboutGame}</a>
-                  </div>
-                  <div class="chips">{g.platforms.map((pl) => <span>{pl}</span>)}</div>
+                {/* Phones: the number and the game's one fact on its art, like a box front. */}
+                <div class="tp-cover" aria-hidden="true">
+                  <span class="tp-num">{pad(i)}</span>
+                  <span class="tp-cover-stat"><b>{g.stat.value}</b>{g.stat.label[lang]}</span>
+                </div>
+              </div>
+
+              <div class="tp-body">
+                {badge && <p class="tp-meta"><span class="badge">{badge[lang]}</span></p>}
+                <p class="label accent"><span class="tp-idx">{pad(i)}</span>{g.genre[lang]}</p>
+                <h2 class="tp-title" id={`${g.slug}-t`}>
+                  <a href={href}>
+                    {g.theme === 'robot' && g.logo ? (
+                      <Image src={g.logo} alt={g.name} widths={[360, 720]} sizes="360px" loading={lead ? 'eager' : 'lazy'} />
+                    ) : (
+                      <>The Perfect <span>{g.shortName}</span></>
+                    )}
+                  </a>
+                </h2>
+                <p class="tp-tag">{g.tagline[lang]}</p>
+                <p class="tp-pitch">{g.pitch[lang]}</p>
+                <div class="tp-actions">
+                  <StoreButtons game={g} lang={lang} mainOnly />
+                  <a class="more" href={href}>{s.aboutGame}</a>
+                </div>
+                <ul class="chips" aria-label={sv ? 'Plattformar' : 'Platforms'}>{g.platforms.map((pl) => <li><span>{pl}</span></li>)}</ul>
+              </div>
+
+              {/* What a closed panel shows on wide screens, like the spine of a boxed edition:
+                  number and name, then what it is, one number, its button and a way to open it. */}
+              <div class="tp-spine">
+                <div class="tp-spine-top" aria-hidden="true">
+                  <span class="tp-no">{pad(i)}</span>
+                  <Mark variant="ux" class="tp-glyph" />
+                </div>
+                <p class="tp-vname" aria-hidden="true"><span>The Perfect</span><b>{g.shortName}</b></p>
+                <div class="tp-foot">
+                  <p class="tp-genre" aria-hidden="true">{g.genreShort[lang]}</p>
+                  <p class="tp-fact" aria-hidden="true"><b>{g.stat.value}</b> {g.stat.label[lang]}</p>
+                  <a class="btn primary tp-cta" href={main.url} rel="noopener">
+                    <Icon name={main.kind} />
+                    <span data-after={main.kind === 'steam' && !steamOut ? storeLabel('steam', lang, true) : undefined}>{storeLabel(main.kind, lang)}</span>
+                  </a>
+                  <a class="tp-more" href={`#${g.slug}`}>
+                    {sv ? 'Mer' : 'More'}<span class="visually-hidden">{sv ? ` om ${g.name}` : ` about ${g.name}`}</span>
+                    <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                  </a>
                 </div>
               </div>
             </article>
@@ -98,21 +205,37 @@ const website = {
   </section>
 
   {news.length > 0 && (
-    <section class="section">
-      <div class="wrap">
-        <div class="section-head">
-          <h2>{s.latestNews}</h2>
+    <section class="news-strip" aria-labelledby="news-h">
+      <div class="wrap ns-in">
+        <div class="ns-head">
+          <h2 id="news-h">{s.latestNews}</h2>
           <a href="/news/">{s.allNews}</a>
         </div>
-        <NewsList posts={news} lang={lang} />
+        <ol class="ns-list">
+          {news.map((p) => (
+            <li>
+              <a class="ns-item" href={`/news/${p.id}/`} hreflang="en">
+                <Picture src={p.data.image} alt="" widths={[240, 480]} sizes="(max-width: 600px) 104px, 200px" formats={['avif', 'webp']} />
+                <div class="ns-text">
+                  <time datetime={p.data.date.toISOString()}>{formatDate(p.data.date, lang)}</time>
+                  <h3 lang="en">{p.data.title}</h3>
+                  <p class="ns-desc" lang="en">{p.data.description}</p>
+                </div>
+              </a>
+            </li>
+          ))}
+        </ol>
       </div>
     </section>
   )}
-  <section class="section">
-    <div class="wrap studio">
-      <div>
-        <h2>{sv ? 'En liten studio i Eskilstuna' : 'A small studio in Eskilstuna'}</h2>
-        <p style="margin-top:16px">
+
+  <section class="studio-band" aria-labelledby="studio-h">
+    <div class="wrap sb-in">
+      <Mark variant="logo" class="sb-mark" />
+      <div class="sb-copy">
+        <p class="label">{sv ? 'Sedan 2013 · Eskilstuna, Mälardalen' : 'Since 2013 · Eskilstuna, Mälardalen'}</p>
+        <h2 id="studio-h">{sv ? 'En liten studio i Eskilstuna' : 'A small studio in Eskilstuna'}</h2>
+        <p>
           {sv
             ? 'UX Productions har gjort spel och lärappar sedan 2013, i Mälardalen. I dag gör vi Perfect-spelen: tre spel som var och ett gör en sak så bra vi kan få till den, utan reklam och utan prenumerationer.'
             : 'UX Productions has made games and learning apps in Sweden’s Mälardalen region since 2013. Today we make the Perfect games: three games that each do one thing as well as we can make it, with no ads and no subscriptions.'}
@@ -123,50 +246,486 @@ const website = {
           {sv ? ' och ' : ' and '}
           <a href={localize('/games/other-work/', lang)}>{sv ? 'lärappar för svenska skolor' : 'learning apps for Swedish schools'}</a>.
         </p>
-        <p><a href={localize('/about/', lang)}>{sv ? 'Mer om studion' : 'More about the studio'}</a></p>
+        <p class="sb-more"><a href={localize('/about/', lang)}>{sv ? 'Mer om studion' : 'More about the studio'}</a></p>
       </div>
-      <div>
-        <h3 style="margin-bottom:6px">{s.follow}</h3>
-        <p>{s.followText}</p>
-        <Socials />
+      <div class="sb-side">
+        <h3 class="visually-hidden">{sv ? 'Studion i siffror' : 'The studio in numbers'}</h3>
+        <ul class="sb-facts">
+          {facts.map((f) => (
+            <li><b>{f.n}</b><span>{f.text}{f.game && <small>{f.game}</small>}</span></li>
+          ))}
+        </ul>
+        <div class="sb-follow">
+          <h3>{s.follow}</h3>
+          <p>{s.followText}</p>
+          <Socials variant="icons" />
+        </div>
       </div>
     </div>
   </section>
 </Base>
 
-<style>
-  .front { position: relative; isolation: isolate; padding-bottom: clamp(8px, 2vw, 24px); }
-  .front-art { position: absolute; inset: 0 0 auto 0; height: clamp(440px, 46vw, 640px); z-index: -1; overflow: hidden; background: #0d0a07; }
-  .front-art img { width: 100%; height: 100%; object-fit: cover; object-position: 55% 78%; }
-  .front-art::after { content: ''; position: absolute; inset: 0;
-    background: linear-gradient(0deg, var(--ground) 2%, rgba(23, 18, 13, .6) 38%, rgba(23, 18, 13, .15) 75%),
-                linear-gradient(90deg, rgba(23, 18, 13, .85) 0%, rgba(23, 18, 13, .35) 45%, rgba(23, 18, 13, 0) 70%); }
-  .front-head { max-width: 40em; padding-top: clamp(64px, 11vw, 150px); margin-bottom: clamp(24px, 4vw, 40px); }
-  .front-head h1 { text-shadow: 0 2px 18px rgba(0, 0, 0, .5); }
-  .featured { display: inline-flex; align-items: center; gap: 10px; margin-top: 18px; color: var(--text); font-weight: 600; text-decoration: none; padding: 6px 14px 6px 6px; border: 1px solid var(--line-strong); border-radius: 4px; background: rgba(23, 18, 13, .6); }
-  .featured span { background: var(--accent); color: var(--accent-ink); font: 600 11px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; padding: 6px 8px; border-radius: 3px; }
-  .featured:hover { color: var(--text); border-color: var(--accent); }
-  @media (max-width: 640px) { .front-art { height: 380px; } .front-art img { object-position: 30% 80%; } .front-head { padding-top: 48px; } }
-  .front-head .label { margin: 0 0 10px; }
-  .front-head h1 { margin-bottom: 12px; }
-  .lede { font-size: clamp(1.1rem, 2vw, 1.3rem); color: var(--text-dim); margin: 0; }
+<script>
+  // Progressive enhancement, all of it optional: the page is complete without it.
+  //  1. The three panels on wide screens open on hover intent, focus, or a click or tap
+  //     on a spine; the last one stays open, and each game opens with its own gesture.
+  //  2. A muted loop from the trailer in the Robot panel (wide screens, after load, never
+  //     with reduced motion or Save-Data), with a pause button.
+  //  3. The launch countdown, and the switch to "out now" wording at the release.
+  const wide = matchMedia('(min-width: 960px)');
+  const still = matchMedia('(prefers-reduced-motion: reduce)');
+  const tri = document.querySelector<HTMLElement>('[data-tri]');
 
-  .panels { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
-  @media (max-width: 900px) { .panels { grid-template-columns: 1fr; max-width: 560px; } }
-  .panel { display: flex; flex-direction: column; border: 1px solid var(--g-line); border-top: 3px solid var(--g-accent); border-radius: var(--radius); overflow: hidden; }
-  .panel-art { position: relative; display: block; }
-  .panel-art img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
-  .badge { align-self: flex-start; background: var(--g-cta); color: var(--g-cta-ink); font: 600 11px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; padding: 7px 9px; border-radius: 3px; }
-  .panel-body { display: flex; flex-direction: column; gap: 10px; padding: 20px 22px 22px; flex: 1; }
-  .panel-title { font-family: var(--g-title); font-size: 1.75rem; line-height: 1.15; }
-  .theme-race .panel-title { font-size: 1.05rem; line-height: 1.5; letter-spacing: 0; }
-  .theme-murder .panel-title { letter-spacing: 0; }
-  .panel-title a { color: var(--g-text) !important; text-decoration: none; }
-  .panel-title a:hover { color: var(--g-accent) !important; }
-  .panel-body p { color: var(--g-dim); margin: 0; }
-  .panel-foot { margin-top: auto; padding-top: 10px; display: grid; gap: 14px; }
-  .panel .chips { padding-top: 0; }
-  .panel-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; }
+  if (tri) {
+    const panels = [...tri.querySelectorAll<HTMLElement>('.tp')];
+    let video: HTMLVideoElement | undefined;
+    let paused = false;
+    let seen = true;
+    const vp = panels.find((p) => p.dataset.video);
+
+    const sync = () => {
+      if (!video || !vp) return;
+      if (vp.classList.contains('is-open') && seen && !paused && wide.matches && !still.matches) video.play().catch(() => {});
+      else video.pause();
+    };
+    // An open panel's spine is hidden; its links leave the tab order at once, even
+    // while the spine is still fading out.
+    const spineLinks = (q: HTMLElement) => {
+      for (const a of q.querySelectorAll<HTMLElement>('.tp-spine a')) {
+        if (q.classList.contains('is-open')) a.tabIndex = -1;
+        else a.removeAttribute('tabindex');
+      }
+    };
+    panels.forEach(spineLinks);
+    const open = (p: HTMLElement) => {
+      if (p.classList.contains('is-open')) return;
+      for (const q of panels) {
+        q.classList.toggle('is-open', q === p);
+        spineLinks(q);
+      }
+      if (wide.matches && !still.matches) {
+        p.classList.remove('opening');
+        void p.offsetWidth;
+        p.classList.add('opening');
+      }
+      sync();
+    };
+
+    // Hover intent: a panel opens once the pointer has rested on it (moved less than
+    // 24 px) for 180 ms, so sweeping across the stage never switches panels, and
+    // pointing at a spine's own button never moves that button away.
+    let timer = 0;
+    let ox = 0;
+    let oy = 0;
+    const cancel = () => {
+      clearTimeout(timer);
+      timer = 0;
+    };
+    for (const p of panels) {
+      p.addEventListener('pointermove', (e) => {
+        if (e.pointerType !== 'mouse' || !wide.matches || p.classList.contains('is-open')) return;
+        if ((e.target as Element).closest('.tp-cta')) return cancel();
+        if (timer && Math.hypot(e.clientX - ox, e.clientY - oy) < 24) return;
+        cancel();
+        ox = e.clientX;
+        oy = e.clientY;
+        timer = window.setTimeout(() => open(p), 180);
+      });
+      p.addEventListener('pointerleave', cancel);
+      p.addEventListener('animationend', () => p.classList.remove('opening'));
+      // Keyboard: focus on anything in a panel's body opens it.
+      p.addEventListener('focusin', (e) => {
+        if (!(e.target as Element).closest('.tp-spine')) open(p);
+      });
+      // A click or tap anywhere on a spine (its "More" link covers it) opens the panel.
+      p.querySelector('.tp-more')?.addEventListener('click', (e) => {
+        if (!wide.matches) return;
+        e.preventDefault();
+        cancel();
+        open(p);
+        p.querySelector<HTMLElement>('.tp-title a')?.focus({ preventScroll: true });
+      });
+    }
+
+    const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
+    if (vp && wide.matches && !still.matches && !saveData) {
+      const start = () => {
+        const v = (video = document.createElement('video'));
+        v.muted = true;
+        v.loop = true;
+        v.playsInline = true;
+        v.className = 'tp-video';
+        v.setAttribute('aria-hidden', 'true');
+        v.src = vp.dataset.video!;
+        v.addEventListener('playing', () => vp.classList.add('has-video'));
+        vp.querySelector('.tp-art')!.append(v);
+
+        const pb = document.createElement('button');
+        pb.type = 'button';
+        pb.className = 'tp-pause';
+        pb.setAttribute('aria-label', vp.dataset.pause!);
+        pb.addEventListener('click', () => {
+          paused = !paused;
+          pb.classList.toggle('is-paused', paused);
+          pb.setAttribute('aria-label', paused ? vp.dataset.play! : vp.dataset.pause!);
+          sync();
+        });
+        vp.append(pb);
+
+        new IntersectionObserver(([e]) => {
+          seen = e.isIntersecting;
+          sync();
+        }).observe(tri);
+        wide.addEventListener('change', sync);
+        still.addEventListener('change', sync);
+        sync();
+      };
+      if (document.readyState === 'complete') start();
+      else addEventListener('load', start, { once: true });
+    }
+  }
+
+  // The countdown: whole minutes left, as three move cards. At the release every
+  // [data-after] text switches to its out-now wording, ahead of the next daily build.
+  const cd = document.querySelector<HTMLElement>('[data-countdown]');
+  if (cd) {
+    const launch = Date.parse(cd.dataset.countdown!);
+    const sv = cd.dataset.lang === 'sv';
+    const cells = [...cd.querySelectorAll<HTMLElement>('[data-cd]')];
+    const text = cd.querySelector<HTMLElement>('[data-cd-text]')!;
+    const launched = () => {
+      cd.remove();
+      for (const el of document.querySelectorAll<HTMLElement>('[data-after]')) if (el.dataset.after) el.textContent = el.dataset.after;
+    };
+    const tick = () => {
+      const left = launch - Date.now();
+      if (left <= 0) return launched();
+      const mins = Math.ceil(left / 6e4);
+      const parts = [Math.floor(mins / 1440), Math.floor(mins / 60) % 24, mins % 60];
+      parts.forEach((n, i) => (cells[i].textContent = String(n).padStart(2, '0')));
+      const [d, h, m] = parts.map((n, i) => `${n} ${(sv ? [['dag', 'dagar'], ['timme', 'timmar'], ['minut', 'minuter']] : [['day', 'days'], ['hour', 'hours'], ['minute', 'minutes']])[i][n === 1 ? 0 : 1]}`);
+      text.textContent = sv ? `${d}, ${h} och ${m} kvar till släppet` : `${d}, ${h} and ${m} to the release`;
+      cd.hidden = false;
+      setTimeout(tick, Math.min(left, 60_000 - (Date.now() % 60_000) + 50));
+    };
+    tick();
+  }
+</script>
+
+<style is:global>
+  /* ---------- Masthead: who we are, and the Steam launch while it is news ---------- */
+  .mast { padding-block: clamp(26px, 3.4vw, 46px) clamp(18px, 2vw, 26px); }
+  .mast-in { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px 48px; align-items: end; }
+  .mast .label { margin: 0 0 12px; text-wrap: balance; }
+  .mast h1 { font: 700 clamp(2.5rem, 4.6vw, 4.6rem)/.92 var(--studio); text-transform: uppercase; letter-spacing: .005em; }
+  .lede { max-width: 30em; margin: 0; color: var(--text-dim); font-size: clamp(1.05rem, 1.35vw, 1.22rem); line-height: 1.45; text-wrap: pretty; }
+  @media (min-width: 960px) {
+    /* Without a launch the lede sits on the h1's baseline, to its right. */
+    .mast:not(.has-launch) .mast-in { grid-template-columns: auto minmax(0, 26em); justify-content: space-between; }
+    .mast:not(.has-launch) .lede { padding-bottom: 6px; }
+    .mast.has-launch .mast-in { grid-template: 'head launch' 1fr 'lede launch' auto / minmax(0, 1fr) minmax(400px, 540px); row-gap: 18px; }
+    .mast.has-launch .mast-head { grid-area: head; align-self: end; }
+    .mast.has-launch .lede { grid-area: lede; align-self: end; padding-bottom: 2px; }
+    .launch { grid-area: launch; }
+  }
+
+  /* The launch: The Perfect Robot's own navy and its logo's letter colours. */
+  .launch { --c1: #ff7f8e; --c2: #ffc857; --c3: #74de78; --c4: #5ce1e6; --c5: #b98cff;
+    position: relative; padding: 20px 22px; border-radius: 6px; background: #0e1b2e; border: 1px solid #24476b; color: var(--g-text); }
+  .launch::before { content: ''; position: absolute; top: -1px; left: -1px; right: -1px; height: 4px; border-radius: 6px 6px 0 0;
+    background: linear-gradient(90deg, var(--c1) 0 20%, var(--c2) 0 40%, var(--c3) 0 60%, var(--c4) 0 80%, var(--c5) 0); }
+  .launch-top { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: 0; }
+  .badge { background: var(--g-cta); color: var(--g-cta-ink); font: 600 11.5px/1.2 var(--mono); letter-spacing: .08em; text-transform: uppercase; padding: 6px 9px; border-radius: 3px; }
+  .launch-name { font: 700 1.35rem/1 var(--studio); letter-spacing: .04em; text-transform: uppercase; color: var(--g-text) !important; text-decoration: none; }
+  .launch-name:hover { color: var(--c4) !important; }
+  .launch-note { margin: 12px 0 0; color: var(--g-dim); font-size: 15.5px; line-height: 1.5; text-wrap: pretty; }
+  .launch-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px 20px; margin-top: 16px; }
+  .launch :focus-visible { outline-color: var(--c4); }
+  /* The countdown as move cards: a coloured top with the number, the unit under it.
+     It waits for the script with its space kept, so nothing moves when it appears. */
+  .cd { display: flex; gap: 8px; margin: 0; }
+  html.js .cd[hidden] { display: flex !important; visibility: hidden; }
+  .cd-card { display: block; width: 58px; border-radius: 6px; overflow: hidden; background: #0a1524; border: 1px solid #24476b; text-align: center; box-shadow: 0 3px 0 #050c16; }
+  .cd-card b { display: block; background: var(--c); color: #0a1524; font: 700 1.6rem/1 var(--studio); padding: 7px 0 5px; font-variant-numeric: tabular-nums;
+    box-shadow: inset 0 -3px 0 rgba(10, 21, 36, .18), inset 0 2px 0 rgba(255, 255, 255, .35); }
+  .cd-card span { display: block; font: 600 10px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--c); padding: 6px 0; }
+  .cd-card:nth-child(2) { --c: var(--c1); }
+  .cd-card:nth-child(3) { --c: var(--c2); }
+  .cd-card:nth-child(4) { --c: var(--c3); }
+  @media (max-width: 959.98px) {
+    .cd { display: none !important; }
+    .launch { padding: 18px 16px; }
+  }
+
+  /* Phones and tablets: all three games named under the masthead, one tap away. */
+  .jump { display: none; }
+  @media (max-width: 959.98px) {
+    .jump { display: block; }
+    .jump ol { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+    .jump a { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 4px 12px 4px 4px; border: 1px solid var(--line-strong); border-radius: 4px; color: var(--text); text-decoration: none; font-size: 15px; font-weight: 600; }
+    .jump span { display: grid; place-items: center; min-width: 30px; height: 30px; border-radius: 3px; font: 700 15px/1 var(--studio); color: var(--g-bg); background: var(--g-accent); }
+    .jump a:hover { border-color: var(--g-accent); color: var(--text); }
+  }
+
+  /* ---------- The stage: three panels, one open ---------- */
+  .stage { padding-bottom: clamp(40px, 5vw, 72px); }
+  /* Transitions run only while someone is pointing at or tabbing through the stage
+     (--k: 1), so loading, resizing or a screenshot never catches a panel mid-move. */
+  .tri { --ease: cubic-bezier(.22, .8, .18, 1); --k: 0; }
+  .tri:is(:hover, :focus-within) { --k: 1; }
+  :where(.tp) { --open: 0; --pe: none; --sv: visible; }
+  :where(.tp.is-open) { --open: 1; --pe: auto; --sv: hidden; }
+  .tp { position: relative; isolation: isolate; overflow: hidden; min-width: 0; border-radius: 4px; scroll-margin-top: 12px; }
+
+  .tp-art { position: absolute; inset: 0; z-index: -1; overflow: hidden; background: var(--g-bg); }
+  .tp-art :is(img, video) {
+    position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover;
+    object-position: calc(var(--x0) + (var(--x1) - var(--x0)) * var(--open)) var(--y);
+  }
+  .tp-art img { transition: opacity .8s, object-position calc(var(--k) * .85s) var(--ease), top calc(var(--k) * .85s) var(--ease), height calc(var(--k) * .85s) var(--ease); }
+  /* The loop is a window of footage at no more than its own size (968x504), top right,
+     feathered into the panel; the still key art fades out behind it while it plays. */
+  .tp-art video {
+    inset: 0 0 auto auto; width: min(100%, 968px); height: auto; aspect-ratio: 968 / 504; object-position: 50% 50%;
+    opacity: 0; transition: opacity .8s;
+    -webkit-mask-image: linear-gradient(0deg, transparent 0, #000 34%), linear-gradient(90deg, transparent 0, #000 26%);
+    -webkit-mask-composite: source-in;
+    mask-image: linear-gradient(0deg, transparent 0, #000 34%), linear-gradient(90deg, transparent 0, #000 26%);
+    mask-composite: intersect;
+  }
+  .tp.has-video.is-open .tp-art video { opacity: 1; }
+  .tp.has-video.is-open .tp-art img { opacity: 0; }
+  /* Slim panels keep their art lit in the middle and dark where the type sits;
+     the open one is dark only under its copy. */
+  .tp-art::before, .tp-art::after { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+  .tp-art::before {
+    background: linear-gradient(180deg,
+      color-mix(in srgb, var(--g-bg) 78%, transparent) 0,
+      color-mix(in srgb, var(--g-bg) 18%, transparent) 22%,
+      color-mix(in srgb, var(--g-bg) 12%, transparent) 42%,
+      color-mix(in srgb, var(--g-bg) 88%, transparent) 64%,
+      var(--g-bg) 100%);
+    opacity: calc(1 - var(--open));
+    transition: opacity calc(var(--k) * .7s) var(--ease);
+  }
+  .tp-art::after {
+    --scrim: 50%;
+    background:
+      linear-gradient(0deg, var(--g-bg) 0%, color-mix(in srgb, var(--g-bg) 82%, transparent) 26%, transparent 60%),
+      linear-gradient(90deg, color-mix(in srgb, var(--g-bg) 92%, transparent) 0%, color-mix(in srgb, var(--g-bg) var(--scrim), transparent) 34%, transparent 58%);
+    opacity: var(--open);
+    transition: opacity calc(var(--k) * .7s) var(--ease);
+  }
+  /* The Robot's laser crosses the key art at title height: a denser scrim under the copy.
+     Zoomed in (open, phones), its art ends above the panel's foot, so its edge fades out. */
+  .theme-robot .tp-art::after { --scrim: 78%; }
+  .theme-robot .tp-art img { -webkit-mask-image: linear-gradient(180deg, #000 82%, transparent); mask-image: linear-gradient(180deg, #000 82%, transparent); }
+  .tp-cover { display: none; }
+
+  .tp-body { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+  .tp-meta { margin: 0; }
+  .tp-body .label { margin: 0; display: flex; gap: 12px; align-items: baseline; }
+  .tp-idx { color: var(--g-dim); }
+  .tp-title { margin: 2px 0; font-family: var(--g-title); line-height: 1; letter-spacing: 0; }
+  .tp-title a { color: var(--g-text) !important; text-decoration: none; display: block; }
+  .tp-title a:hover { opacity: .9; }
+  .theme-robot .tp-title img { width: clamp(230px, 21vw, 320px); height: auto; margin: -14px 0 -12px -10px; }
+  .theme-murder .tp-title { font-size: clamp(2.5rem, 3.6vw, 3.6rem); font-weight: 700; }
+  .theme-murder .tp-title a { color: var(--g-accent) !important; }
+  .theme-murder .tp-title span { display: block; }
+  .theme-race .tp-title { font-size: clamp(1.05rem, 1.3vw, 1.3rem); line-height: 1.5; text-transform: uppercase; }
+  .theme-race .tp-title span { display: block; font-size: 2.15em; line-height: 1.15; color: var(--g-accent); text-shadow: .09em .09em 0 #5ce1e6; margin-top: .1em; }
+  .tp-tag { text-wrap: pretty; margin: 0; font-size: clamp(1.12rem, 1.4vw, 1.3rem); line-height: 1.35; font-weight: 600; color: var(--g-text); max-width: 24em; }
+  .tp-pitch { text-wrap: pretty; margin: 0; color: var(--g-dim); max-width: 30em; }
+  .tp-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: 6px; }
   .more { font-size: 15px; font-weight: 600; }
-  .panel .chips span { color: var(--g-dim); border-color: var(--g-line); }
+  .tp .chips { list-style: none; margin: 0; padding: 2px 0 0; }
+  .tp .chips span { color: var(--g-dim); border-color: color-mix(in srgb, var(--g-dim) 38%, transparent); }
+  .tp :focus-visible { outline-color: var(--g-accent); }
+  .tp-spine { display: none; }
+
+  .tp-pause {
+    position: absolute; right: 18px; top: 20px; width: 38px; height: 38px; border-radius: 50%;
+    border: 1px solid color-mix(in srgb, var(--g-text) 45%, transparent); background: color-mix(in srgb, var(--g-bg) 55%, transparent);
+    color: var(--g-text); cursor: pointer; display: none;
+  }
+  .tp.has-video.is-open .tp-pause { display: block; z-index: 4; }
+  .tp-pause::before { content: ''; position: absolute; inset: 0; margin: auto; width: 10px; height: 12px; border-inline: 3px solid currentColor; box-sizing: border-box; }
+  .tp-pause.is-paused::before { width: 0; height: 0; border: 0; border-left: 11px solid currentColor; border-block: 7px solid transparent; margin-left: 15px; }
+  .tp-pause:hover { border-color: var(--g-text); }
+
+  /* Each game's rule along the top of its panel: Robot's five letter colours, Murder's
+     gold double rule, Race's chequered strip. Opening a panel plays its own gesture. */
+  .tp::after { content: ''; position: absolute; inset: 0 0 auto; z-index: 3; pointer-events: none; }
+  .theme-robot::after { height: 4px; background: linear-gradient(90deg, #ff7f8e 0 20%, #ffc857 0 40%, #74de78 0 60%, #5ce1e6 0 80%, #b98cff 0); }
+  .theme-murder::after { height: 6px; border-block: 1.5px solid var(--g-accent); }
+  .theme-race::after { height: 8px; background: repeating-conic-gradient(#e9edf5 0 25%, #0a0d13 0 50%) 0 0 / 8px 8px; }
+  @media (prefers-reduced-motion: no-preference) {
+    .theme-robot.opening::after { animation: rule-steps .6s steps(5, jump-start) both; }
+    .theme-murder.opening::after { animation: rule-centre .9s cubic-bezier(.6, 0, .2, 1) both; }
+    .theme-race.opening::after { animation: rule-wipe .42s cubic-bezier(.3, 0, .1, 1) both; }
+  }
+  @keyframes rule-steps { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0); } }
+  @keyframes rule-centre { from { clip-path: inset(0 50%); } to { clip-path: inset(0); } }
+  @keyframes rule-wipe { from { clip-path: inset(0 0 0 100%); } to { clip-path: inset(0); } }
+
+  /* Wide screens: one open panel and two spines, all three as tall as the tallest copy
+     needs (every body keeps its width and its height, open or not), never shorter than
+     the stage. Works without JS through :hover, :focus-within and :target. */
+  @media (min-width: 960px) {
+    .tri { display: flex; gap: 8px; min-height: clamp(540px, calc(100svh - 360px), 760px); }
+    .tp {
+      display: grid; grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+      flex: calc(1 + 3.4 * var(--open)) 1 0; min-width: 170px;
+      transition: flex-grow calc(var(--k) * .85s) var(--ease);
+    }
+    html:not(.js) :where(.tri:has(.tp:target) .tp) { --open: 0; --pe: none; --sv: visible; }
+    html:not(.js) :where(.tri .tp:target) { --open: 1; --pe: auto; --sv: hidden; }
+    html:not(.js) :where(.tri:has(.tp-body:focus-within) .tp) { --open: 0; --pe: none; --sv: visible; }
+    html:not(.js) :where(.tri .tp:has(.tp-body:focus-within)) { --open: 1; --pe: auto; --sv: hidden; }
+    html:not(.js) :where(.tri:has(.tp:hover) .tp) { --open: 0; --pe: none; --sv: visible; }
+    html:not(.js) :where(.tri .tp:hover) { --open: 1; --pe: auto; --sv: hidden; }
+
+    /* The open Robot zooms in on its key art: the robot stands right of the copy. */
+    .theme-robot .tp-art img { top: calc(-43% * var(--open)); height: calc(100% + 25% * var(--open)); }
+
+    .tp-body, .tp-spine { grid-area: 1 / 1; }
+    .tp-body {
+      align-self: end; z-index: 1;
+      width: clamp(380px, 34vw, 540px); padding: clamp(28px, 3vw, 44px) clamp(28px, 3vw, 44px) clamp(28px, 2.8vw, 40px);
+      opacity: var(--open); transform: translateY(calc((1 - var(--open)) * 14px));
+      transition:
+        opacity calc(var(--k) * (.12s + var(--open) * .38s)) ease calc(var(--k) * var(--open) * .3s),
+        transform calc(var(--k) * .7s) var(--ease) calc(var(--k) * var(--open) * .3s);
+      pointer-events: var(--pe);
+    }
+
+    .tp-spine {
+      z-index: 2; display: flex; flex-direction: column; min-height: 0; padding: 20px 16px 18px;
+      opacity: calc(1 - var(--open)); visibility: var(--sv);
+      /* Out quickly as a panel opens; back in only once the closing body has gone. */
+      transition:
+        opacity calc(var(--k) * (.15s + (1 - var(--open)) * .3s)) ease calc(var(--k) * (1 - var(--open)) * .38s),
+        visibility calc(var(--k) * .15s);
+    }
+    .tp-spine-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+    .tp-no { font: 700 64px/.8 var(--studio); color: transparent; -webkit-text-stroke: 1.5px var(--g-accent); letter-spacing: .01em; }
+    .theme-murder .tp-no { font: 700 60px/.8 var(--g-title); -webkit-text-stroke-width: 1.25px; }
+    .theme-race .tp-no { font: 400 34px/1 var(--g-title); -webkit-text-stroke-width: 1px; padding-top: 4px; }
+    .tp-glyph { width: 30px; height: auto; color: var(--g-accent); margin-top: 2px; }
+    /* The name reads up the spine, the game's own lettering beside THE PERFECT. */
+    .tp-vname {
+      flex: 1 1 0; min-height: 0; margin: 14px 0; overflow: hidden;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .1em;
+      writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap;
+      text-shadow: 0 1px 14px color-mix(in srgb, var(--g-bg) 85%, transparent);
+    }
+    .tp-vname span { font: 600 15px/1 var(--studio); letter-spacing: .3em; text-transform: uppercase; color: var(--g-text); }
+    .tp-vname b { font: 700 52px/1 var(--studio); letter-spacing: .06em; text-transform: uppercase; color: var(--g-text); }
+    .theme-murder .tp-vname b { font: 700 50px/1.05 var(--g-title); letter-spacing: .01em; text-transform: none; color: var(--g-accent); }
+    .theme-race .tp-vname b { font: 400 32px/1.2 var(--g-title); letter-spacing: 0; color: var(--g-accent); text-shadow: .09em .09em 0 #5ce1e6; }
+    .tp-foot { display: flex; flex-direction: column; align-items: stretch; gap: 10px; }
+    .tp-genre { margin: 0; font: 500 11px/1.35 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--g-accent); }
+    .tp-fact { margin: 0 0 2px; color: var(--g-dim); font-size: 14px; line-height: 1.3; }
+    .tp-fact b { display: block; font: 700 30px/1 var(--studio); color: var(--g-text); margin-bottom: 2px; }
+    .theme-murder .tp-fact b { font: 700 28px/1.05 var(--g-title); }
+    .theme-race .tp-fact b { font: 400 20px/1.3 var(--g-title); }
+    .tp-cta { position: relative; z-index: 2; min-height: 44px; padding: 8px 12px; gap: 8px; font-size: 14px; line-height: 1.2; text-align: left; justify-content: flex-start; }
+    .tp-cta svg { width: 18px; height: 18px; }
+    /* "More" opens the panel, and its hit area covers the whole spine. */
+    .tp-more { display: inline-flex; align-items: center; gap: 4px; align-self: flex-start; font: 600 14px/1 var(--body); color: var(--g-text) !important; text-decoration: none; padding: 4px 0; }
+    .tp-more svg { width: 14px; height: 14px; transition: transform .2s; }
+    .tp-more::after { content: ''; position: absolute; inset: 0; z-index: 1; cursor: pointer; }
+    .tp-more:hover, .tp:hover .tp-more { color: var(--g-accent) !important; }
+    .tp:hover .tp-more svg { transform: translateX(3px); }
+    .tp-more:focus-visible { outline: none; }
+    .tp-more:focus-visible::after { outline: 2px solid var(--g-accent); outline-offset: -5px; border-radius: 4px; }
+    .tp:not(.is-open):hover .tp-art::before { opacity: .75; }
+    .tp::after { opacity: calc(.6 + .4 * var(--open)); }
+  }
+
+  /* Phones and tablets: a stack of art tiles, each with its button in view. */
+  @media (max-width: 959.98px) {
+    .stage { padding-top: 6px; }
+    .tri { display: grid; gap: 0; margin-inline: calc(-1 * var(--gutter)); }
+    .tp { --open: 1; --pe: auto; border-radius: 0; display: flex; flex-direction: column; }
+    .tp + .tp { border-top: 1px solid var(--line); }
+    .tp-art { position: relative; inset: auto; height: clamp(220px, 58vw, 420px); }
+    .tp-art :is(img, video) { object-position: var(--xm) var(--ym); }
+    /* The Robot's panorama is cropped in so the green robot stands clear above the copy. */
+    .theme-robot .tp-art img { top: -55%; height: 150%; }
+    .tp-art::before { opacity: 1; background: linear-gradient(180deg, color-mix(in srgb, var(--g-bg) 80%, transparent) 0, transparent 46%); }
+    .tp-art::after { background: linear-gradient(0deg, var(--g-bg) 0%, color-mix(in srgb, var(--g-bg) 70%, transparent) 24%, transparent 56%); }
+    .tp-cover { position: absolute; z-index: 2; inset: 16px var(--gutter) auto; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+    .tp-num { font: 700 52px/.8 var(--studio); color: transparent; -webkit-text-stroke: 1.5px var(--g-accent); }
+    .theme-murder .tp-num { font: 700 50px/.8 var(--g-title); }
+    .theme-race .tp-num { font: 400 28px/1 var(--g-title); -webkit-text-stroke-width: 1px; }
+    .tp-cover-stat { max-width: 11.5em; text-align: right; color: var(--g-text); font-size: 13.5px; line-height: 1.3; text-shadow: 0 1px 8px var(--g-bg); }
+    .tp-cover-stat b { display: block; font: 700 32px/1 var(--studio); color: var(--g-accent); margin-bottom: 2px; }
+    .theme-murder .tp-cover-stat b { font: 700 30px/1.05 var(--g-title); }
+    .theme-race .tp-cover-stat b { font: 400 22px/1.2 var(--g-title); }
+    .tp-body { position: relative; margin-top: -64px; padding: 0 var(--gutter) 40px; z-index: 1; }
+    .tp-pause, .tp-art video { display: none; }
+    .tp.has-video.is-open .tp-art img { opacity: 1; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tp, .tp *, .tp::after, .tp-art::before, .tp-art::after { transition: none !important; animation: none !important; }
+  }
+
+  /* ---------- News strip ---------- */
+  .news-strip { padding-block: clamp(36px, 4.5vw, 60px); border-top: 1px solid var(--line); }
+  .ns-in { display: grid; grid-template-columns: minmax(150px, 220px) minmax(0, 1fr); gap: 20px 48px; align-items: start; }
+  .ns-head { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+  .ns-head h2 { font: 700 clamp(1.9rem, 2.8vw, 2.6rem)/.95 var(--studio); text-transform: uppercase; letter-spacing: .01em; }
+  .ns-head a { font-size: 15px; }
+  .ns-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: 18px 36px; }
+  .ns-item { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 18px; align-items: start; color: var(--text); text-decoration: none; }
+  .ns-item img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 3px; }
+  .ns-text { display: flex; flex-direction: column; gap: 6px; }
+  .ns-item time { font: 500 12px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); }
+  .ns-item h3 { font-size: 1.12rem; line-height: 1.25; }
+  .ns-desc { margin: 0; color: var(--text-dim); font-size: 14.5px; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .ns-item:hover h3 { color: var(--accent); }
+  @media (max-width: 760px) {
+    .ns-in { grid-template-columns: 1fr; }
+    .ns-head { flex-direction: row; justify-content: space-between; align-items: baseline; }
+  }
+  @media (max-width: 600px) {
+    .ns-list { gap: 22px; }
+    .ns-item { grid-template-columns: 104px minmax(0, 1fr); gap: 14px; }
+    .ns-item h3 { font-size: 1.02rem; }
+    .ns-desc { font-size: 14px; }
+  }
+
+  /* ---------- Studio band: the logo's own paper and ink ---------- */
+  .studio-band { background: var(--paper); color: var(--ink); padding-block: clamp(56px, 7vw, 104px); }
+  .sb-in { display: grid; grid-template-columns: minmax(180px, 320px) minmax(0, 1.2fr) minmax(280px, .95fr); gap: clamp(32px, 4.5vw, 72px); align-items: start; }
+  .sb-mark { display: block; width: 100%; height: auto; color: var(--ink); }
+  .sb-copy .label { color: var(--ink-dim); margin: 0 0 12px; }
+  .sb-copy h2 { font: 700 clamp(2.1rem, 3.6vw, 3.4rem)/.95 var(--studio); text-transform: uppercase; letter-spacing: .005em; margin-bottom: 18px; color: var(--ink); }
+  .sb-copy p { color: var(--ink-dim); max-width: 36em; }
+  .sb-copy p:last-child { margin-bottom: 0; }
+  .studio-band a { color: var(--ink); text-decoration-thickness: 1px; }
+  .studio-band a:hover { color: var(--ink); text-decoration-thickness: 2px; }
+  .studio-band :focus-visible { outline-color: var(--ink); }
+  .sb-more a { font-weight: 600; }
+  .sb-facts { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--ink); }
+  .sb-facts li { display: grid; grid-template-columns: 4.2rem minmax(0, 1fr); gap: 14px; align-items: baseline; padding: 9px 0; border-bottom: 1px solid color-mix(in srgb, var(--ink) 18%, transparent); }
+  .sb-facts b { font: 700 1.75rem/1 var(--studio); letter-spacing: .01em; color: var(--ink); white-space: nowrap; }
+  .sb-facts span { color: var(--ink-dim); font-size: 15px; line-height: 1.35; }
+  .sb-facts small { display: block; font: 500 10.5px/1.6 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-dim); }
+  .sb-follow { margin-top: 26px; }
+  .sb-follow h3 { font: 700 1.3rem/1 var(--studio); text-transform: uppercase; letter-spacing: .06em; color: var(--ink); }
+  .sb-follow p { color: var(--ink-dim); margin: 8px 0 14px; font-size: 15px; }
+  .sb-follow .social-icons a { width: 48px; height: 48px; }
+  @media (max-width: 1100px) {
+    .sb-in { grid-template-columns: minmax(160px, 240px) minmax(0, 1fr); }
+    .sb-side { grid-column: 2; }
+  }
+  @media (max-width: 680px) {
+    .sb-in { grid-template-columns: 1fr; gap: 28px; }
+    .sb-mark { width: min(200px, 56vw); }
+    .sb-side { grid-column: auto; }
+  }
 </style>

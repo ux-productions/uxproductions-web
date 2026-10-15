@@ -34,20 +34,45 @@ export const SAME_AS = [
 export const ROBOT_STEAM_RELEASE = new Date('2026-10-22T16:00:00Z');
 export const robotOnSteam = (now = new Date()) => now >= ROBOT_STEAM_RELEASE;
 
+/** The release day and time in Swedish time, worded from ROBOT_STEAM_RELEASE:
+ *  day '22 October' / '22 oktober', time '18:00 CEST' / 'kl. 18.00'. */
+export const steamRelease = (lang: Lang) => {
+  const opts = { timeZone: 'Europe/Stockholm' } as const;
+  const day = ROBOT_STEAM_RELEASE.toLocaleDateString(lang === 'sv' ? 'sv-SE' : 'en-GB', { ...opts, day: 'numeric', month: 'long' });
+  const hm = ROBOT_STEAM_RELEASE.toLocaleTimeString('en-GB', { ...opts, hour: '2-digit', minute: '2-digit' });
+  const zone = new Intl.DateTimeFormat('en-GB', { ...opts, timeZoneName: 'short' }).formatToParts(ROBOT_STEAM_RELEASE).find((p) => p.type === 'timeZoneName')?.value;
+  return { day, time: lang === 'sv' ? `kl. ${hm.replace(':', '.')}` : `${hm} ${zone}` };
+};
+
 /**
  * Front-page badges: the one place to flag something new on a game's panel.
  * Each game shows its first badge whose dates include today; the daily build
  * switches them on and off, so an expired badge simply disappears.
  */
 export const BADGES: { game: string; en: string; sv: string; from?: Date; until?: Date }[] = [
-  { game: 'the-perfect-robot', en: 'On Steam 22 October', sv: 'På Steam 22 oktober', until: ROBOT_STEAM_RELEASE },
+  { game: 'the-perfect-robot', en: `On Steam ${steamRelease('en').day}`, sv: `På Steam ${steamRelease('sv').day}`, until: ROBOT_STEAM_RELEASE },
   { game: 'the-perfect-robot', en: 'Out now on Steam', sv: 'Ute nu på Steam', from: ROBOT_STEAM_RELEASE, until: new Date('2026-11-05T16:00:00Z') },
 ];
 
 export const badgeFor = (game: string, now = new Date()) =>
   BADGES.find((b) => b.game === game && (!b.from || now >= b.from) && (!b.until || now < b.until));
 
-/** The game whose key art fills the top of the front page. */
+/** The words on a store button. Steam says Wishlist until the release, then Buy. */
+export const storeLabel = (kind: string, lang: Lang, steamOut = robotOnSteam()) => {
+  const sv = lang === 'sv';
+  switch (kind) {
+    case 'steam':
+      return steamOut ? (sv ? 'Köp på Steam' : 'Buy on Steam') : sv ? 'Önskelista på Steam' : 'Wishlist on Steam';
+    case 'appstore':
+      return 'App Store';
+    case 'googleplay':
+      return 'Google Play';
+    default:
+      return sv ? 'Spela i webbläsaren' : 'Play in your browser';
+  }
+};
+
+/** The game whose panel is open when the front page loads. */
 export const FEATURED_GAME = 'the-perfect-robot';
 
 /** The front page shows news only while the newest post is younger than this. */
