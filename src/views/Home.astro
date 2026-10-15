@@ -1,6 +1,7 @@
 ---
 import { Picture } from 'astro:assets';
 import Base from '../layouts/Base.astro';
+import GameIcon from '../components/GameIcon.astro';
 import GameTitle from '../components/GameTitle.astro';
 import Icon from '../components/Icon.astro';
 import Mark from '../components/Mark.astro';
@@ -78,7 +79,9 @@ const loops = robotLoops().map((l) => ({
   files: [1200, 1600].map((w) => ({ w, webm: `/video/robot-loop-${l.name}-${w}.webm`, mp4: `/video/robot-loop-${l.name}-${w}.mp4`, poster: `/video/robot-loop-${l.name}-${w}.jpg` })),
 }));
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
-const pad = (i: number) => String(i + 1).padStart(2, '0');
+
+// A game's one fact as it reads at a glance: the number and its unit together, never apart.
+const fact = (g: (typeof GAMES)[number]) => `${g.stat.value} ${g.stat.unit[lang]}`;
 
 // ---- The studio band's facts, with the game numbers taken from games.ts.
 const facts = [
@@ -125,8 +128,8 @@ const facts = [
       <p class="lede">{sv ? 'Tre spel som vart och ett bygger på en idé, för Steam, mobilen och webbläsaren.' : 'Three games, each built around one idea, for Steam, phones and the browser.'}</p>
       <nav class="jump" aria-label={sv ? 'Spelen' : 'The games'}>
         <ol>
-          {GAMES.map((g, i) => (
-            <li class={`theme-${g.theme}`}><a href={`#${g.slug}`}><span aria-hidden="true">{pad(i)}</span>{g.name}</a></li>
+          {GAMES.map((g) => (
+            <li class={`theme-${g.theme}`}><a href={`#${g.slug}`}><GameIcon game={g} />{g.name}</a></li>
           ))}
         </ol>
       </nav>
@@ -136,7 +139,7 @@ const facts = [
   <section class="stage" aria-label={s.ourGames}>
     <div class="wrap">
       <div class="tri" data-tri>
-        {GAMES.map((g, i) => {
+        {GAMES.map((g) => {
           const href = localize(`/games/${g.slug}/`, lang);
           // The Robot's launch already has its own block in the masthead.
           const badge = g.slug === ROBOT.slug && launch ? undefined : badgeFor(g.slug);
@@ -163,18 +166,18 @@ const facts = [
                   loading={lead ? 'eager' : 'lazy'}
                   fetchpriority={lead ? 'high' : 'auto'}
                 />
-                {/* Phones: the number and the game's one fact on its art, like a box front. */}
-                <div class="tp-cover" aria-hidden="true">
-                  <span class="tp-num">{pad(i)}</span>
-                  <span class="tp-cover-stat"><b>{g.stat.value}</b>{g.stat.label[lang]}</span>
-                </div>
+              </div>
+              {/* Phones: the game's app icon and its one fact on its art, like a box front. */}
+              <div class="tp-cover" aria-hidden="true">
+                <GameIcon game={g} class="tp-cover-icon" />
+                <span class="tp-cover-stat"><b>{fact(g)}</b>{g.stat.detail[lang]}</span>
               </div>
 
               <div class="tp-body" id={`${g.slug}-body`}>
                 {badge && <p class="tp-meta"><span class="badge">{badge[lang]}</span></p>}
-                <p class="label accent"><span class="tp-idx">{pad(i)}</span>{g.genre[lang]}</p>
-                {/* The spine and the phone cover show the game's number only to the eye;
-                    where the pitch does not already say it, screen readers get it here. */}
+                <p class="label accent"><GameIcon game={g} class="tp-icon-open" eager={lead} />{g.genre[lang]}</p>
+                {/* The phone cover shows the game's fact only to the eye; where the pitch
+                    does not already say it, screen readers get it here. */}
                 {!g.pitch[lang].includes(g.stat.value) && !g.pitch[lang].includes(g.stat.label[lang]) && <p class="visually-hidden">{`${g.stat.value} ${g.stat.label[lang]}`}</p>}
                 <h2 class="tp-title" id={`${g.slug}-t`}>
                   <a href={href}><GameTitle game={g} logoSizes="(min-width: 960px) clamp(230px, 21vw, 320px), 320px" eager={lead} /></a>
@@ -189,19 +192,19 @@ const facts = [
               </div>
 
               {/* What a closed panel shows on wide screens, like the spine of a boxed edition:
-                  its number, the game's own name turned on its side, what it is, one number,
+                  the game's app icon, its own name turned on its side, what it is, one fact,
                   its button, and "More", which opens the panel (a click or tap anywhere on
                   the spine does the same). Only one of body and spine is visible at a time,
                   and only the visible one is in the accessibility tree and the tab order. */}
               <div class="tp-spine">
                 <div class="tp-spine-top" aria-hidden="true">
-                  <span class="tp-no">{pad(i)}</span>
+                  <GameIcon game={g} class="tp-icon" />
                   <Mark variant="ux" class="tp-glyph" />
                 </div>
                 <h2 class="tp-vname"><GameTitle game={g} logoSizes="300px" /></h2>
                 <div class="tp-foot">
                   <p class="tp-genre">{g.genreShort[lang]}</p>
-                  <p class="tp-fact"><b>{g.stat.value}</b> {g.stat.label[lang]}</p>
+                  <p class="tp-fact"><b>{fact(g)}</b> {g.stat.detail[lang]}</p>
                   <a class="btn primary tp-cta" href={main.url} rel="noopener">
                     <Icon name={main.kind} />
                     <span data-after={main.kind === 'steam' && !steamOut ? storeLabel('steam', lang, true) : undefined}>{storeLabel(main.kind, lang)}</span><span class="visually-hidden">{` (${g.name})`}</span>
@@ -521,14 +524,21 @@ const facts = [
     .launch-name .gt-robot { width: 132px; margin: -8px 0 -6px -8px; }
   }
 
-  /* Phones and tablets: all three games named under the masthead, one tap away. */
+  /* Phones and tablets: all three games under the masthead, each by its app icon and its
+     name, one tap away. */
   .jump { display: none; }
   @media (max-width: 959.98px) {
     .jump { display: block; }
     .jump ol { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
-    .jump a { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 4px 12px 4px 4px; border: 1px solid var(--line-strong); border-radius: 4px; color: var(--text); text-decoration: none; font-size: 15px; font-weight: 600; }
-    .jump span { display: grid; place-items: center; min-width: 30px; height: 30px; border-radius: 3px; font: 700 15px/1 var(--studio); color: var(--g-bg); background: var(--g-accent); }
+    .jump a { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 5px 14px 5px 5px; border: 1px solid var(--line-strong); border-radius: 8px; color: var(--text); text-decoration: none; font-size: 15px; font-weight: 600; }
+    .jump .app-icon { width: 32px; height: 32px; border-radius: 7px; box-shadow: 0 0 0 1px rgba(255, 255, 255, .12); }
     .jump a:hover { border-color: var(--g-accent); color: var(--text); }
+  }
+  /* Phones: the three icons side by side with their names under them, as on a home screen. */
+  @media (max-width: 559.98px) {
+    .jump ol { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .jump a { display: flex; flex-direction: column; gap: 8px; height: 100%; padding: 12px 6px 11px; text-align: center; font-size: 13.5px; line-height: 1.2; text-wrap: balance; }
+    .jump .app-icon { width: 44px; height: 44px; border-radius: 10px; }
   }
 
   /* ---------- The stage: three panels, one open ---------- */
@@ -596,8 +606,9 @@ const facts = [
 
   .tp-body { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; container-type: inline-size; }
   .tp-meta { margin: 0; }
-  .tp-body .label { margin: 0; display: flex; gap: 12px; align-items: baseline; }
-  .tp-idx { color: var(--g-dim); }
+  .tp-body .label { margin: 0; display: flex; gap: 12px; align-items: center; }
+  /* The game's app icon beside what it is, as in a store listing (on phones it is on the art). */
+  .tp-icon-open { width: 40px; height: 40px; }
   /* Each game's own name (GameTitle), on one line, as wide as the copy allows. */
   .tp-title { margin: 2px 0; line-height: 1; letter-spacing: 0; max-width: 100%; }
   .tp-title a { display: block; text-decoration: none; border-radius: 2px; }
@@ -713,10 +724,9 @@ const facts = [
         visibility 0s linear calc(var(--k) * var(--open) * .14s);
     }
     .tp-spine-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
-    .tp-no { font: 700 64px/.8 var(--studio); color: transparent; -webkit-text-stroke: 1.5px var(--g-accent); letter-spacing: .01em; }
-    .theme-murder .tp-no { font: 700 60px/.8 var(--g-title); -webkit-text-stroke-width: 1.25px; }
-    .theme-race .tp-no { font: 400 34px/1 var(--g-title); -webkit-text-stroke-width: 1px; padding-top: 4px; }
-    .tp-glyph { width: 30px; height: auto; color: var(--g-accent); margin-top: 2px; }
+    /* At the top, like a boxed edition's spine: the game's app icon, and the studio's UX. */
+    .tp-icon { width: 48px; height: 48px; }
+    .tp-glyph { width: 30px; height: auto; color: var(--g-accent); margin-top: 4px; }
     /* The game's own name turned on its side, reading up the spine, as large as the room
        it has allows (cqh, cqw: shares of its own box), so a short stage, larger text or
        wider spacing shrinks it instead of cutting it off. */
@@ -731,10 +741,9 @@ const facts = [
     .theme-robot .tp-vname > .gt-robot { width: min(300px, 100cqh, 160cqw); max-width: none; }
     .tp-foot { display: flex; flex-direction: column; align-items: stretch; gap: 10px; }
     .tp-genre { margin: 0; font: 500 11px/1.35 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--g-accent); hyphens: manual; overflow-wrap: break-word; }
-    .tp-fact { margin: 0 0 2px; color: var(--g-dim); font-size: 14px; line-height: 1.3; }
-    .tp-fact b { display: block; font: 700 30px/1 var(--studio); color: var(--g-text); margin-bottom: 2px; }
-    .theme-murder .tp-fact b { font: 700 28px/1.05 var(--g-title); }
-    .theme-race .tp-fact b { font: 400 20px/1.3 var(--g-title); }
+    /* The game's one fact as plain words: the number and its unit together, then a few more. */
+    .tp-fact { margin: 0 0 2px; color: var(--g-dim); font-size: 13.5px; line-height: 1.35; }
+    .tp-fact b { display: block; font: 700 19px/1.2 var(--body); color: var(--g-text); margin-bottom: 1px; }
     .tp-cta { position: relative; z-index: 2; min-height: 44px; padding: 8px 12px; gap: 8px; font-size: 14px; line-height: 1.2; text-align: left; justify-content: flex-start; }
     .tp-cta svg { width: 18px; height: 18px; }
     /* "More" opens the panel; its hit area covers the whole spine, under the store button. */
@@ -776,16 +785,13 @@ const facts = [
     .tp-art::before { opacity: 1; background: linear-gradient(180deg, color-mix(in srgb, var(--g-bg) 80%, transparent) 0, transparent 46%); }
     .tp-art::after { background: linear-gradient(0deg, var(--g-bg) 0%, color-mix(in srgb, var(--g-bg) 70%, transparent) 24%, transparent 56%); }
     .tp-cover { position: absolute; z-index: 2; inset: 16px var(--gutter) auto; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
-    .tp-num { font: 700 52px/.8 var(--studio); color: transparent; -webkit-text-stroke: 1.5px var(--g-accent); }
-    .theme-murder .tp-num { font: 700 50px/.8 var(--g-title); }
-    .theme-race .tp-num { font: 400 28px/1 var(--g-title); -webkit-text-stroke-width: 1px; }
+    .tp-cover-icon { width: 52px; height: 52px; box-shadow: 0 0 0 1px rgba(255, 255, 255, .16), 0 6px 18px rgba(0, 0, 0, .5); }
+    .tp-icon-open { display: none; }
     /* The stat sits on a soft shade of the game's ground, so it reads even where the
        art behind it is bright (the Robot's laser). */
     .tp-cover-stat { position: relative; isolation: isolate; max-width: 11.5em; text-align: right; color: var(--g-text); font-size: 13.5px; line-height: 1.3; text-shadow: 0 1px 8px var(--g-bg); }
     .tp-cover-stat::before { content: ''; position: absolute; z-index: -1; inset: -16px -18px; border-radius: 18px; background: color-mix(in srgb, var(--g-bg) 85%, transparent); filter: blur(8px); }
-    .tp-cover-stat b { display: block; font: 700 32px/1 var(--studio); color: var(--g-accent); margin-bottom: 2px; }
-    .theme-murder .tp-cover-stat b { font: 700 30px/1.05 var(--g-title); }
-    .theme-race .tp-cover-stat b { font: 400 22px/1.2 var(--g-title); }
+    .tp-cover-stat b { display: block; font: 700 19px/1.2 var(--body); color: var(--g-text); margin-bottom: 2px; }
     .tp-body { position: relative; margin-top: -64px; padding: 0 var(--gutter) 40px; z-index: 1; }
     .tp-pause, .tp-art video { display: none; }
   }

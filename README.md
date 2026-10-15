@@ -18,7 +18,8 @@ npm run check      # fails on broken internal links or anchors in dist/
 | What | Where |
 | --- | --- |
 | Games: text (English and Swedish), store links, facts, FAQ, screenshots, trailers | `src/data/games.ts` |
-| Each game's short genre and its one number for the front page (`genreShort`, `stat`: shown on the spines, the phone tiles and the studio facts) | `src/data/games.ts` |
+| Each game's short genre and its one fact for the front page (`genreShort`, `stat`: the number with its unit, such as "4–20 players", and a few words more; shown on the spines, the phone tiles and the studio facts) | `src/data/games.ts` |
+| Each game's app icon, as players see it on their phones and in the stores (copied from the game's repo at 256 px: Race `src/Client/public/icon-512.png`, Murder its iOS `AppIcon.appiconset`, Robot `Assets/Icons/AppIcons/appstore.png`), shown on the front page spines, open panels, phone tiles and the phone jump row through `src/components/GameIcon.astro` | `src/assets/<game>/icon.png` |
 | Learning apps ("Other work") | `src/data/other.ts` |
 | Studio details, socials, Steam release date (and its wording), badges, the Robot panel's loop by date (`ROBOT_LOOPS`), store button labels, UI strings | `src/data/site.ts` |
 | News posts (Markdown, English) | `src/content/news/*.md` |

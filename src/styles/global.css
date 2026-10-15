@@ -86,6 +86,9 @@ p { margin: 0 0 1em; }
 .skip { position: absolute; left: -9999px; top: 8px; background: var(--accent); color: var(--accent-ink); padding: 8px 12px; z-index: 10; }
 .skip:focus { left: 8px; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+/* A game's app icon (GameIcon.astro), rounded like one on a phone, with a hairline so a
+   dark icon keeps its edge on a dark ground. */
+.app-icon { display: block; flex: none; max-width: none; border-radius: 22.5%; box-shadow: 0 0 0 1px rgba(255, 255, 255, .14), 0 3px 12px rgba(0, 0, 0, .4); }
 
 /* Each game's own name, as the game sets it (GameTitle.astro). Sizes come from the
    font-size where it is used, chosen to fit one line (Murder is about 11.4em wide with

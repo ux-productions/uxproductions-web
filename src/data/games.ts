@@ -4,6 +4,7 @@ import type { Lang } from './site';
 import robotHero from '../assets/robot/hero.jpg';
 import robotCapsule from '../assets/robot/capsule.jpg';
 import robotLogo from '../assets/robot/logo.png';
+import robotIcon from '../assets/robot/icon.png';
 import robotTrailerPoster from '../assets/robot/trailer-poster.jpg';
 import robotHalloweenPoster from '../assets/robot/halloween-poster.jpg';
 import robot01 from '../assets/robot/01_hero.jpg';
@@ -16,6 +17,7 @@ import robot07 from '../assets/robot/07_worlds.jpg';
 import robot08 from '../assets/robot/08_results.jpg';
 import murderHero from '../assets/murder/hero.jpg';
 import murderCard from '../assets/murder/card.jpg';
+import murderIcon from '../assets/murder/icon.png';
 import murder01 from '../assets/murder/01-role-reveal.jpg';
 import murder02 from '../assets/murder/02-night.jpg';
 import murder03 from '../assets/murder/03-day.jpg';
@@ -24,6 +26,7 @@ import murder05 from '../assets/murder/05-gameover.jpg';
 import murder06 from '../assets/murder/06-lobby.jpg';
 import raceHero from '../assets/race/hero.jpg';
 import raceCard from '../assets/race/card.jpg';
+import raceIcon from '../assets/race/icon.png';
 import race01 from '../assets/race/01-breaker-bay.jpg';
 import race02 from '../assets/race/02-switchback-nocturne.jpg';
 import race03 from '../assets/race/03-fallow-pines.jpg';
@@ -59,8 +62,10 @@ export interface Game {
   genre: L;
   /** The genre in two or three words, for tight spots like the front page spines. */
   genreShort: L;
-  /** One concrete number about the game, for the front page spines and tiles and the studio facts. */
-  stat: { value: string; label: L };
+  /** One concrete fact about the game, read at a glance: the number and its unit together
+   *  (`value` + `unit`: "4–20 players") with a few words more (`detail`) on the front page
+   *  spines and phone tiles; `label` is the whole phrase after the number, for the studio facts. */
+  stat: { value: string; unit: L; detail: L; label: L };
   tagline: L;
   /** One line for cards. */
   pitch: L;
@@ -75,6 +80,8 @@ export interface Game {
   website?: string;
   hero: ImageMetadata;
   card: ImageMetadata;
+  /** The game's app icon, as players see it on their phones and in the stores (square, unrounded). */
+  icon: ImageMetadata;
   logo?: ImageMetadata;
   shots: Shot[];
   shotsPortrait?: boolean;
@@ -98,7 +105,12 @@ export const ROBOT: Game = {
   genre: { en: 'Programming puzzles and races', sv: 'Programmeringspussel och race' },
   // The soft hyphen lets the long Swedish word break on the narrowest spines.
   genreShort: { en: 'Programming puzzles', sv: 'Programmerings­pussel' },
-  stat: { value: '57', label: { en: 'hand-made levels in six worlds', sv: 'handgjorda banor i sex världar' } },
+  stat: {
+    value: '57',
+    unit: { en: 'levels', sv: 'banor' },
+    detail: { en: 'hand-made, in six worlds', sv: 'handgjorda, i sex världar' },
+    label: { en: 'hand-made levels in six worlds', sv: 'handgjorda banor i sex världar' },
+  },
   tagline: {
     en: "Your robot does exactly what you tell it. That's the problem.",
     sv: 'Din robot gör exakt det du säger åt den. Det är det som är problemet.',
@@ -185,6 +197,7 @@ export const ROBOT: Game = {
   ],
   hero: robotHero,
   card: robotCapsule,
+  icon: robotIcon,
   logo: robotLogo,
   shots: [
     { src: robot02, alt: { en: 'Planning a turn: four program slots over a hand of move cards', sv: 'En tur planeras: fyra programplatser ovanför en hand med rörelsekort' } },
@@ -230,7 +243,12 @@ export const MURDER: Game = {
   shortName: 'Murder',
   genre: { en: 'Noir social deduction game', sv: 'Mörkt sällskapsspel' },
   genreShort: { en: 'Social deduction', sv: 'Sällskapsspel' },
-  stat: { value: '4–20', label: { en: 'players, in one room or online', sv: 'spelare, i samma rum eller online' } },
+  stat: {
+    value: '4–20',
+    unit: { en: 'players', sv: 'spelare' },
+    detail: { en: 'in one room or online', sv: 'i samma rum eller online' },
+    label: { en: 'players, in one room or online', sv: 'spelare, i samma rum eller online' },
+  },
   tagline: {
     en: 'Someone at this table is a killer. Trust no one.',
     sv: 'Någon vid det här bordet är en mördare. Lita på ingen.',
@@ -308,6 +326,7 @@ export const MURDER: Game = {
   website: 'https://the-perfect-murder.com',
   hero: murderHero,
   card: murderCard,
+  icon: murderIcon,
   shots: [
     { src: murder01, alt: { en: 'A secret role being revealed', sv: 'En hemlig roll avslöjas' } },
     { src: murder02, alt: { en: 'Night falls on the town', sv: 'Natten faller över staden' } },
@@ -334,7 +353,12 @@ export const RACE: Game = {
   shortName: 'Race',
   genre: { en: 'Top-down arcade racing', sv: 'Arkadracing uppifrån' },
   genreShort: { en: 'Arcade racing', sv: 'Arkadracing' },
-  stat: { value: '4', label: { en: 'circuits and three car classes', sv: 'banor och tre bilklasser' } },
+  stat: {
+    value: '4',
+    unit: { en: 'circuits', sv: 'banor' },
+    detail: { en: 'and three car classes', sv: 'och tre bilklasser' },
+    label: { en: 'circuits and three car classes', sv: 'banor och tre bilklasser' },
+  },
   tagline: {
     en: 'One more corner. One cleaner line. One perfect lap.',
     sv: 'En kurva till. En renare linje. Ett perfekt varv.',
@@ -410,6 +434,7 @@ export const RACE: Game = {
   website: 'https://the-perfect-race.com',
   hero: raceHero,
   card: raceCard,
+  icon: raceIcon,
   shots: [
     { src: race01, alt: { en: 'Racing through Breaker Bay', sv: 'Racing genom Breaker Bay' } },
     { src: race02, alt: { en: 'Switchback Nocturne at night', sv: 'Switchback Nocturne på natten' } },

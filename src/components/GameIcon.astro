@@ -1,0 +1,31 @@
+---
+/**
+ * A game's app icon, as players see it on their phones and in the stores (src/assets/<game>/icon.png,
+ * copied from each game's repo). The files are square and unrounded, so it is rounded here like an
+ * app icon (.app-icon in global.css). One set of files per game (56 px, for 1x to 3x screens), so the
+ * front page fetches each icon once wherever it shows it; the CSS where it is used sets the size it
+ * is drawn at (up to 56 px). It sits next to the game's name, so it is decorative (empty alt) unless
+ * `alt` is given.
+ */
+import { Image } from 'astro:assets';
+import type { Game } from '../data/games';
+
+interface Props {
+  game: Game;
+  class?: string;
+  alt?: string;
+  eager?: boolean;
+}
+const { game, class: className, alt = '', eager = false } = Astro.props;
+const size = 56;
+---
+<Image
+  src={game.icon}
+  alt={alt}
+  width={size}
+  height={size}
+  densities={[1, 2, 3].filter((d) => size * d <= game.icon.width)}
+  class:list={['app-icon', className]}
+  loading={eager ? 'eager' : 'lazy'}
+  decoding="async"
+/>
