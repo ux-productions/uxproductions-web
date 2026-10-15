@@ -6,8 +6,8 @@ import Base from '../layouts/Base.astro';
 import NewsList from '../components/NewsList.astro';
 import Socials from '../components/Socials.astro';
 import StoreButtons from '../components/StoreButtons.astro';
-import { GAMES } from '../data/games';
-import { SITE, badgeFor, localize, t, type Lang } from '../data/site';
+import { GAMES, gameBySlug } from '../data/games';
+import { FEATURED_GAME, SITE, badgeFor, localize, t, type Lang } from '../data/site';
 import { freshNews } from '../data/news';
 
 interface Props {
@@ -17,6 +17,8 @@ const { lang } = Astro.props;
 const s = t(lang);
 const sv = lang === 'sv';
 const news = await freshNews();
+const featured = gameBySlug(FEATURED_GAME)!;
+const featuredBadge = badgeFor(featured.slug);
 
 const title = sv ? 'UX Productions: The Perfect Robot, Murder och Race' : 'UX Productions: The Perfect Robot, Murder and Race';
 const description = sv
@@ -35,16 +37,33 @@ const website = {
 ---
 <Base title={title} description={description} lang={lang} path="/" bilingual image="/og/studio.jpg" imageAlt="The Perfect Robot, The Perfect Murder and The Perfect Race" jsonld={[website]}>
   <section class="front">
+    <div class="front-art">
+      <Picture
+        src={featured.hero}
+        alt=""
+        widths={[720, 1280, 1920, 2400].filter((w) => w <= featured.hero.width)}
+        sizes="100vw"
+        formats={['avif', 'webp']}
+        loading="eager"
+        fetchpriority="high"
+      />
+    </div>
     <div class="wrap">
       <div class="front-head">
         <p class="label accent">{sv ? 'Spelstudio i Eskilstuna sedan 2013' : 'Game studio in Eskilstuna, Sweden, since 2013'}</p>
         <h1>{sv ? 'Spel från UX Productions' : 'Games by UX Productions'}</h1>
         <p class="lede">{sv ? 'Tre spel som vart och ett bygger på en idé. Ingen reklam, inga prenumerationer.' : 'Three games, each built around one idea. No ads, no subscriptions.'}</p>
+        {featuredBadge && (
+          <a class="featured" href={localize(`/games/${featured.slug}/`, lang)}>
+            <span>{featuredBadge[lang]}</span>{featured.name}
+          </a>
+        )}
       </div>
       <div class="panels">
         {GAMES.map((g, i) => {
           const href = localize(`/games/${g.slug}/`, lang);
-          const badge = badgeFor(g.slug);
+          // The featured game's badge already shows in the hero.
+          const badge = g.slug === featured.slug ? undefined : badgeFor(g.slug);
           return (
             <article class={`game panel theme-${g.theme}`}>
               <a class="panel-art" href={href} tabindex="-1" aria-hidden="true">
@@ -55,7 +74,7 @@ const website = {
                   sizes="(max-width: 900px) 100vw, 380px"
                   formats={['avif', 'webp']}
                   loading="eager"
-                  fetchpriority={i === 0 ? 'high' : 'auto'}
+                  fetchpriority="auto"
                 />
               </a>
               <div class="panel-body">
@@ -116,11 +135,18 @@ const website = {
 </Base>
 
 <style>
-  .front {
-    padding-block: clamp(36px, 6vw, 72px) clamp(8px, 2vw, 24px);
-    background: radial-gradient(ellipse 70% 55% at 50% 0%, rgba(242, 169, 59, .13), transparent 70%);
-  }
-  .front-head { max-width: 40em; margin-bottom: clamp(24px, 4vw, 40px); }
+  .front { position: relative; isolation: isolate; padding-bottom: clamp(8px, 2vw, 24px); }
+  .front-art { position: absolute; inset: 0 0 auto 0; height: clamp(440px, 46vw, 640px); z-index: -1; overflow: hidden; background: #0d0a07; }
+  .front-art img { width: 100%; height: 100%; object-fit: cover; object-position: 55% 78%; }
+  .front-art::after { content: ''; position: absolute; inset: 0;
+    background: linear-gradient(0deg, var(--ground) 2%, rgba(23, 18, 13, .6) 38%, rgba(23, 18, 13, .15) 75%),
+                linear-gradient(90deg, rgba(23, 18, 13, .85) 0%, rgba(23, 18, 13, .35) 45%, rgba(23, 18, 13, 0) 70%); }
+  .front-head { max-width: 40em; padding-top: clamp(64px, 11vw, 150px); margin-bottom: clamp(24px, 4vw, 40px); }
+  .front-head h1 { text-shadow: 0 2px 18px rgba(0, 0, 0, .5); }
+  .featured { display: inline-flex; align-items: center; gap: 10px; margin-top: 18px; color: var(--text); font-weight: 600; text-decoration: none; padding: 6px 14px 6px 6px; border: 1px solid var(--line-strong); border-radius: 4px; background: rgba(23, 18, 13, .6); }
+  .featured span { background: var(--accent); color: var(--accent-ink); font: 600 11px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; padding: 6px 8px; border-radius: 3px; }
+  .featured:hover { color: var(--text); border-color: var(--accent); }
+  @media (max-width: 640px) { .front-art { height: 380px; } .front-art img { object-position: 30% 80%; } .front-head { padding-top: 48px; } }
   .front-head .label { margin: 0 0 10px; }
   .front-head h1 { margin-bottom: 12px; }
   .lede { font-size: clamp(1.1rem, 2vw, 1.3rem); color: var(--text-dim); margin: 0; }

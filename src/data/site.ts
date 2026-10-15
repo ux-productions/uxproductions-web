@@ -47,6 +47,9 @@ export const BADGES: { game: string; en: string; sv: string; from?: Date; until?
 export const badgeFor = (game: string, now = new Date()) =>
   BADGES.find((b) => b.game === game && (!b.from || now >= b.from) && (!b.until || now < b.until));
 
+/** The game whose key art fills the top of the front page. */
+export const FEATURED_GAME = 'the-perfect-robot';
+
 /** The front page shows news only while the newest post is younger than this. */
 export const NEWS_FRESH_DAYS = 90;
 
