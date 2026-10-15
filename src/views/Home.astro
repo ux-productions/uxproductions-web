@@ -42,9 +42,13 @@ const launchBadge = badgeFor(ROBOT.slug);
 const steamOut = robotOnSteam();
 const release = steamRelease(lang);
 const outBadge = BADGES.find((b) => b.game === ROBOT.slug && b.from?.getTime() === ROBOT_STEAM_RELEASE.getTime());
-const outNote = sv ? 'Ute nu på Steam. Finns också på iOS och Android.' : 'Out now on Steam. Also on iOS and Android.';
+// The chip already says "out now", so the sentence says when it came out.
+const outNote = sv
+  ? `Släpptes på Steam ${release.day}. Finns också på iOS och Android.`
+  : `Released on Steam on ${release.day}. Also on iOS and Android.`;
 const launch = launchBadge && {
-  chip: steamOut ? launchBadge[lang] : `${launchBadge[lang]} · ${release.time}`,
+  // A no-break space before the dot: a narrow chip breaks after it, never inside the time.
+  chip: steamOut ? launchBadge[lang] : `${launchBadge[lang]} · ${release.time}`,
   note: steamOut
     ? outNote
     : sv ? `Släpps på Steam ${release.day} ${release.time}. Finns redan på iOS och Android.` : `Comes to Steam on ${release.day} at ${release.time}. Already out on iOS and Android.`,
@@ -54,24 +58,28 @@ const launch = launchBadge && {
 const steam = ROBOT.stores.find((st) => st.kind === 'steam')!;
 const units = sv ? ['Dagar', 'Timmar', 'Min'] : ['Days', 'Hours', 'Min'];
 
-// ---- The three panels. How each game's art sits: x as a spine, x when open, y on wide
-// screens, and x and y on phones. The Robot spine shows the floating robot head rather
-// than the laser; the open Robot (and phones) zoom in on the full-size key art so the
-// green robot stands beside the copy. Race uses one crop of a night circuit from its
-// press screenshot, large enough never to be upscaled.
+// ---- The three panels. How each game's art sits on wide screens: x and y as a spine
+// (x0, y0) and open (x1, y1); and on phones (xm, ym). The Robot places its key art by
+// two of its own points instead (see the stage CSS): the floating head centred on its
+// spine, and the green robot right of the copy when open. Race uses one crop of a night
+// circuit from its press screenshot, large enough never to be upscaled: its spine runs
+// along the circuit's straight, clear of the cars, and the open panel keeps the whole
+// car pack in frame. Each `sizes` is the width the art is drawn at (the stage is
+// 540-760 px tall; phone tiles 58vw, at most 420 px).
 const ART = {
-  robot: { src: robotKeyArt, widths: [1100, 1600, 2400, 3200, 3840], sizes: '(min-width: 960px) 2800px, 1100px', x0: '78%', x1: '24%', y: '50%', xm: '40%', ym: '50%' },
-  murder: { src: MURDER.hero, widths: [800, 1200, 1672], sizes: '(min-width: 960px) 1400px, 640px', x0: '34%', x1: '60%', y: '50%', xm: '40%', ym: '50%' },
-  race: { src: racePanel, widths: [600, 1000, 1400, 1730], sizes: '(min-width: 960px) 1000px, 100vw', x0: '39%', x1: '50%', y: '100%', xm: '50%', ym: '45%' },
+  robot: { src: robotKeyArt, widths: [1100, 1600, 2400, 3200, 3840], sizes: '(min-width: 960px) clamp(1820px, calc((100vh - 340px) * 3.9), 2950px), (min-width: 724px) 1960px, 270vw', x0: '50%', x1: '50%', y0: '50%', y1: '50%', xm: '30%', ym: '50%' },
+  murder: { src: MURDER.hero, widths: [640, 840, 1200, 1672], sizes: '(min-width: 960px) max(960px, calc((100vh - 360px) * 1.78)), 105vw', x0: '34%', x1: '60%', y0: '50%', y1: '50%', xm: '40%', ym: '50%' },
+  race: { src: racePanel, widths: [600, 1000, 1400, 1730], sizes: '(min-width: 960px) 1000px, 100vw', x0: '100%', x1: '50%', y0: '50%', y1: '60%', xm: '50%', ym: '45%' },
 } as const;
+const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 const pad = (i: number) => String(i + 1).padStart(2, '0');
 
 // ---- The studio band's facts, with the game numbers taken from games.ts.
 const facts = [
   { n: SITE.founded, text: sv ? 'Grundad i Eskilstuna' : 'Founded in Eskilstuna' },
   { n: String(GAMES.length), text: sv ? 'Spel, vart och ett kring en idé' : 'Games, each built around one idea' },
-  { n: ROBOT.stat.value, text: ROBOT.stat.label[lang], game: ROBOT.name },
-  { n: MURDER.stat.value, text: MURDER.stat.label[lang], game: MURDER.name },
+  { n: ROBOT.stat.value, text: cap(ROBOT.stat.label[lang]), game: ROBOT.name },
+  { n: MURDER.stat.value, text: cap(MURDER.stat.label[lang]), game: MURDER.name },
   { n: '0', text: sv ? 'Reklam eller prenumerationer, i något av spelen' : 'Ads or subscriptions, in any of the games' },
 ];
 ---
@@ -85,7 +93,7 @@ const facts = [
         <h1>{sv ? 'Spel från UX Productions' : 'Games by UX Productions'}</h1>
       </div>
       {launch && (
-        <div class="launch theme-robot">
+        <div class:list={['launch theme-robot', { 'has-cd': !steamOut }]}>
           <p class="launch-top">
             <span class="badge" data-after={launch.after?.chip}>{launch.chip}</span>
             <a class="launch-name" href={localize(`/games/${ROBOT.slug}/`, lang)}>{ROBOT.name}</a>
@@ -94,7 +102,7 @@ const facts = [
           <div class="launch-row">
             <a class="btn primary" href={steam.url} rel="noopener">
               <Icon name="steam" />
-              <span data-after={steamOut ? undefined : storeLabel('steam', lang, true)}>{storeLabel('steam', lang)}</span>
+              <span data-after={steamOut ? undefined : storeLabel('steam', lang, true)}>{storeLabel('steam', lang)}</span><span class="visually-hidden">{` (${ROBOT.name})`}</span>
             </a>
             {!steamOut && (
               <p class="cd" role="timer" data-countdown={ROBOT_STEAM_RELEASE.toISOString()} data-lang={lang} hidden>
@@ -136,7 +144,7 @@ const facts = [
               data-video={g.theme === 'robot' ? '/video/robot-loop.mp4' : undefined}
               data-pause={sv ? 'Pausa filmen' : 'Pause the video'}
               data-play={sv ? 'Spela filmen' : 'Play the video'}
-              style={`--x0:${art.x0};--x1:${art.x1};--y:${art.y};--xm:${art.xm};--ym:${art.ym}`}
+              style={`--x0:${art.x0};--x1:${art.x1};--y0:${art.y0};--y1:${art.y1};--xm:${art.xm};--ym:${art.ym}`}
             >
               <div class="tp-art">
                 <Picture
@@ -158,6 +166,9 @@ const facts = [
               <div class="tp-body">
                 {badge && <p class="tp-meta"><span class="badge">{badge[lang]}</span></p>}
                 <p class="label accent"><span class="tp-idx">{pad(i)}</span>{g.genre[lang]}</p>
+                {/* The spine and the phone cover show the game's number only to the eye;
+                    where the pitch does not already say it, screen readers get it here. */}
+                {!g.pitch[lang].includes(g.stat.value) && !g.pitch[lang].includes(g.stat.label[lang]) && <p class="visually-hidden">{`${g.stat.value} ${g.stat.label[lang]}`}</p>}
                 <h2 class="tp-title" id={`${g.slug}-t`}>
                   <a href={href}>
                     {g.theme === 'robot' && g.logo ? (
@@ -170,8 +181,8 @@ const facts = [
                 <p class="tp-tag">{g.tagline[lang]}</p>
                 <p class="tp-pitch">{g.pitch[lang]}</p>
                 <div class="tp-actions">
-                  <StoreButtons game={g} lang={lang} mainOnly />
-                  <a class="more" href={href}>{s.aboutGame}</a>
+                  <StoreButtons game={g} lang={lang} mainOnly named />
+                  <a class="more" href={href}>{s.aboutGame}<span class="visually-hidden">{` (${g.name})`}</span></a>
                 </div>
                 <ul class="chips" aria-label={sv ? 'Plattformar' : 'Platforms'}>{g.platforms.map((pl) => <li><span>{pl}</span></li>)}</ul>
               </div>
@@ -189,7 +200,7 @@ const facts = [
                   <p class="tp-fact" aria-hidden="true"><b>{g.stat.value}</b> {g.stat.label[lang]}</p>
                   <a class="btn primary tp-cta" href={main.url} rel="noopener">
                     <Icon name={main.kind} />
-                    <span data-after={main.kind === 'steam' && !steamOut ? storeLabel('steam', lang, true) : undefined}>{storeLabel(main.kind, lang)}</span>
+                    <span data-after={main.kind === 'steam' && !steamOut ? storeLabel('steam', lang, true) : undefined}>{storeLabel(main.kind, lang)}</span><span class="visually-hidden">{` (${g.name})`}</span>
                   </a>
                   <a class="tp-more" href={`#${g.slug}`}>
                     {sv ? 'Mer' : 'More'}<span class="visually-hidden">{sv ? ` om ${g.name}` : ` about ${g.name}`}</span>
@@ -297,13 +308,13 @@ const facts = [
       }
     };
     panels.forEach(spineLinks);
-    const open = (p: HTMLElement) => {
+    const open = (p: HTMLElement, gesture = true) => {
       if (p.classList.contains('is-open')) return;
       for (const q of panels) {
         q.classList.toggle('is-open', q === p);
         spineLinks(q);
       }
-      if (wide.matches && !still.matches) {
+      if (gesture && wide.matches && !still.matches) {
         p.classList.remove('opening');
         void p.offsetWidth;
         p.classList.add('opening');
@@ -323,7 +334,9 @@ const facts = [
     };
     for (const p of panels) {
       p.addEventListener('pointermove', (e) => {
-        if (e.pointerType !== 'mouse' || !wide.matches || p.classList.contains('is-open')) return;
+        if (e.pointerType !== 'mouse') return;
+        tri.classList.remove('kbd');
+        if (!wide.matches || p.classList.contains('is-open')) return;
         if ((e.target as Element).closest('.tp-cta')) return cancel();
         if (timer && Math.hypot(e.clientX - ox, e.clientY - oy) < 24) return;
         cancel();
@@ -333,9 +346,12 @@ const facts = [
       });
       p.addEventListener('pointerleave', cancel);
       p.addEventListener('animationend', () => p.classList.remove('opening'));
-      // Keyboard: focus on anything in a panel's body opens it.
+      // Keyboard: focus on anything in a panel's body opens it, and its copy shows at
+      // once (no hover delay) so the focus ring is never on an invisible link.
       p.addEventListener('focusin', (e) => {
-        if (!(e.target as Element).closest('.tp-spine')) open(p);
+        if ((e.target as Element).closest('.tp-spine')) return;
+        if (!p.classList.contains('is-open')) tri.classList.add('kbd');
+        open(p);
       });
       // A click or tap anywhere on a spine (its "More" link covers it) opens the panel.
       p.querySelector('.tp-more')?.addEventListener('click', (e) => {
@@ -346,6 +362,15 @@ const facts = [
         p.querySelector<HTMLElement>('.tp-title a')?.focus({ preventScroll: true });
       });
     }
+
+    // A link to a game's panel (#the-perfect-race, as the phone jump chips make) opens
+    // that panel, as it does without the script through :target.
+    const fromHash = (gesture: boolean) => {
+      const p = panels.find((q) => location.hash === `#${q.id}`);
+      if (p && wide.matches) open(p, gesture);
+    };
+    fromHash(false);
+    addEventListener('hashchange', () => fromHash(true));
 
     const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
     if (vp && wide.matches && !still.matches && !saveData) {
@@ -394,7 +419,9 @@ const facts = [
     const cells = [...cd.querySelectorAll<HTMLElement>('[data-cd]')];
     const text = cd.querySelector<HTMLElement>('[data-cd-text]')!;
     const launched = () => {
-      cd.remove();
+      // Hidden, not removed: the cards keep their place, so nothing below moves.
+      cd.hidden = true;
+      text.textContent = '';
       for (const el of document.querySelectorAll<HTMLElement>('[data-after]')) if (el.dataset.after) el.textContent = el.dataset.after;
     };
     const tick = () => {
@@ -428,6 +455,17 @@ const facts = [
     .mast.has-launch .lede { grid-area: lede; align-self: end; padding-bottom: 2px; }
     .launch { grid-area: launch; }
   }
+  /* Laptops (1280x720, 1366x768): a tighter masthead and launch block, so the stage
+     and all three panels' buttons fit on the first screen. */
+  @media (min-width: 960px) and (max-height: 860px) {
+    .mast { padding-block: 16px 14px; }
+    .mast .label { margin-bottom: 8px; }
+    .mast h1 { font-size: clamp(2.3rem, 3.9vw, 3.6rem); }
+    .mast.has-launch .mast-in { row-gap: 12px; }
+    .launch { padding: 14px 18px; }
+    .launch-note { margin-top: 8px; font-size: 14.5px; line-height: 1.45; }
+    .launch .btn { min-height: 42px; }
+  }
 
   /* The launch: The Perfect Robot's own navy and its logo's letter colours. */
   .launch { --c1: #ff7f8e; --c2: #ffc857; --c3: #74de78; --c4: #5ce1e6; --c5: #b98cff;
@@ -438,17 +476,34 @@ const facts = [
   .badge { background: var(--g-cta); color: var(--g-cta-ink); font: 600 11.5px/1.2 var(--mono); letter-spacing: .08em; text-transform: uppercase; padding: 6px 9px; border-radius: 3px; }
   .launch-name { font: 700 1.35rem/1 var(--studio); letter-spacing: .04em; text-transform: uppercase; color: var(--g-text) !important; text-decoration: none; }
   .launch-name:hover { color: var(--c4) !important; }
-  .launch-note { margin: 12px 0 0; color: var(--g-dim); font-size: 15.5px; line-height: 1.5; text-wrap: pretty; }
+  .launch-note { margin: 12px 0 0; color: var(--g-dim); font-size: 15.5px; line-height: 1.5; text-wrap: balance; }
   .launch-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px 20px; margin-top: 16px; }
   .launch :focus-visible { outline-color: var(--c4); }
   /* The countdown as move cards: a coloured top with the number, the unit under it.
-     It waits for the script with its space kept, so nothing moves when it appears. */
+     It waits for the script with its space kept, so nothing moves when it appears.
+     --cd-n and --cd-u are the number and unit sizes; a card is (n + u + 26px) tall. */
+  .launch { --cd-n: 1.6rem; --cd-u: 10px; --cd-w: 58px; --cd-pad: 0px; }
   .cd { display: flex; gap: 8px; margin: 0; }
   html.js .cd[hidden] { display: flex !important; visibility: hidden; }
-  .cd-card { display: block; width: 58px; border-radius: 6px; overflow: hidden; background: #0a1524; border: 1px solid #24476b; text-align: center; box-shadow: 0 3px 0 #050c16; }
-  .cd-card b { display: block; background: var(--c); color: #0a1524; font: 700 1.6rem/1 var(--studio); padding: 7px 0 5px; font-variant-numeric: tabular-nums;
+  .cd-card { display: block; width: var(--cd-w); border-radius: 6px; overflow: hidden; background: #0a1524; border: 1px solid #24476b; text-align: center; box-shadow: 0 3px 0 #050c16; }
+  .cd-card b { display: block; background: var(--c); color: #0a1524; font: 700 var(--cd-n)/1 var(--studio); padding: calc(7px - var(--cd-pad)) 0 calc(5px - var(--cd-pad)); font-variant-numeric: tabular-nums;
     box-shadow: inset 0 -3px 0 rgba(10, 21, 36, .18), inset 0 2px 0 rgba(255, 255, 255, .35); }
-  .cd-card span { display: block; font: 600 10px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--c); padding: 6px 0; }
+  .cd-card span { display: block; font: 600 var(--cd-u)/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--c); padding: calc(6px - var(--cd-pad)) 0; }
+  /* At the release the script hides the countdown but keeps its place, and the sentence
+     keeps its two lines, so the stage below never jumps. */
+  @media (min-width: 960px) {
+    html.js .launch.has-cd .launch-note { min-height: 2lh; }
+  }
+  /* Laptops: the countdown stands beside the words and the button, a size smaller. */
+  @media (min-width: 960px) and (max-height: 860px) {
+    .launch { --cd-n: 1.35rem; --cd-u: 9.5px; --cd-w: 52px; --cd-pad: 2px;
+      display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 20px; }
+    .launch-top { grid-column: 1 / -1; }
+    .launch-note { grid-column: 1; }
+    .launch-row { display: contents; }
+    .launch-row .btn { grid-column: 1; justify-self: start; margin-top: 12px; }
+    .launch .cd { grid-column: 2; grid-row: 2 / span 2; align-self: end; }
+  }
   .cd-card:nth-child(2) { --c: var(--c1); }
   .cd-card:nth-child(3) { --c: var(--c2); }
   .cd-card:nth-child(4) { --c: var(--c3); }
@@ -480,9 +535,12 @@ const facts = [
   .tp-art { position: absolute; inset: 0; z-index: -1; overflow: hidden; background: var(--g-bg); }
   .tp-art :is(img, video) {
     position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover;
-    object-position: calc(var(--x0) + (var(--x1) - var(--x0)) * var(--open)) var(--y);
+    object-position: calc(var(--x0) + (var(--x1) - var(--x0)) * var(--open)) calc(var(--y0) + (var(--y1) - var(--y0)) * var(--open));
   }
-  .tp-art img { transition: opacity .8s, object-position calc(var(--k) * .85s) var(--ease), top calc(var(--k) * .85s) var(--ease), height calc(var(--k) * .85s) var(--ease); }
+  .tp-art img {
+    --t: calc(var(--k) * .85s) var(--ease);
+    transition: opacity .8s, object-position var(--t), top var(--t), left var(--t), height var(--t), transform var(--t);
+  }
   /* The loop is a window of footage at no more than its own size (968x508), top right,
      feathered into the panel; the still key art fades out behind it while it plays. */
   .tp-art video {
@@ -493,8 +551,10 @@ const facts = [
     mask-image: linear-gradient(0deg, transparent 0, #000 34%), linear-gradient(90deg, transparent 0, #000 26%);
     mask-composite: intersect;
   }
-  .tp.has-video.is-open .tp-art video { opacity: 1; }
-  .tp.has-video.is-open .tp-art img { opacity: 0; }
+  @media (min-width: 960px) {
+    .tp.has-video.is-open .tp-art video { opacity: 1; }
+    .tp.has-video.is-open .tp-art img { opacity: 0; }
+  }
   /* Slim panels keep their art lit in the middle and dark where the type sits;
      the open one is dark only under its copy. */
   .tp-art::before, .tp-art::after { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none; }
@@ -520,6 +580,13 @@ const facts = [
      Zoomed in (open, phones), its art ends above the panel's foot, so its edge fades out. */
   .theme-robot .tp-art::after { --scrim: 78%; }
   .theme-robot .tp-art img { -webkit-mask-image: linear-gradient(180deg, #000 82%, transparent); mask-image: linear-gradient(180deg, #000 82%, transparent); }
+  /* As a spine its top edge sits below the number, so it fades in there too. */
+  @media (min-width: 960px) {
+    .theme-robot .tp-art img {
+      -webkit-mask-image: linear-gradient(180deg, transparent, #000 14%, #000 82%, transparent);
+      mask-image: linear-gradient(180deg, transparent, #000 14%, #000 82%, transparent);
+    }
+  }
   .tp-cover { display: none; }
 
   .tp-body { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
@@ -549,7 +616,11 @@ const facts = [
     border: 1px solid color-mix(in srgb, var(--g-text) 45%, transparent); background: color-mix(in srgb, var(--g-bg) 55%, transparent);
     color: var(--g-text); cursor: pointer; display: none;
   }
-  .tp.has-video.is-open .tp-pause { display: block; z-index: 4; }
+  /* Only where the loop plays: a window narrowed (or a tablet turned) below 960 px
+     hides the video, and its button goes with it. */
+  @media (min-width: 960px) {
+    .tp.has-video.is-open .tp-pause { display: block; z-index: 4; }
+  }
   .tp-pause::before { content: ''; position: absolute; inset: 0; margin: auto; width: 10px; height: 12px; border-inline: 3px solid currentColor; box-sizing: border-box; }
   .tp-pause.is-paused::before { width: 0; height: 0; border: 0; border-left: 11px solid currentColor; border-block: 7px solid transparent; margin-left: 15px; }
   .tp-pause:hover { border-color: var(--g-text); }
@@ -573,7 +644,7 @@ const facts = [
      needs (every body keeps its width and its height, open or not), never shorter than
      the stage. Works without JS through :hover, :focus-within and :target. */
   @media (min-width: 960px) {
-    .tri { display: flex; gap: 8px; min-height: clamp(540px, calc(100svh - 360px), 760px); }
+    .tri { --stage-h: clamp(540px, calc(100svh - 360px), 760px); display: flex; gap: 8px; min-height: var(--stage-h); }
     .tp {
       display: grid; grid-template: minmax(0, 1fr) / minmax(0, 1fr);
       flex: calc(1 + 3.4 * var(--open)) 1 0; min-width: 170px;
@@ -586,8 +657,24 @@ const facts = [
     html:not(.js) :where(.tri:has(.tp:hover) .tp) { --open: 0; --pe: none; --sv: visible; }
     html:not(.js) :where(.tri .tp:hover) { --open: 1; --pe: auto; --sv: hidden; }
 
-    /* The open Robot zooms in on its key art: the robot stands right of the copy. */
-    .theme-robot .tp-art img { top: calc(-43% * var(--open)); height: calc(100% + 25% * var(--open)); }
+    /* The Robot's key art is a wide panorama, always drawn to the panel's height, so it
+       is placed by two of its own points rather than by object-position: point --a of
+       the art (a share of its width) sits at --r across the panel. As a spine (0) the
+       floating head (75% across the art) is centred, a little smaller and below the
+       number; open (1) the art zooms in and the green robot (44% across) stands just
+       right of the copy, never past the panel's edge. --half is half the robot's width. */
+    .theme-robot {
+      --t0: 60px; --h0: min(100%, 520px); --r0: 50%; --a0: 75%;
+      --t1: -43%; --h1: 125%; --a1: 44.3%; --half: calc(var(--stage-h) * .195);
+      --r1: max(70%, min(calc(clamp(380px, 34vw, 540px) - clamp(14px, 1.5vw, 22px) + var(--half)), calc(100% - var(--half))));
+    }
+    .theme-robot .tp-art img {
+      inset: auto; width: auto; max-width: none;
+      top: calc(var(--t0) + (var(--t1) - var(--t0)) * var(--open));
+      height: calc(var(--h0) + (var(--h1) - var(--h0)) * var(--open));
+      left: calc(var(--r0) + (var(--r1) - var(--r0)) * var(--open));
+      transform: translateX(calc(-1 * (var(--a0) + (var(--a1) - var(--a0)) * var(--open))));
+    }
 
     .tp-body, .tp-spine { grid-area: 1 / 1; }
     .tp-body {
@@ -613,19 +700,21 @@ const facts = [
     .theme-murder .tp-no { font: 700 60px/.8 var(--g-title); -webkit-text-stroke-width: 1.25px; }
     .theme-race .tp-no { font: 400 34px/1 var(--g-title); -webkit-text-stroke-width: 1px; padding-top: 4px; }
     .tp-glyph { width: 30px; height: auto; color: var(--g-accent); margin-top: 2px; }
-    /* The name reads up the spine, the game's own lettering beside THE PERFECT. */
+    /* The name reads up the spine, the game's own lettering beside THE PERFECT. It is
+       sized to the room it has (cqh: a share of its own box's height), so a short stage,
+       larger text or wider letter spacing shrinks it instead of cutting it off. */
     .tp-vname {
-      flex: 1 1 0; min-height: 0; margin: 14px 0; overflow: hidden;
+      flex: 1 1 0; min-height: 0; margin: 14px 0; overflow: hidden; container-type: size;
       display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .1em;
       writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap;
       text-shadow: 0 1px 14px color-mix(in srgb, var(--g-bg) 85%, transparent);
     }
-    .tp-vname span { font: 600 15px/1 var(--studio); letter-spacing: .3em; text-transform: uppercase; color: var(--g-text); }
-    .tp-vname b { font: 700 52px/1 var(--studio); letter-spacing: .06em; text-transform: uppercase; color: var(--g-text); }
-    .theme-murder .tp-vname b { font: 700 50px/1.05 var(--g-title); letter-spacing: .01em; text-transform: none; color: var(--g-accent); }
-    .theme-race .tp-vname b { font: 400 32px/1.2 var(--g-title); letter-spacing: 0; color: var(--g-accent); text-shadow: .09em .09em 0 #5ce1e6; }
+    .tp-vname span { font: 700 min(15px, 8.5cqh)/1 var(--studio); letter-spacing: .3em; text-transform: uppercase; color: var(--g-text); }
+    .tp-vname b { font: 700 min(52px, 27cqh)/1 var(--studio); letter-spacing: .06em; text-transform: uppercase; color: var(--g-text); }
+    .theme-murder .tp-vname b { font: 700 min(50px, 21cqh)/1.05 var(--g-title); letter-spacing: .01em; text-transform: none; color: var(--g-accent); }
+    .theme-race .tp-vname b { font: 400 min(32px, 20cqh)/1.2 var(--g-title); letter-spacing: 0; color: var(--g-accent); text-shadow: .09em .09em 0 #5ce1e6; }
     .tp-foot { display: flex; flex-direction: column; align-items: stretch; gap: 10px; }
-    .tp-genre { margin: 0; font: 500 11px/1.35 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--g-accent); }
+    .tp-genre { margin: 0; font: 500 11px/1.35 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--g-accent); hyphens: manual; overflow-wrap: break-word; }
     .tp-fact { margin: 0 0 2px; color: var(--g-dim); font-size: 14px; line-height: 1.3; }
     .tp-fact b { display: block; font: 700 30px/1 var(--studio); color: var(--g-text); margin-bottom: 2px; }
     .theme-murder .tp-fact b { font: 700 28px/1.05 var(--g-title); }
@@ -642,6 +731,19 @@ const facts = [
     .tp-more:focus-visible::after { outline: 2px solid var(--g-accent); outline-offset: -5px; border-radius: 4px; }
     .tp:not(.is-open):hover .tp-art::before { opacity: .75; }
     .tp::after { opacity: calc(.6 + .4 * var(--open)); }
+    /* Opened by keyboard focus: the copy shows at once, so the focused link is never
+       invisible while the panel widens. */
+    .tri.kbd .tp-body { transition-duration: .2s !important; transition-delay: 0s !important; }
+  }
+  /* Laptops: a lower stage (see the masthead). */
+  @media (min-width: 960px) and (max-height: 860px) {
+    .tri { --stage-h: clamp(450px, calc(100svh - 280px), 760px); }
+  }
+  /* Portrait tablets and tall narrow windows: the open panel is taller than it is wide
+     and too narrow for the robot beside the copy, so the robot stands above it instead,
+     in the panel's empty top half, unzoomed and right of centre. */
+  @media (min-width: 960px) and (max-aspect-ratio: 1/1) {
+    .theme-robot { --t1: -49%; --h1: 100%; --r1: 62%; }
   }
 
   /* Phones and tablets: a stack of art tiles, each with its button in view. */
@@ -660,17 +762,30 @@ const facts = [
     .tp-num { font: 700 52px/.8 var(--studio); color: transparent; -webkit-text-stroke: 1.5px var(--g-accent); }
     .theme-murder .tp-num { font: 700 50px/.8 var(--g-title); }
     .theme-race .tp-num { font: 400 28px/1 var(--g-title); -webkit-text-stroke-width: 1px; }
-    .tp-cover-stat { max-width: 11.5em; text-align: right; color: var(--g-text); font-size: 13.5px; line-height: 1.3; text-shadow: 0 1px 8px var(--g-bg); }
+    /* The stat sits on a soft shade of the game's ground, so it reads even where the
+       art behind it is bright (the Robot's laser). */
+    .tp-cover-stat { position: relative; isolation: isolate; max-width: 11.5em; text-align: right; color: var(--g-text); font-size: 13.5px; line-height: 1.3; text-shadow: 0 1px 8px var(--g-bg); }
+    .tp-cover-stat::before { content: ''; position: absolute; z-index: -1; inset: -16px -18px; border-radius: 18px; background: color-mix(in srgb, var(--g-bg) 85%, transparent); filter: blur(8px); }
     .tp-cover-stat b { display: block; font: 700 32px/1 var(--studio); color: var(--g-accent); margin-bottom: 2px; }
     .theme-murder .tp-cover-stat b { font: 700 30px/1.05 var(--g-title); }
     .theme-race .tp-cover-stat b { font: 400 22px/1.2 var(--g-title); }
     .tp-body { position: relative; margin-top: -64px; padding: 0 var(--gutter) 40px; z-index: 1; }
     .tp-pause, .tp-art video { display: none; }
-    .tp.has-video.is-open .tp-art img { opacity: 1; }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .tp, .tp *, .tp::after, .tp-art::before, .tp-art::after { transition: none !important; animation: none !important; }
+  }
+
+  /* Print: the games' copy and buttons as plain text; the art, the spines and the
+     on-screen controls stay on screen. */
+  @media print {
+    .tp-art, .tp-cover, .tp-pause, .tp-spine, .cd, .jump, .tp::after, .launch::before { display: none !important; }
+    .tri { display: block; min-height: 0; margin: 0; }
+    .tp { display: block; overflow: visible; border: 0; break-inside: avoid; }
+    .tp + .tp { border-top: 1px solid #bbb; }
+    .tp-body { position: static; width: auto; margin: 0; padding: 18px 0; opacity: 1 !important; transform: none !important; }
+    .launch { background: none; border: 1px solid #bbb; }
   }
 
   /* ---------- News strip ---------- */
@@ -719,13 +834,17 @@ const facts = [
   .sb-follow h3 { font: 700 1.3rem/1 var(--studio); text-transform: uppercase; letter-spacing: .06em; color: var(--ink); }
   .sb-follow p { color: var(--ink-dim); margin: 8px 0 14px; font-size: 15px; }
   .sb-follow .social-icons a { width: 48px; height: 48px; }
+  /* Tablets: the mark beside the copy, then the facts and the socials side by side
+     across the whole band, so no column runs empty. */
   @media (max-width: 1100px) {
     .sb-in { grid-template-columns: minmax(160px, 240px) minmax(0, 1fr); }
-    .sb-side { grid-column: 2; }
+    .sb-side { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 32px clamp(32px, 4.5vw, 72px); align-items: start; }
+    .sb-follow { margin-top: 0; }
   }
   @media (max-width: 680px) {
     .sb-in { grid-template-columns: 1fr; gap: 28px; }
     .sb-mark { width: min(200px, 56vw); }
-    .sb-side { grid-column: auto; }
+    .sb-side { grid-column: auto; display: block; }
+    .sb-follow { margin-top: 26px; }
   }
 </style>

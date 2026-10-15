@@ -8,8 +8,10 @@ interface Props {
   lang: Lang;
   /** Show only the first (main) store. */
   mainOnly?: boolean;
+  /** Add the game's name to each button for screen readers, where several games' buttons share a page. */
+  named?: boolean;
 }
-const { game, lang, mainOnly = false } = Astro.props;
+const { game, lang, mainOnly = false, named = false } = Astro.props;
 // Before the release the Steam label carries its "Buy" wording in data-after, so the
 // front page can switch it the moment the game comes out (see Home.astro).
 const steamPending = !robotOnSteam();
@@ -18,7 +20,7 @@ const steamPending = !robotOnSteam();
   {(mainOnly ? game.stores.slice(0, 1) : game.stores).map((s, i) => (
     <a class:list={['btn', { primary: i === 0 }]} href={s.url} rel="noopener">
       <Icon name={s.kind} />
-      {s.kind === 'steam' && steamPending ? <span data-after={storeLabel('steam', lang, true)}>{storeLabel('steam', lang)}</span> : storeLabel(s.kind, lang)}
+      {s.kind === 'steam' && steamPending ? <span data-after={storeLabel('steam', lang, true)}>{storeLabel('steam', lang)}</span> : storeLabel(s.kind, lang)}{named && <span class="visually-hidden">{` (${game.name})`}</span>}
     </a>
   ))}
   <slot />

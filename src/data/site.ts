@@ -35,13 +35,15 @@ export const ROBOT_STEAM_RELEASE = new Date('2026-10-22T16:00:00Z');
 export const robotOnSteam = (now = new Date()) => now >= ROBOT_STEAM_RELEASE;
 
 /** The release day and time in Swedish time, worded from ROBOT_STEAM_RELEASE:
- *  day '22 October' / '22 oktober', time '18:00 CEST' / 'kl. 18.00'. */
+ *  day '22 October' / '22 oktober', time '18:00 CEST' / 'kl. 18.00'.
+ *  Each is joined with no-break spaces, so a narrow line never splits it. */
 export const steamRelease = (lang: Lang) => {
   const opts = { timeZone: 'Europe/Stockholm' } as const;
+  const nb = (s: string) => s.replace(/ /g, ' ');
   const day = ROBOT_STEAM_RELEASE.toLocaleDateString(lang === 'sv' ? 'sv-SE' : 'en-GB', { ...opts, day: 'numeric', month: 'long' });
   const hm = ROBOT_STEAM_RELEASE.toLocaleTimeString('en-GB', { ...opts, hour: '2-digit', minute: '2-digit' });
   const zone = new Intl.DateTimeFormat('en-GB', { ...opts, timeZoneName: 'short' }).formatToParts(ROBOT_STEAM_RELEASE).find((p) => p.type === 'timeZoneName')?.value;
-  return { day, time: lang === 'sv' ? `kl. ${hm.replace(':', '.')}` : `${hm} ${zone}` };
+  return { day: nb(day), time: nb(lang === 'sv' ? `kl. ${hm.replace(':', '.')}` : `${hm} ${zone}`) };
 };
 
 /**

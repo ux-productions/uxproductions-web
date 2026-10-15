@@ -96,7 +96,8 @@ export const ROBOT: Game = {
   name: 'The Perfect Robot',
   shortName: 'Robot',
   genre: { en: 'Programming puzzles and races', sv: 'Programmeringspussel och race' },
-  genreShort: { en: 'Programming puzzles', sv: 'Programmeringspussel' },
+  // The soft hyphen lets the long Swedish word break on the narrowest spines.
+  genreShort: { en: 'Programming puzzles', sv: 'Programmerings­pussel' },
   stat: { value: '57', label: { en: 'hand-made levels in six worlds', sv: 'handgjorda banor i sex världar' } },
   tagline: {
     en: "Your robot does exactly what you tell it. That's the problem.",

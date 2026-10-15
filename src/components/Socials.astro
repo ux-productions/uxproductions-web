@@ -14,7 +14,8 @@ const { variant = 'list' } = Astro.props;
       <li>
         <a href={s.url} rel="noopener me" title={`${s.name} ${s.handle}`}>
           <Icon name={s.id} />
-          <span class="visually-hidden">{s.name} {s.handle}</span>
+          {/* One expression, so the space between name and handle survives the compiler. */}
+          <span class="visually-hidden">{`${s.name} (${s.handle})`}</span>
         </a>
       </li>
     ))}
