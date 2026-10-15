@@ -34,6 +34,22 @@ export const SAME_AS = [
 export const ROBOT_STEAM_RELEASE = new Date('2026-10-22T16:00:00Z');
 export const robotOnSteam = (now = new Date()) => now >= ROBOT_STEAM_RELEASE;
 
+/**
+ * Front-page badges: the one place to flag something new on a game's panel.
+ * Each game shows its first badge whose dates include today; the daily build
+ * switches them on and off, so an expired badge simply disappears.
+ */
+export const BADGES: { game: string; en: string; sv: string; from?: Date; until?: Date }[] = [
+  { game: 'the-perfect-robot', en: 'On Steam 22 October', sv: 'På Steam 22 oktober', until: ROBOT_STEAM_RELEASE },
+  { game: 'the-perfect-robot', en: 'Out now on Steam', sv: 'Ute nu på Steam', from: ROBOT_STEAM_RELEASE, until: new Date('2026-11-05T16:00:00Z') },
+];
+
+export const badgeFor = (game: string, now = new Date()) =>
+  BADGES.find((b) => b.game === game && (!b.from || now >= b.from) && (!b.until || now < b.until));
+
+/** The front page shows news only while the newest post is younger than this. */
+export const NEWS_FRESH_DAYS = 90;
+
 const T = {
   en: {
     nav: { games: 'Games', news: 'News', press: 'Press', about: 'About' },

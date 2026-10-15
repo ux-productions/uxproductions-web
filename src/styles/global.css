@@ -101,23 +101,7 @@ p { margin: 0 0 1em; }
 .section-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; margin-bottom: 28px; }
 .section-head a { font-size: 15px; }
 
-/* Home hero */
-.hero { position: relative; background: #0d0a07; overflow: hidden; }
-.hero picture, .hero > img { display: block; }
-.hero img.hero-art { width: 100%; height: clamp(360px, 46vw, 600px); object-fit: cover; object-position: 50% 80%; }
-.hero::after { content: ''; position: absolute; inset: 0; pointer-events: none;
-  background: linear-gradient(0deg, rgba(23, 18, 13, .96) 6%, rgba(23, 18, 13, .55) 42%, rgba(23, 18, 13, 0) 72%),
-              linear-gradient(90deg, rgba(23, 18, 13, .75) 0%, rgba(23, 18, 13, 0) 55%); }
-.hero-copy { position: absolute; z-index: 1; left: 0; right: 0; bottom: clamp(24px, 5vw, 56px); }
-.hero-copy h1.label { max-width: none; }
-.hero-copy p { max-width: 34em; color: var(--text-dim); font-size: 1.1rem; }
-@media (max-width: 640px) {
-  .hero img.hero-art { height: 300px; object-position: 30% 50%; }
-  .hero::after { background: linear-gradient(0deg, var(--ground) 0%, rgba(23,18,13,0) 60%); }
-  .hero-copy { position: relative; bottom: auto; margin-top: -40px; }
-}
-
-/* Game cards (home and games index) */
+/* Game cards (games index, 404) */
 .game-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 22px; }
 .game-card { display: flex; flex-direction: column; background: var(--plate); border-radius: var(--radius); overflow: hidden; color: var(--text); text-decoration: none; border: 1px solid var(--line); transition: border-color .15s, transform .15s; }
 .game-card:hover { border-color: var(--line-strong); color: var(--text); transform: translateY(-2px); }

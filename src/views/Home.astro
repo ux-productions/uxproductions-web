@@ -1,13 +1,14 @@
 ---
+import '@fontsource/bodoni-moda/700.css';
+import '@fontsource/press-start-2p/400.css';
 import { Picture } from 'astro:assets';
 import Base from '../layouts/Base.astro';
-import GameCard from '../components/GameCard.astro';
 import NewsList from '../components/NewsList.astro';
 import Socials from '../components/Socials.astro';
 import StoreButtons from '../components/StoreButtons.astro';
-import { GAMES, ROBOT } from '../data/games';
-import { SITE, localize, robotOnSteam, t, type Lang } from '../data/site';
-import { publishedNews } from '../data/news';
+import { GAMES } from '../data/games';
+import { SITE, badgeFor, localize, t, type Lang } from '../data/site';
+import { freshNews } from '../data/news';
 
 interface Props {
   lang: Lang;
@@ -15,8 +16,7 @@ interface Props {
 const { lang } = Astro.props;
 const s = t(lang);
 const sv = lang === 'sv';
-const steamOut = robotOnSteam();
-const news = (await publishedNews()).slice(0, 3);
+const news = await freshNews();
 
 const title = sv ? 'UX Productions: The Perfect Robot, Murder och Race' : 'UX Productions: The Perfect Robot, Murder and Race';
 const description = sv
@@ -33,42 +33,47 @@ const website = {
   publisher: { '@id': `${SITE.url}/#organization` },
 };
 ---
-<Base title={title} description={description} lang={lang} path="/" bilingual image="/og/home.jpg" imageAlt="The Perfect Robot key art" jsonld={[website]}>
-  <section class="hero">
-    <Picture
-      src={ROBOT.hero}
-      class="hero-art"
-      alt={sv ? 'Robotar på en upplyst testbana, en sprängs av en laser' : 'Robots on a lit test board, one blown apart by a laser'}
-      widths={[720, 1280, 1920, 2400]}
-      sizes="100vw"
-      formats={['avif', 'webp']}
-      loading="eager"
-      fetchpriority="high"
-    />
-    <div class="hero-copy">
-      <div class="wrap">
-        <h1 class="label accent">{sv ? 'UX Productions, spelstudio i Sverige' : 'UX Productions, game studio in Sweden'}</h1>
-        <h2 class="hero-title">
-          {steamOut
-            ? sv ? 'The Perfect Robot finns nu på Steam' : 'The Perfect Robot is out now on Steam'
-            : sv ? 'The Perfect Robot kommer till Steam den 22 oktober' : 'The Perfect Robot comes to Steam on 22 October'}
-        </h2>
-        <p>{ROBOT.tagline[lang]} {sv ? 'Ett programmeringspussel med 57 handgjorda banor i sex världar.' : 'A programming puzzle game with 57 hand-made levels in six worlds.'}</p>
-        <StoreButtons game={ROBOT} lang={lang}>
-          <a class="btn" href={localize('/games/the-perfect-robot/', lang)}>{s.aboutGame}</a>
-        </StoreButtons>
-      </div>
-    </div>
-  </section>
-
-  <section class="section">
+<Base title={title} description={description} lang={lang} path="/" bilingual image="/og/studio.jpg" imageAlt="The Perfect Robot, The Perfect Murder and The Perfect Race" jsonld={[website]}>
+  <section class="front">
     <div class="wrap">
-      <div class="section-head">
-        <h2>{s.ourGames}</h2>
-        <a href={localize('/games/', lang)}>{s.allGames}</a>
+      <div class="front-head">
+        <p class="label accent">{sv ? 'Spelstudio i Eskilstuna sedan 2013' : 'Game studio in Eskilstuna, Sweden, since 2013'}</p>
+        <h1>{sv ? 'Spel från UX Productions' : 'Games by UX Productions'}</h1>
+        <p class="lede">{sv ? 'Tre spel som vart och ett bygger på en idé. Ingen reklam, inga prenumerationer.' : 'Three games, each built around one idea. No ads, no subscriptions.'}</p>
       </div>
-      <div class="game-grid">
-        {GAMES.map((g) => <GameCard game={g} lang={lang} />)}
+      <div class="panels">
+        {GAMES.map((g, i) => {
+          const href = localize(`/games/${g.slug}/`, lang);
+          const badge = badgeFor(g.slug);
+          return (
+            <article class={`game panel theme-${g.theme}`}>
+              <a class="panel-art" href={href} tabindex="-1" aria-hidden="true">
+                <Picture
+                  src={g.card}
+                  alt=""
+                  widths={[400, 640, 960]}
+                  sizes="(max-width: 900px) 100vw, 380px"
+                  formats={['avif', 'webp']}
+                  loading="eager"
+                  fetchpriority={i === 0 ? 'high' : 'auto'}
+                />
+              </a>
+              <div class="panel-body">
+                {badge && <span class="badge">{badge[lang]}</span>}
+                <span class="label accent">{g.genre[lang]}</span>
+                <h2 class="panel-title"><a href={href}>{g.name}</a></h2>
+                <p>{g.pitch[lang]}</p>
+                <div class="panel-foot">
+                  <div class="panel-actions">
+                    <StoreButtons game={g} lang={lang} mainOnly />
+                    <a class="more" href={href}>{s.aboutGame}</a>
+                  </div>
+                  <div class="chips">{g.platforms.map((pl) => <span>{pl}</span>)}</div>
+                </div>
+              </div>
+            </article>
+          );
+        })}
       </div>
     </div>
   </section>
@@ -84,7 +89,6 @@ const website = {
       </div>
     </section>
   )}
-
   <section class="section">
     <div class="wrap studio">
       <div>
@@ -112,6 +116,31 @@ const website = {
 </Base>
 
 <style>
-  .hero-title { font-size: clamp(2rem, 5vw, 3.4rem); margin: 10px 0 14px; max-width: 15em; }
-  .hero-copy .label { margin: 0; }
+  .front {
+    padding-block: clamp(36px, 6vw, 72px) clamp(8px, 2vw, 24px);
+    background: radial-gradient(ellipse 70% 55% at 50% 0%, rgba(242, 169, 59, .13), transparent 70%);
+  }
+  .front-head { max-width: 40em; margin-bottom: clamp(24px, 4vw, 40px); }
+  .front-head .label { margin: 0 0 10px; }
+  .front-head h1 { margin-bottom: 12px; }
+  .lede { font-size: clamp(1.1rem, 2vw, 1.3rem); color: var(--text-dim); margin: 0; }
+
+  .panels { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+  @media (max-width: 900px) { .panels { grid-template-columns: 1fr; max-width: 560px; } }
+  .panel { display: flex; flex-direction: column; border: 1px solid var(--g-line); border-top: 3px solid var(--g-accent); border-radius: var(--radius); overflow: hidden; }
+  .panel-art { position: relative; display: block; }
+  .panel-art img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+  .badge { align-self: flex-start; background: var(--g-cta); color: var(--g-cta-ink); font: 600 11px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; padding: 7px 9px; border-radius: 3px; }
+  .panel-body { display: flex; flex-direction: column; gap: 10px; padding: 20px 22px 22px; flex: 1; }
+  .panel-title { font-family: var(--g-title); font-size: 1.75rem; line-height: 1.15; }
+  .theme-race .panel-title { font-size: 1.05rem; line-height: 1.5; letter-spacing: 0; }
+  .theme-murder .panel-title { letter-spacing: 0; }
+  .panel-title a { color: var(--g-text) !important; text-decoration: none; }
+  .panel-title a:hover { color: var(--g-accent) !important; }
+  .panel-body p { color: var(--g-dim); margin: 0; }
+  .panel-foot { margin-top: auto; padding-top: 10px; display: grid; gap: 14px; }
+  .panel .chips { padding-top: 0; }
+  .panel-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; }
+  .more { font-size: 15px; font-weight: 600; }
+  .panel .chips span { color: var(--g-dim); border-color: var(--g-line); }
 </style>

@@ -6,8 +6,10 @@ import { robotOnSteam, type Lang } from '../data/site';
 interface Props {
   game: Game;
   lang: Lang;
+  /** Show only the first (main) store. */
+  mainOnly?: boolean;
 }
-const { game, lang } = Astro.props;
+const { game, lang, mainOnly = false } = Astro.props;
 const sv = lang === 'sv';
 const steamOut = robotOnSteam();
 
@@ -25,7 +27,7 @@ const label = (kind: string) => {
 };
 ---
 <div class="btns">
-  {game.stores.map((s, i) => (
+  {(mainOnly ? game.stores.slice(0, 1) : game.stores).map((s, i) => (
     <a class:list={['btn', { primary: i === 0 }]} href={s.url} rel="noopener">
       <Icon name={s.kind} />
       {label(s.kind)}

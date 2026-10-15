@@ -45,7 +45,6 @@ def studio():
     return canvas
 
 
-save(cover(ASSETS / 'robot' / 'capsule.jpg', 0.5, 0.35), 'home.jpg')
 save(studio(), 'studio.jpg')
 save(cover(ASSETS / 'robot' / 'capsule.jpg', 0.5, 0.35), 'the-perfect-robot.jpg')
 save(cover(ASSETS / 'murder' / 'card.jpg'), 'the-perfect-murder.jpg')
