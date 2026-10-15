@@ -1,0 +1,32 @@
+---
+/**
+ * A game's name as the game itself sets it, taken from each game's own repo:
+ *   The Perfect Robot   its logo image
+ *   The Perfect Murder  Bodoni Moda 700 in gold (#c9a045), title case, after the
+ *                       magnifying glass from the game's top bar (nav-menu.component.html)
+ *   The Perfect Race    one line of Press Start 2P, THE and RACE in ink (#dfe5f2) on a
+ *                       dark backing shadow, only PERFECT in neon purple (#b46bff) with
+ *                       its glow (tokens.css and chrome.css .brand)
+ * The size comes from the font-size where it is used: Murder is about 11.4em wide with
+ * its glass, Race about 16.6em, so a one-line title fits in width / 11.6 or width / 16.8.
+ * The text (or the logo's alt) is the game's name, so it can stand in a heading or a link.
+ */
+import { Image } from 'astro:assets';
+import type { Game } from '../data/games';
+
+interface Props {
+  game: Game;
+  class?: string;
+  /** Robot: the logo's drawn width, for its srcset. */
+  logoSizes?: string;
+  eager?: boolean;
+}
+const { game, class: className, logoSizes = '320px', eager = false } = Astro.props;
+---
+{game.theme === 'robot' && game.logo ? (
+  <Image src={game.logo} alt={game.name} class:list={['gt gt-robot', className]} widths={[240, 360, 480, 720]} sizes={logoSizes} loading={eager ? 'eager' : 'lazy'} />
+) : game.theme === 'murder' ? (
+  <span class:list={['gt gt-murder', className]}><svg class="gt-glass" viewBox="0 0 22 22" fill="none" aria-hidden="true" focusable="false"><circle cx="9" cy="9" r="6.25" stroke="currentColor" stroke-width="1.5" /><line x1="13.6" y1="13.6" x2="19.5" y2="19.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg>{game.name}</span>
+) : (
+  <span class:list={['gt gt-race', className]}>The <b>Perfect</b>{` ${game.shortName}`}</span>
+)}

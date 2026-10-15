@@ -2,6 +2,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import Base from '../../layouts/Base.astro';
+import GameTitle from '../../components/GameTitle.astro';
 import Icon from '../../components/Icon.astro';
 import { GAMES, type Game } from '../../data/games';
 import { SITE } from '../../data/site';
@@ -34,11 +35,13 @@ const videoFiles = game.videos.map((v) => ({
   path={`/press/${game.slug}/`}
   image={`/og/${game.slug}.jpg`}
   imageAlt={game.name}
+  fonts={game.theme === 'robot' ? [] : [game.theme]}
 >
   <div class="wrap">
     <header class="page-head">
       <nav class="crumbs" aria-label="Breadcrumb"><a href="/press/">Press</a> / {game.name}</nav>
-      <h1>{game.name} press kit</h1>
+      <p class="label kit-label">Press kit</p>
+      <h1 class="kit-title"><GameTitle game={game} logoSizes="(max-width: 640px) 260px, 360px" eager /><span class="visually-hidden"> press kit</span></h1>
       <p>{game.tagline.en}</p>
       <div class="btns" style="margin-top:20px">
         {zip && <a class="btn primary" href={`/press/${game.slug}/${zip}`} download><Icon name="download" />Download everything ({sizeOf(zip)})</a>}
@@ -89,6 +92,12 @@ const videoFiles = game.videos.map((v) => ({
 
 <style>
   .kit-grid { padding-top: 24px; }
+  /* The game's own name as the page title (the h1 says "... press kit" to everyone). */
+  .kit-label { margin: 18px 0 0; }
+  .page-head h1.kit-title { container-type: inline-size; max-width: none; margin: 10px 0 14px; }
+  .kit-title :global(.gt-robot) { width: min(360px, 70vw); margin: -14px 0 -10px -12px; }
+  .kit-title :global(.gt-murder) { font-size: min(3.5rem, 100cqi / 11.6); }
+  .kit-title :global(.gt-race) { font-size: min(2.25rem, 100cqi / 16.8); }
   .kit-grid .prose h2:first-child { margin-top: 0; }
   .downloads { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); gap: 10px; padding-block: 8px 88px; }
   @media (min-width: 1100px) { .downloads[style*="--cols"] { grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); } }

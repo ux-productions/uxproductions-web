@@ -1,6 +1,7 @@
 ---
 import { Image, Picture, getImage } from 'astro:assets';
 import Base from '../layouts/Base.astro';
+import GameTitle from '../components/GameTitle.astro';
 import StoreButtons from '../components/StoreButtons.astro';
 import NewsList from '../components/NewsList.astro';
 import type { Game } from '../data/games';
@@ -119,7 +120,7 @@ const breadcrumbs = {
               <Image src={game.logo} class="logo" alt={game.name} widths={[440, 880]} sizes="440px" loading="eager" />
             </h1>
           ) : (
-            <h1>{game.name}</h1>
+            <h1><GameTitle game={game} /></h1>
           )}
           <p class="tagline">{game.tagline[lang]}</p>
           <StoreButtons game={game} lang={lang} />

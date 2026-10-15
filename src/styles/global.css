@@ -87,6 +87,16 @@ p { margin: 0 0 1em; }
 .skip:focus { left: 8px; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
+/* Each game's own name, as the game sets it (GameTitle.astro). Sizes come from the
+   font-size where it is used; the shadows are the games' own, in em so they keep their
+   proportions at any size (at 13 px they are exactly The Perfect Race's 1px/2px/7px). */
+.gt { white-space: nowrap; text-transform: none; letter-spacing: 0; }
+.gt-murder { display: inline-flex; align-items: center; gap: .5em; font: 700 1em/1.15 var(--murder-face); letter-spacing: .01em; color: #c9a045; }
+.gt-glass { width: 1.05em; height: 1.05em; flex: none; opacity: .85; }
+.gt-race { font: 400 1em/1.3 var(--race-face); text-transform: uppercase; letter-spacing: .04em; color: #dfe5f2; text-shadow: 0 .077em .154em rgba(0, 0, 0, .35); }
+.gt-race b { font-weight: inherit; color: #b46bff; text-shadow: 0 0 .54em rgba(180, 107, 255, .28); }
+.gt-robot { display: block; height: auto; }
+
 /* Buttons */
 .btn {
   display: inline-flex; align-items: center; gap: 9px;
@@ -135,7 +145,11 @@ p { margin: 0 0 1em; }
 .game-card img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
 .game-card .strip { height: 4px; background: var(--strip); }
 .game-card .body { padding: 18px 20px 22px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
-.game-card h3 { font-size: 1.4rem; }
+.game-card h3 { display: flex; align-items: center; min-height: 3.1rem; font-size: 1.4rem; }
+.game-card h3 .gt-murder { font-size: min(1.55rem, (100cqi - 0px) / 11.6); }
+.game-card h3 .gt-race { font-size: min(1.05rem, 100cqi / 16.8); }
+.game-card h3 .gt-robot { width: 132px; margin: -8px 0 -8px -6px; }
+.game-card .body { container-type: inline-size; }
 .game-card .genre { font: 500 12px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--strip); }
 .game-card p { color: var(--text-dim); margin: 0; font-size: 15.5px; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 8px; }
@@ -258,8 +272,9 @@ p { margin: 0 0 1em; }
   background: linear-gradient(0deg, var(--g-bg) 3%, color-mix(in srgb, var(--g-bg) 55%, transparent) 40%, transparent 75%); }
 .game-hero .copy { position: absolute; z-index: 1; left: 0; right: 0; bottom: clamp(18px, 4vw, 44px); }
 .game-hero h1 { font-family: var(--g-title); margin: 8px 0 10px; }
-.theme-race .game-hero h1 { font-size: clamp(1.5rem, 4vw, 2.6rem); line-height: 1.3; letter-spacing: 0; }
-.theme-murder .game-hero h1 { font-weight: 700; letter-spacing: 0; }
+.game-hero .copy .wrap { container-type: inline-size; }
+.theme-race .game-hero h1 { font-size: min(2.6rem, 100cqi / 16.8); line-height: 1.3; letter-spacing: 0; margin-block: 14px 16px; }
+.theme-murder .game-hero h1 { font-size: min(4rem, 100cqi / 11.6); letter-spacing: 0; }
 .game-hero .logo { width: min(440px, 70vw); height: auto; margin: -10px 0 -6px -10px; }
 .game-hero .tagline { font-size: clamp(1.1rem, 2.2vw, 1.4rem); color: var(--g-text); max-width: 32em; margin-bottom: 18px; }
 @media (max-width: 640px) {

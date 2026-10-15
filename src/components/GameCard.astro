@@ -1,5 +1,6 @@
 ---
 import { Picture } from 'astro:assets';
+import GameTitle from './GameTitle.astro';
 import type { Game } from '../data/games';
 import { localize, type Lang } from '../data/site';
 
@@ -23,7 +24,7 @@ const strip = { robot: '#5ce1e6', murder: '#c9a045', race: '#b46bff' }[game.them
   <div class="strip"></div>
   <div class="body">
     <span class="genre">{game.genre[lang]}</span>
-    <h3>{game.name}</h3>
+    <h3><GameTitle game={game} logoSizes="132px" /></h3>
     <p>{game.pitch[lang]}</p>
     <div class="chips">{game.platforms.map((p) => <span>{p}</span>)}</div>
   </div>

@@ -26,8 +26,10 @@ npm run check      # fails on broken internal links or anchors in dist/
 | Page templates (one per page type, rendered in both languages) | `src/views/` |
 | Front page: launch block, the three game panels, news strip, studio band | `src/views/Home.astro` |
 | The UX Productions mark as vector paths (traced from `public/press/ux-productions-logo.png`), used in the header (UX and the word PRODUCTIONS), the studio band and the footer | `src/components/Mark.astro` |
+| Each game's name as the game itself sets it (Robot: its logo; Murder: Bodoni Moda in gold with the magnifying glass; Race: one line of Press Start 2P with PERFECT in purple), used on the front page, game pages, game cards, press kits and news posts | `src/components/GameTitle.astro` |
 | Fonts: every @font-face, the files each page preloads, and the metric-matched fallbacks (see Fonts below) | `src/components/Fonts.astro` |
 | Front page art: the Robot key art at full size, and the Race panel (a crop of its night-circuit press screenshot) | `src/assets/robot/key-art.jpg`, `src/assets/race/panel.jpg` |
+| Game cards (games index, 404) and the share images made from them; the Race card is the game's own share image (`the-perfect-race/src/Client/public/og-image.png`) | `src/assets/<game>/card.jpg`, `src/assets/robot/capsule.jpg` |
 | Styles: studio palette, the shared page width, and each game's palette | `src/styles/global.css` |
 | Press kit downloads (full-size files, thumbnails, zip) | `public/press/<game>/` |
 | Trailers | `public/video/` |

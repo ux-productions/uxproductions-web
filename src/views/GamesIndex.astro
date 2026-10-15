@@ -20,7 +20,7 @@ const description = sv
 const redirects = Object.fromEntries(GAMES.map((g) => [g.slug, localize(`/games/${g.slug}/`, lang)]));
 OTHER_WORK.forEach((w) => (redirects[w.id] = localize(`/games/other-work/#${w.id}`, lang)));
 ---
-<Base title={title} description={description} lang={lang} path="/games/" bilingual>
+<Base title={title} description={description} lang={lang} path="/games/" bilingual fonts={['murder', 'race']}>
   <script is:inline define:vars={{ redirects }}>
     const to = redirects[location.hash.slice(1)];
     if (to) location.replace(to);

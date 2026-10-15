@@ -2,6 +2,7 @@
 import { Picture } from 'astro:assets';
 import { render, type CollectionEntry } from 'astro:content';
 import Base from '../../layouts/Base.astro';
+import GameTitle from '../../components/GameTitle.astro';
 import StoreButtons from '../../components/StoreButtons.astro';
 import { gameBySlug } from '../../data/games';
 import { publishedNews } from '../../data/news';
@@ -52,6 +53,8 @@ const breadcrumbs = {
   imageAlt={post.data.imageAlt}
   published={post.data.date}
   jsonld={[article, breadcrumbs]}
+
+  fonts={game && game.theme !== 'robot' ? [game.theme] : []}
 >
   <div class="wrap">
     <header class="page-head narrow">
@@ -67,7 +70,7 @@ const breadcrumbs = {
       <aside class="post-side">
         {game ? (
           <div class="side-box post-game">
-            <h2>{game.name}</h2>
+            <h2><GameTitle game={game} logoSizes="200px" /></h2>
             <p>{game.tagline.en}</p>
             <StoreButtons game={game} lang="en">
               <a class="btn" href={`/games/${game.slug}/`}>About the game</a>
@@ -90,7 +93,10 @@ const breadcrumbs = {
   .post-grid { padding-bottom: 88px; }
   .post > :global(picture:first-child img), .post > :global(img:first-child) { margin-top: .4em; }
   .post-side { position: sticky; top: 20px; align-self: start; margin-top: .4em; }
-  .post-game h2 { font: 700 1.25rem/1.2 var(--display); text-transform: none; letter-spacing: -0.01em; margin-bottom: 6px; }
+  .post-game h2 { font: 700 1.25rem/1.2 var(--display); text-transform: none; letter-spacing: -0.01em; margin-bottom: 6px; container-type: inline-size; }
+  .post-game h2 :global(.gt-robot) { width: 200px; margin: -10px 0 -6px -8px; }
+  .post-game h2 :global(.gt-murder) { font-size: min(1.5rem, 100cqi / 11.6); }
+  .post-game h2 :global(.gt-race) { font-size: min(1rem, 100cqi / 16.8); }
   .post-game p { margin: 0 0 14px; color: var(--text-dim); font-size: 15.5px; }
   .post-more { margin: 14px 0 0; font-size: 15px; color: var(--text-muted); }
 </style>
