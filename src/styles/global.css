@@ -86,6 +86,8 @@ p { margin: 0 0 1em; }
 .skip { position: absolute; left: -9999px; top: 8px; background: var(--accent); color: var(--accent-ink); padding: 8px 12px; z-index: 10; }
 .skip:focus { left: 8px; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+/* A hyphenated word kept on one line (Words.astro): never "hand- / made". */
+.nw { white-space: nowrap; }
 /* A game's app icon (GameIcon.astro), rounded like one on a phone, with a hairline so a
    dark icon keeps its edge on a dark ground. */
 .app-icon { display: block; flex: none; max-width: none; border-radius: 22.5%; box-shadow: 0 0 0 1px rgba(255, 255, 255, .14), 0 3px 12px rgba(0, 0, 0, .4); }
@@ -101,6 +103,12 @@ p { margin: 0 0 1em; }
 .gt-race { font: 400 1em/1.3 var(--race-face); text-transform: uppercase; letter-spacing: .04em; color: #dfe5f2; text-shadow: 0 .077em .154em rgba(0, 0, 0, .35); }
 .gt-race b { font-weight: inherit; color: #b46bff; text-shadow: 0 0 .54em rgba(180, 107, 255, .28); }
 .gt-robot { display: block; height: auto; }
+/* Contrast themes paint every background in the theme's own colour: a light one would
+   leave the Robot logo's light letters on white, so the logo keeps its own navy plate
+   (as in print). */
+@media (forced-colors: active) {
+  img.gt-robot, .game-hero .logo { forced-color-adjust: none; background: #0a1524; border-radius: 6px; }
+}
 
 /* Buttons */
 .btn {
@@ -150,7 +158,9 @@ p { margin: 0 0 1em; }
 .game-card img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
 .game-card .strip { height: 4px; background: var(--strip); }
 .game-card .body { padding: 18px 20px 22px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
-.game-card h3 { display: flex; align-items: center; min-height: 3.1rem; font-size: 1.4rem; }
+/* Every card's title row is as tall as the Robot's logo (66 px at 132 px wide), so the
+   three descriptions start on one line. */
+.game-card h3 { display: flex; align-items: center; min-height: max(3.1rem, 66px); font-size: 1.4rem; }
 .game-card h3 .gt-murder { font-size: min(1.55rem, 100cqi / 11.6); }
 .game-card h3 .gt-race { font-size: min(1.05rem, 100cqi / 16.8); }
 .game-card h3 .gt-robot { width: 132px; margin: -6px 0 -2px -6px; }
@@ -276,6 +286,14 @@ p { margin: 0 0 1em; }
 .game-hero::after { content: ''; position: absolute; inset: 0; pointer-events: none;
   background: linear-gradient(0deg, var(--g-bg) 3%, color-mix(in srgb, var(--g-bg) 55%, transparent) 40%, transparent 75%); }
 .game-hero .copy { position: absolute; z-index: 1; left: 0; right: 0; bottom: clamp(18px, 4vw, 44px); }
+/* Above phone width the copy stands on the art: the hero is the art band's height, or
+   taller where its copy needs more (the Robot's logo on a tablet or a phone on its side),
+   so the copy is never cut off at the top or pushed under the header. */
+@media (min-width: 640.02px) {
+  .game-hero { display: flex; flex-direction: column; justify-content: flex-end; min-height: clamp(320px, 46vw, 560px); }
+  .game-hero img.art { position: absolute; inset: 0; height: 100%; }
+  .game-hero .copy { position: relative; bottom: auto; padding-block: 28px clamp(18px, 4vw, 44px); }
+}
 .game-hero h1 { font-family: var(--g-title); margin: 8px 0 10px; }
 .game-hero .copy .wrap { container-type: inline-size; }
 .theme-race .game-hero h1 { font-size: min(2.6rem, 100cqi / 16.8); line-height: 1.3; letter-spacing: 0; margin-block: 14px 16px; }
@@ -347,6 +365,7 @@ p { margin: 0 0 1em; }
   body { background: #fff; color: #000; }
   .footer-mark, .skip, .game-hero::after, .game-hero img.art { display: none !important; }
   /* A game page's title stands on the paper, not on its (dark) key art. */
+  .game-hero { display: block; min-height: 0; }
   .game-hero .copy { position: static; margin: 0; padding-top: 24px; }
   /* The games' names in print: Race's ink and Murder's gold would vanish on white, so
      they print dark, PERFECT in a deep purple; the Robot's logo keeps its own navy

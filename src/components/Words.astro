@@ -1,0 +1,22 @@
+---
+/**
+ * A line of copy set so it breaks well: a hyphenated word ("hand-made") stays on one line
+ * (.nw in global.css), and with `sentences` each sentence is a span of its own
+ * (class `sent`), so a stylesheet can keep a short sentence whole on its own line instead
+ * of splitting it ("Det är / det som är problemet."). A sentence's first word keeps to the
+ * next one (keepOpeners in site.ts), so no line ends on a lone "One" or "Det".
+ */
+import { keepOpeners } from '../data/site';
+
+interface Props {
+  text: string;
+  sentences?: boolean;
+}
+const { text, sentences = false } = Astro.props;
+// Sentences end at . ! or ? and a plain space (the no-break spaces stay inside them).
+const parts = sentences ? keepOpeners(text).split(/(?<=[.!?]) +/) : [keepOpeners(text)];
+// Each part as runs of plain text and hyphenated words.
+const runs = (s: string) => s.split(/(\S*\p{L}-\p{L}\S*)/u).map((t, i) => ({ t, keep: i % 2 === 1 }));
+---
+{/* On one line: whitespace in the template would end up between the words. */}
+{parts.map((part, i) => <>{i > 0 && ' '}{sentences ? <span class="sent">{runs(part).map((r) => (r.keep ? <span class="nw">{r.t}</span> : r.t))}</span> : runs(part).map((r) => (r.keep ? <span class="nw">{r.t}</span> : r.t))}</>)}

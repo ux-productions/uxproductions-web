@@ -9,9 +9,11 @@ import Socials from '../components/Socials.astro';
 import StoreButtons from '../components/StoreButtons.astro';
 import { GAMES, MURDER, ROBOT, platformLabel } from '../data/games';
 import PanelArt from '../components/PanelArt.astro';
-import { BADGES, FEATURED_GAME, ROBOT_STEAM_RELEASE, SITE, badgeFor, formatDate, keepOpeners, localize, loopsFor, robotOnSteam, steamRelease, storeLabel, storeShort, t, type Lang } from '../data/site';
+import Words from '../components/Words.astro';
+import { BADGES, FEATURED_GAME, ROBOT_STEAM_RELEASE, SITE, badgeFor, excerpt, formatDate, localize, loopsFor, robotOnSteam, steamRelease, storeLabel, storeShort, t, type Lang } from '../data/site';
 import { freshNews } from '../data/news';
 import robotKeyArt from '../assets/robot/key-art.jpg';
+import robotKeyArtPhone from '../assets/robot/key-art-phone.jpg';
 import murderNight from '../assets/murder/harbour-night.jpg';
 import murderNightPhone from '../assets/murder/harbour-night-phone.jpg';
 import raceNight from '../assets/race/harbour-street-night.jpg';
@@ -55,7 +57,7 @@ const launch = launchBadge && {
   chip: steamOut ? launchBadge[lang] : `${launchBadge[lang]} · ${release.time}`,
   note: steamOut
     ? outNote
-    : sv ? `Släpps på Steam ${release.day} ${release.time}. Finns redan på iOS och Android.` : `Comes to Steam on ${release.day} at ${release.time}. Already out on iOS and Android.`,
+    : sv ? `Släpps på Steam ${release.day} ${release.time}. Finns redan på iOS och Android.` : `Comes to Steam on ${release.day} at ${release.time}. Already out on iOS and Android.`,
   // What the words become at the release, for a page that is open at that moment.
   after: steamOut ? undefined : { chip: outBadge?.[lang], note: outNote },
 };
@@ -76,7 +78,13 @@ const units = sv ? ['Dagar', 'Timmar', 'Min'] : ['Days', 'Hours', 'Min'];
 // 58vw tall, at most 420 px.
 const PHONE = '(max-width: 559.98px)';
 const ART = {
-  robot: { src: robotKeyArt, widths: [1100, 1600, 2400, 3200, 3840], sizes: '(min-width: 960px) clamp(1820px, calc((100vh - 340px) * 3.9), 2950px), (min-width: 724px) 1960px, 270vw', x0: '50%', x1: '50%', y0: '50%', y1: '50%', xm: '30%', ym: '50%', phone: undefined },
+  robot: {
+    src: robotKeyArt, widths: [1100, 1600, 2400, 3200, 3840], sizes: '(min-width: 960px) clamp(1820px, calc((100vh - 340px) * 3.9), 2950px), (min-width: 724px) 1960px, 270vw',
+    x0: '50%', x1: '50%', y0: '50%', y1: '50%', xm: '30%', ym: '50%',
+    // The part of the panorama a phone tile shows (the green robot and the unicorn), so
+    // a phone fetches that and not the whole 3840 px panorama.
+    phone: { src: robotKeyArtPhone, widths: [600, 900, 1170], sizes: '100vw', media: PHONE },
+  },
   murder: {
     src: murderNight, widths: [640, 960, 1280, 1672],
     sizes: '(min-width: 960px) max(min(935px, 70vw), calc(clamp(540px, 100vh - 360px, 760px) * 1.78)), max(100vw, calc(clamp(220px, 58vw, 420px) * 1.78))',
@@ -134,7 +142,7 @@ const facts = [
           </p>
           {/* Before the release the note keeps room for the longer of its two texts (the
               hidden ones in data-now and data-out), so the switch never moves the stage. */}
-          <p class="launch-note" data-now={launch.after && launch.note} data-out={launch.after?.note}><span data-after={launch.after?.note}>{launch.note}</span></p>
+          <p class="launch-note" data-now={launch.after && launch.note} data-out={launch.after?.note}><span class="sents" data-after={launch.after?.note}><Words text={launch.note} sentences /></span></p>
           <div class="launch-row">
             <a class="btn primary" href={steam.url} rel="noopener">
               <Icon name="steam" />
@@ -189,7 +197,7 @@ const facts = [
               {/* Phones: the game's app icon and its one fact on its art, like a box front. */}
               <div class="tp-cover" aria-hidden="true">
                 <GameIcon game={g} class="tp-cover-icon" />
-                <span class="tp-cover-stat"><b>{fact(g)}</b>{g.stat.detail[lang]}</span>
+                <span class="tp-cover-stat"><b>{fact(g)}</b><Words text={g.stat.detail[lang]} /></span>
               </div>
 
               <div class="tp-body" id={`${g.slug}-body`}>
@@ -199,10 +207,10 @@ const facts = [
                     does not already say it, screen readers get it here. */}
                 {!g.pitch[lang].includes(g.stat.value) && !g.pitch[lang].includes(g.stat.label[lang]) && <p class="visually-hidden">{`${g.stat.value} ${g.stat.label[lang]}`}</p>}
                 <h2 class="tp-title" id={`${g.slug}-t`}>
-                  <a href={href}><GameTitle game={g} logoSizes="(min-width: 960px) clamp(230px, 21vw, 320px), 320px" eager={lead} /></a>
+                  <a href={href}><GameTitle game={g} logoSizes="(min-width: 960px) clamp(230px, 21vw, 320px), 230px" /></a>
                 </h2>
-                <p class="tp-tag">{keepOpeners(g.tagline[lang])}</p>
-                <p class="tp-pitch">{g.pitch[lang]}</p>
+                <p class="tp-tag"><Words text={g.tagline[lang]} sentences /></p>
+                <p class="tp-pitch"><Words text={g.pitch[lang]} /></p>
                 <div class="tp-actions">
                   <StoreButtons game={g} lang={lang} mainOnly named />
                   <a class="more" href={href}>{s.aboutGame}<span class="visually-hidden">{` (${g.name})`}</span></a>
@@ -223,7 +231,7 @@ const facts = [
                 <h2 class="tp-vname"><GameTitle game={g} logoSizes="300px" /></h2>
                 <div class="tp-foot">
                   <p class="tp-genre">{g.genreShort[lang]}</p>
-                  <p class="tp-fact"><b>{fact(g)}</b> <span class="tp-detail">{g.stat.detail[lang]}</span></p>
+                  <p class="tp-fact"><b>{fact(g)}</b> <span class="tp-detail"><Words text={g.stat.detail[lang]} /></span></p>
                   {/* On laptops the button shows only its first word (Play, Wishlist); the
                       whole label stays its name for screen readers. */}
                   <a class="btn primary tp-cta" href={main.url} rel="noopener">
@@ -260,7 +268,7 @@ const facts = [
                 <div class="ns-text">
                   <time datetime={p.data.date.toISOString()}>{formatDate(p.data.date, lang)}</time>
                   <h3 lang="en">{p.data.title}</h3>
-                  <p class="ns-desc" lang="en">{p.data.description}</p>
+                  <p class="ns-desc" lang="en"><Words text={excerpt(p.data.description)} /></p>
                 </div>
               </a>
             </li>
@@ -277,15 +285,15 @@ const facts = [
         <p class="label">{sv ? 'Sedan 2013 · Eskilstuna, Mälardalen' : 'Since 2013 · Eskilstuna, Mälardalen'}</p>
         <h2 id="studio-h">{sv ? 'En liten studio i Eskilstuna' : 'A small studio in Eskilstuna'}</h2>
         <p>
-          {sv
+          <Words text={sv
             ? 'UX Productions har gjort spel och lärappar sedan 2013, i Mälardalen. I dag gör vi Perfect-spelen: tre spel som var och ett gör en sak så bra vi kan få till den, utan reklam och utan prenumerationer.'
-            : 'UX Productions has made games and learning apps in Sweden’s Mälardalen region since 2013. Today we make the Perfect games: three games that each do one thing as well as we can make it, with no ads and no subscriptions.'}
+            : 'UX Productions has made games and learning apps in Sweden’s Mälardalen region since 2013. Today we make the Perfect games: three games that each do one thing as well as we can make it, with no ads and no subscriptions.'} />
         </p>
         <p>
           {sv ? 'Vi gör också ' : 'We also make '}
           <a href={localize('/tools/', lang)}>{sv ? 'verktyg för Unity-utvecklare' : 'tools for Unity developers'}</a>
           {sv ? ' och ' : ' and '}
-          <a href={localize('/games/other-work/', lang)}>{sv ? 'lärappar för svenska skolor' : 'learning apps for Swedish schools'}</a>.
+          <a href={localize('/games/other-work/', lang)}>{sv ? 'lärappar för svenska skolor' : 'learning apps for Swedish schools'}</a>.
         </p>
         <p class="sb-more"><a href={localize('/about/', lang)}>{sv ? 'Mer om studion' : 'More about the studio'}</a></p>
       </div>
@@ -323,7 +331,10 @@ const facts = [
   if (tri) {
     const panels = [...tri.querySelectorAll<HTMLElement>('.tp')];
     const videos = new Map<HTMLElement, HTMLVideoElement>();
-    const pauseButtons: HTMLButtonElement[] = [];
+    // Panels whose loop could not be played (a network error, a codec the browser lacks):
+    // they keep their still, and are not tried again.
+    const failed = new Set<HTMLElement>();
+    let pauseButtons: HTMLButtonElement[] = [];
     // One pause for every loop: someone who stopped the motion does not get it back by
     // opening another game.
     let paused = false;
@@ -348,13 +359,16 @@ const facts = [
 
     // `box` is the size of an open panel, measured before this one starts to widen.
     const addVideo = (p: HTMLElement, box: DOMRect) => {
-      if (videos.has(p) || !p.dataset.loops || !loaded || !wide.matches || still.matches || saveData) return;
+      if (videos.has(p) || failed.has(p) || !p.dataset.loops || !loaded || !wide.matches || still.matches || saveData) return;
       const loop = loopFor(p, box);
       if (!loop) return;
       addButton(p);
       // While the loops are paused, a newly opened game gets its button (set to Play) but
       // no video yet: nothing is downloaded until the visitor presses Play.
-      if (paused) return;
+      if (paused) {
+        p.classList.add('has-loop');
+        return;
+      }
       // The loop covers the open panel (Race's at --art-zoom times its width). Take the
       // smaller file when it is never enlarged (at this screen's density), else the larger:
       // the games' fine detail (Race's pixel-art cars, Murder's windows) stays sharp.
@@ -372,21 +386,42 @@ const facts = [
       // The video is hidden until it plays, so the Robot's needs none.
       if (loop.stillIsPoster) v.poster = p.querySelector<HTMLImageElement>('.tp-art img')?.currentSrc ?? '';
       v.style.objectPosition = loop.position;
+      // Moving art, not content: out of the accessibility tree and the tab order (Firefox
+      // would stop on a video element), with no picture-in-picture or casting offered.
       v.setAttribute('aria-hidden', 'true');
+      v.tabIndex = -1;
+      v.disablePictureInPicture = true;
+      v.setAttribute('disableremoteplayback', '');
       for (const [src, type] of [[file.webm, 'video/webm'], [file.mp4, 'video/mp4']]) {
         const so = document.createElement('source');
         so.src = src;
         so.type = type;
         v.append(so);
       }
+      // The pause button shows once the loop can play; if neither file can, the panel
+      // keeps its still and loses the button, so nothing offers to pause a video that
+      // is not there.
+      v.addEventListener('loadeddata', () => p.classList.add('has-loop'), { once: true });
       v.addEventListener('playing', () => p.classList.add('has-video'), { once: true });
+      v.querySelector('source:last-child')!.addEventListener('error', () => drop(p), { once: true });
       // In a box of its own: the Robot's ends where its key art does (see .tp-loop).
       const frame = document.createElement('div');
       frame.className = 'tp-loop';
       frame.append(v);
       p.querySelector('.tp-art')!.append(frame);
     };
-    // The panel's pause button, made with its loop (or, while paused, in its place).
+    // A loop that cannot play: its video and its button go, the still stays.
+    const drop = (p: HTMLElement) => {
+      failed.add(p);
+      videos.get(p)?.closest('.tp-loop')?.remove();
+      videos.delete(p);
+      const pb = p.querySelector<HTMLButtonElement>('.tp-pause');
+      pauseButtons = pauseButtons.filter((b) => b !== pb);
+      pb?.remove();
+      p.classList.remove('has-loop', 'has-video');
+    };
+    // The panel's pause button, made with its loop (or, while paused, in its place). It
+    // shows (.has-loop) once the loop has its first frame, or at once while paused.
     const addButton = (p: HTMLElement) => {
       if (p.querySelector('.tp-pause')) return;
       const pb = document.createElement('button');
@@ -399,7 +434,6 @@ const facts = [
         else sync();
       });
       p.append(pb);
-      p.classList.add('has-loop');
       pauseButtons.push(pb);
       label(pb);
     };
@@ -451,9 +485,15 @@ const facts = [
       more.replaceWith(btn);
       btn.addEventListener('click', (e) => {
         if (!wide.matches) return;
-        open(p, e.detail === 0 ? 'key' : 'pointer');
-        // The spine (and this button) are hidden now: carry focus to the opened panel.
-        p.querySelector<HTMLElement>('.tp-title a')?.focus({ preventScroll: true });
+        const key = e.detail === 0;
+        open(p, key ? 'key' : 'pointer');
+        // The spine (and this button) are hidden now: carry focus to the opened panel. From
+        // the keyboard, a title above or below the screen (reached by Shift+Tab from further
+        // down) is brought into view with its panel, so what has focus is always seen.
+        const title = p.querySelector<HTMLElement>('.tp-title a');
+        title?.focus({ preventScroll: true });
+        const r = title?.getBoundingClientRect();
+        if (key && r && (r.top < 0 || r.bottom > innerHeight)) p.scrollIntoView({ block: 'nearest', behavior: still.matches ? 'auto' : 'smooth' });
       });
     }
 
@@ -500,7 +540,21 @@ const facts = [
       // Hidden, not removed: the cards keep their place, so nothing below moves.
       cd.hidden = true;
       text.textContent = '';
-      for (const el of document.querySelectorAll<HTMLElement>('[data-after]')) if (el.dataset.after) el.textContent = el.dataset.after;
+      for (const el of document.querySelectorAll<HTMLElement>('[data-after]')) {
+        if (!el.dataset.after) continue;
+        if (!el.classList.contains('sents')) {
+          el.textContent = el.dataset.after;
+          continue;
+        }
+        // A note set sentence by sentence (Words.astro) stays so.
+        el.textContent = '';
+        el.dataset.after.split(/(?<=[.!?]) +/).forEach((t, i) => {
+          const sp = document.createElement('span');
+          sp.className = 'sent';
+          sp.textContent = t;
+          el.append(...(i ? [' ', sp] : [sp]));
+        });
+      }
     };
     const tick = () => {
       const left = launch - Date.now();
@@ -532,6 +586,8 @@ const facts = [
     .mast:not(.has-launch) .lede { padding-bottom: 6px; }
     .mast.has-launch .mast-in { grid-template: 'head launch' 1fr 'lede launch' auto / minmax(0, 1fr) minmax(400px, 540px); row-gap: 18px; }
     .mast.has-launch .mast-head { grid-area: head; align-self: end; }
+    /* The logo hangs a little below the chip's row: the note keeps out of its column. */
+    .launch-note { padding-right: 104px; }
     .mast.has-launch .lede { grid-area: lede; align-self: end; padding-bottom: 2px; }
     .launch { grid-area: launch; }
   }
@@ -544,7 +600,7 @@ const facts = [
     .promise { margin-top: 10px; font-size: clamp(1.35rem, 2vw, 1.8rem); }
     .mast.has-launch .mast-in { row-gap: 12px; }
     .launch { padding: 14px 18px; }
-    .launch-note { margin-top: 8px; font-size: 14.5px; line-height: 1.45; }
+    .launch-note { margin-top: 8px; padding-right: 0; font-size: 14.5px; line-height: 1.45; }
     .launch .btn { min-height: 42px; }
   }
 
@@ -560,6 +616,9 @@ const facts = [
   .launch-name .gt-robot { width: 104px; margin: -10px -6px -12px 0; }
   .launch-name:hover .gt-robot { filter: brightness(1.1); }
   .launch-note { margin: 12px 0 0; color: var(--g-dim); font-size: 15.5px; line-height: 1.5; text-wrap: balance; }
+  /* Each sentence whole on its line where both do not fit on one ("Comes to Steam on 22
+     October at 18:00 CEST." / "Already out on iOS and Android."). */
+  .launch-note .sent { display: inline-block; }
   .launch-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px 20px; margin-top: 16px; }
   .launch :focus-visible { outline-color: var(--c4); }
   /* The countdown as move cards: a coloured top with the number, the unit under it.
@@ -637,14 +696,19 @@ const facts = [
     position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover;
     object-position: calc(var(--x0) + (var(--x1) - var(--x0)) * var(--open)) calc(var(--y0) + (var(--y1) - var(--y0)) * var(--open));
   }
-  .tp-art img { transition: opacity .8s, filter .35s, object-position var(--t), top var(--t), left var(--t), height var(--t), transform var(--t); }
+  .tp-art img { transition: var(--img-fade, opacity .8s), filter .35s, object-position var(--t), top var(--t), left var(--t), height var(--t), transform var(--t); }
   /* The loop covers the open panel (the script sets its file and object-position); the
      still art fades out behind it while it plays. Where the still is that loop's first
      frame (Murder, Race), both are drawn alike and move alike. */
-  .tp-art video { opacity: 0; transition: opacity .8s, top var(--t), left var(--t), height var(--t), transform var(--t); }
+  .tp-art video { opacity: 0; transition: var(--vid-fade, opacity .8s), top var(--t), left var(--t), height var(--t), transform var(--t); }
   @media (min-width: 960px) {
     .tp.has-video.is-open .tp-art video { opacity: 1; }
     .tp.has-video.is-open .tp-art img { opacity: 0; }
+    /* The Robot's loop is another scene than its key art: one fades out to the panel's
+       navy before the other fades in, so the two never show through each other (Murder's
+       and Race's still is their loop's first frame, so they cross-fade). */
+    .theme-robot { --img-fade: opacity .3s ease-out .28s; --vid-fade: opacity .28s ease-in; }
+    .theme-robot.has-video.is-open { --img-fade: opacity .28s ease-in; --vid-fade: opacity .4s ease-out .28s; }
   }
   /* The script puts each loop in a box of its own, as large as the panel. The Robot's key
      art, open, fades out at 82% of the panel's height (its foot is under the copy), so its
@@ -685,7 +749,7 @@ const facts = [
   /* Murder's loop passes through a bright day: a denser scrim under the copy. */
   .theme-murder .tp-art::after { --scrim: 70%; }
   /* Race: lit cars cross the copy's edge now and then. */
-  .theme-race .tp-art::after { --scrim: 66%; }
+  .theme-race .tp-art::after { --scrim: 70%; }
   .theme-robot .tp-art img { -webkit-mask-image: linear-gradient(180deg, #000 82%, transparent); mask-image: linear-gradient(180deg, #000 82%, transparent); }
   /* As a spine its top edge sits below the app icon, so it fades in there too. */
   @media (min-width: 960px) {
@@ -709,6 +773,9 @@ const facts = [
   .theme-murder .tp-title { font-size: min(2.9rem, 100cqi / 11.6); }
   .theme-race .tp-title { font-size: min(1.7rem, 100cqi / 16.8); margin-block: 8px 4px; }
   .tp-tag { text-wrap: pretty; margin: 0; font-size: clamp(1.12rem, 1.4vw, 1.3rem); line-height: 1.35; font-weight: 600; color: var(--g-text); max-width: 24em; }
+  /* A short sentence of the tagline is never split across two lines ("Det är / det som
+     är problemet."): where both do not fit on one line, each has its own. */
+  .tp-tag .sent { display: inline-block; }
   .tp-pitch { text-wrap: pretty; margin: 0; color: var(--g-dim); max-width: 30em; }
   .tp-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: 6px; }
   .more { font-size: 15px; font-weight: 600; }
@@ -792,7 +859,10 @@ const facts = [
     .theme-race .tp-art :is(img, video) {
       --h: calc(100cqh + (max(100cqw * var(--art-zoom) / 1.6, 100cqh) - 100cqh) * var(--open));
       inset: auto; width: auto; max-width: none; height: var(--h);
-      top: calc((100cqh - var(--h)) / 2);
+      /* Open, the frame sits a little lower (6.5% of its height, as far as it reaches past
+         the panel): the pack's trailing car then runs beside the shorter tagline, never
+         on the end of the game's name. */
+      top: calc((100cqh - var(--h)) / 2 + min(var(--h) * .065, (var(--h) - 100cqh) / 2) * var(--open));
       left: calc(var(--rl0) + (var(--rl1) - var(--rl0)) * var(--open));
       transform: translateX(calc(-1 * (var(--ra0) + (var(--ra1) - var(--ra0)) * var(--open))));
     }
@@ -857,7 +927,9 @@ const facts = [
     .theme-murder .tp-vname > .gt { font-size: min(44px, 100cqh / 13.8, 70cqw); }
     .theme-race .tp-vname > .gt { font-size: min(30px, 100cqh / 17.2, 40cqw); }
     .theme-robot .tp-vname > .gt-robot { width: min(300px, 100cqh, 160cqw); max-width: none; }
-    .tp-foot { display: flex; flex-direction: column; align-items: stretch; gap: 10px; }
+    /* Stacked above the name's soft band (z-index works on a flex item without making it
+       a containing block, so "More" still covers the whole panel). */
+    .tp-foot { display: flex; flex-direction: column; align-items: stretch; gap: 10px; z-index: 1; }
     .tp-genre { margin: 0; font: 500 11px/1.35 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--g-accent); hyphens: manual; overflow-wrap: break-word; }
     /* The game's one fact as plain words: the number and its unit together, then a few more. */
     .tp-fact { margin: 0 0 2px; color: var(--g-dim); font-size: 13.5px; line-height: 1.35; min-height: calc(19px * 1.2 + 1px + 2 * 13.5px * 1.35); }
@@ -916,12 +988,15 @@ const facts = [
     .tp + .tp { border-top: 1px solid var(--line); }
     .tp-art { position: relative; inset: auto; height: clamp(220px, 58vw, 420px); }
     .tp-art :is(img, video) { object-position: var(--xm) var(--ym); }
-    /* Phones: Murder and Race show a crop of their art made for this tile. */
-    @media (max-width: 559.98px) {
-      .has-phone-art .tp-art img { object-position: 50% 50%; }
-    }
     /* The Robot's panorama is cropped in so the green robot stands clear above the copy. */
     .theme-robot .tp-art img { top: -55%; height: 150%; }
+    /* Phones: each game shows a crop of its art made for this tile (the Robot's is that
+       same part of its panorama, with the same fade at its foot). */
+    @media (max-width: 559.98px) {
+      .has-phone-art .tp-art img { object-position: 50% 50%; }
+      .theme-robot.has-phone-art .tp-art img { top: 0; height: 100%;
+        -webkit-mask-image: linear-gradient(180deg, #000 68%, transparent 95%); mask-image: linear-gradient(180deg, #000 68%, transparent 95%); }
+    }
     .tp-art::before { opacity: 1; background: linear-gradient(180deg, color-mix(in srgb, var(--g-bg) 80%, transparent) 0, transparent 46%); }
     .tp-art::after { background: linear-gradient(0deg, var(--g-bg) 0%, color-mix(in srgb, var(--g-bg) 70%, transparent) 24%, transparent 56%); }
     .tp-cover { position: absolute; z-index: 2; inset: 16px var(--gutter) auto; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
@@ -977,7 +1052,8 @@ const facts = [
     .ns-list { gap: 22px; }
     .ns-item { grid-template-columns: 104px minmax(0, 1fr); gap: 14px; }
     .ns-item h3 { font-size: 1.02rem; }
-    .ns-desc { font-size: 14px; }
+    /* Three lines on a phone's narrow column, so the excerpt ends where it was cut. */
+    .ns-desc { font-size: 14px; -webkit-line-clamp: 3; }
   }
 
   /* ---------- Studio band: the logo's own paper and ink ---------- */

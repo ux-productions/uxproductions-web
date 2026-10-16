@@ -70,7 +70,8 @@ export const badgeFor = (game: string, now = new Date()) =>
  * with `stillIsPoster` the panel's own still art, which is the loop's first frame and
  * already loaded, is its poster. `position` is the open panel's object-position, the same
  * as its still's. With `minWidth` the loop plays only in an open panel at least that wide
- * (and wider than it is tall); a narrower one keeps its still, whose crop is made for it.
+ * (and more than 1.2 times as wide as it is tall); a narrower one (tablets, portrait
+ * screens) keeps its still, whose crop is made for it.
  */
 export const LOOPS: { game: string; name: string; height: number; until?: Date; position: string; stillIsPoster?: boolean; minWidth?: number }[] = [
   // The Robot's Halloween world (Grave Circle, from a 4K take) while the Halloween sale
@@ -81,10 +82,13 @@ export const LOOPS: { game: string; name: string; height: number; until?: Date; 
   { game: 'the-perfect-robot', name: 'robot-loop-clockwork', height: 1024, position: '0% 50%', minWidth: 800 },
   // Murder: a round's night and day on the harbour, night → dawn → day → dusk → night,
   // rendered by the game's own engine from its four paintings of the harbour (16 s).
-  { game: 'the-perfect-murder', name: 'murder-loop-daynight', height: 900, position: '0% 50%', stillIsPoster: true },
+  // In a narrower open panel (a 1024x768 iPad, small windows) the copy covers most of it
+  // and the bright day would sit behind the gold title and label: the night still stays.
+  { game: 'the-perfect-murder', name: 'murder-loop-daynight', height: 900, position: '0% 50%', stillIsPoster: true, minWidth: 680 },
   // Race: a real Quick Race against seven Ace bots on Harbour Street, the city circuit the
-  // game only runs at night: the whole pack through the park S-bends (6.5 s).
-  { game: 'the-perfect-race', name: 'race-loop-harbour', height: 1000, position: '50% 50%', stillIsPoster: true },
+  // game only runs at night: the whole pack through the park S-bends (6.5 s). Narrower
+  // open panels keep the still, for the same reason (the street lamps' glow).
+  { game: 'the-perfect-race', name: 'race-loop-harbour', height: 1000, position: '50% 50%', stillIsPoster: true, minWidth: 680 },
 ];
 export const loopsFor = (game: string, now = new Date()) => LOOPS.filter((l) => l.game === game && (!l.until || now < l.until));
 
@@ -119,8 +123,20 @@ export const storeShort = (kind: string, lang: Lang, steamOut = robotOnSteam()) 
 };
 
 /** A sentence's first word kept with the next one (a no-break space), so a line never ends
- *  on a lone "One" or "Det" that starts the next sentence. */
-export const keepOpeners = (text: string) => text.replace(/(^|[.!?]\s+)(\S+) /g, '$1$2\u00a0');
+ *  on a lone "One" or "Det" that starts the next sentence. Only a plain space after a full
+ *  stop starts a sentence: "kl. 18.00", joined by a no-break space, is not one. */
+export const keepOpeners = (text: string) => text.replace(/(^|[.!?] +)(\S+) /g, '$1$2\u00a0');
+
+/** A news post's description, shortened for the front page's strip to at most `max`
+ *  characters: cut where a clause or a sentence ends, else between words, never after a
+ *  comma ("with all six worlds,…"). A whole sentence needs no ellipsis. */
+export const excerpt = (text: string, max = 84) => {
+  if (text.length <= max) return text;
+  const head = text.slice(0, max + 1);
+  const ends = [', ', '; ', ': ', '. ', '? ', '! '].map((e) => head.lastIndexOf(e)).filter((i) => i > max * 0.45);
+  const cut = (ends.length ? head.slice(0, Math.max(...ends) + 1) : head.slice(0, head.lastIndexOf(' '))).replace(/[\s,;:–—-]+$/, '');
+  return /[.!?]$/.test(cut) ? cut : `${cut}…`;
+};
 
 /** The game whose panel is open when the front page loads. */
 export const FEATURED_GAME = 'the-perfect-robot';
