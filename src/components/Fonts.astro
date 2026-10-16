@@ -18,8 +18,9 @@
  *    file every page preloads, with font-display: optional: a font that is not ready
  *    when the page is first drawn is not swapped in later, so text never changes font in
  *    front of the reader. A preload does not guarantee it is ready: on some first visits
- *    (in Chromium measured from about 10 ms round trips, and from about 150 ms) that
- *    page keeps the body's fallback; every later page has the font from the cache.
+ *    that page keeps the body's fallback (measured: every engine on 150 ms / 1.6 Mbps,
+ *    WebKit from about 80 ms, Chromium now and then even on fast lines); every later page
+ *    has the font from the cache.
  *  - The fallbacks are local fonts with their metrics matched to the web font
  *    (size-adjust, ascent, descent and line gap, computed from the font files), so that
  *    fallback takes almost the same room.
