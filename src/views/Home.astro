@@ -118,7 +118,7 @@ const fact = (g: (typeof GAMES)[number]) => `${g.stat.value} ${g.stat.unit[lang
 // ---- The studio band's facts, with the game numbers taken from games.ts.
 const facts = [
   { n: SITE.founded, text: sv ? 'Grundad i Eskilstuna' : 'Founded in Eskilstuna' },
-  { n: String(GAMES.length), text: sv ? 'Spel, vart och ett kring en idé' : 'Games, each built around one idea' },
+  { n: String(GAMES.length), text: sv ? 'Spel: ett robotpussel, ett sällskapsspel och ett racingspel' : 'Games: a robot puzzle, a party game and a racer' },
   { n: ROBOT.stat.value, text: cap(ROBOT.stat.label[lang]), game: ROBOT.name },
   { n: MURDER.stat.value, text: cap(MURDER.stat.label[lang]), game: MURDER.name },
   { n: '0', text: sv ? 'Reklam eller prenumerationer, i något av spelen' : 'Ads or subscriptions, in any of the games' },
@@ -159,7 +159,7 @@ const facts = [
           </div>
         </div>
       )}
-      <p class="lede">{sv ? 'Tre spel som vart och ett bygger på en idé, för Steam, mobilen och webbläsaren.' : 'Three games, each built around one idea, for Steam, phones and the browser.'}</p>
+      <p class="lede">{sv ? 'En robot som gör exakt det du säger. En mördare vid ert bord. Ett varv som alltid kan bli lite renare. Tre spel för Steam, mobilen och webbläsaren.' : 'A robot that does exactly what you tell it. A killer at your table. A lap that can always be a little cleaner. Three games for Steam, phones and the browser.'}</p>
       <nav class="jump" aria-label={sv ? 'Spelen' : 'The games'}>
         <ol>
           {GAMES.map((g) => (
