@@ -3,69 +3,71 @@
  * Every web font on the site, declared here with the exact files the build emits, so a
  * preload and its @font-face can never point at different URLs.
  *
- * How a page avoids showing a heading in the wrong font and then swapping it:
- *  - The faces every page shows on its first screen are preloaded: the studio face
- *    (Saira Condensed 700; game pages, which use their own title faces, leave it out),
- *    the body face (Familjen Grotesk 400) and the mono labels (IBM Plex Mono 500), latin
- *    subsets. A page that shows a game's title face on its first screen preloads that
- *    one too (the `games` prop).
- *  - Every face uses font-display: optional. A preloaded face arrives before the first
- *    paint (Chrome even holds that paint for it, up to 100 ms); a face already in the
- *    cache is used at once on every later page. If a font is not there in time (a first
- *    visit on a slow line), the page keeps the fallback for that visit instead of
- *    swapping it under the reader, and the next page uses the real one.
- *    (Measured by capturing every frame of page-to-page navigation in Chromium, Firefox
- *    and WebKit, cold and warm cache, at full speed and throttled: with swap, headings
- *    first painted in the fallback and then changed; with optional they never did.)
+ * How a page avoids showing a heading in one font and then another:
+ *  - Headings, labels and game titles come inside the page. The studio face (Saira
+ *    Condensed 700) and the mono labels (IBM Plex Mono 500), only ever set in capitals,
+ *    and the two games' title faces (Bodoni Moda 700 for "The Perfect Murder", Press
+ *    Start 2P for "THE PERFECT RACE") each have a small subset with just the characters
+ *    they use (src/assets/fonts/, made by scripts/make-font-subsets.py from
+ *    subsets.json), inlined below as data: URLs: about 12 KB in all. They are declared
+ *    after the full faces, so for their characters the browser takes them and never
+ *    fetches the full file, and they are there for the first paint on any connection
+ *    (font-display: block only ever waits for the decoding). The full faces stay
+ *    declared for any other character.
+ *  - The body face (Familjen Grotesk, one variable font for 400 to 700, latin) is the one
+ *    file every page preloads, with font-display: optional: a font that is not ready
+ *    when the page is first drawn is not swapped in later, so text never changes font in
+ *    front of the reader. A preload does not guarantee it is ready: on some first visits
+ *    (in Chromium measured from about 10 ms round trips, and from about 150 ms) that
+ *    page keeps the body's fallback; every later page has the font from the cache.
  *  - The fallbacks are local fonts with their metrics matched to the web font
  *    (size-adjust, ascent, descent and line gap, computed from the font files), so that
- *    rare fallback paint takes almost the same room.
+ *    fallback takes almost the same room.
  * latin covers English and Swedish (å, ä, ö); latin-ext loads only for other letters.
  */
 import sairaLatin from '@fontsource/saira-condensed/files/saira-condensed-latin-700-normal.woff2?url';
 import sairaExt from '@fontsource/saira-condensed/files/saira-condensed-latin-ext-700-normal.woff2?url';
-import body400 from '@fontsource/familjen-grotesk/files/familjen-grotesk-latin-400-normal.woff2?url';
-import body400x from '@fontsource/familjen-grotesk/files/familjen-grotesk-latin-ext-400-normal.woff2?url';
-import body500 from '@fontsource/familjen-grotesk/files/familjen-grotesk-latin-500-normal.woff2?url';
-import body500x from '@fontsource/familjen-grotesk/files/familjen-grotesk-latin-ext-500-normal.woff2?url';
-import body600 from '@fontsource/familjen-grotesk/files/familjen-grotesk-latin-600-normal.woff2?url';
-import body600x from '@fontsource/familjen-grotesk/files/familjen-grotesk-latin-ext-600-normal.woff2?url';
-import body700 from '@fontsource/familjen-grotesk/files/familjen-grotesk-latin-700-normal.woff2?url';
-import body700x from '@fontsource/familjen-grotesk/files/familjen-grotesk-latin-ext-700-normal.woff2?url';
+// The body face as one variable font for all its weights (400 to 700).
+import bodyLatin from '@fontsource-variable/familjen-grotesk/files/familjen-grotesk-latin-wght-normal.woff2?url';
+import bodyExt from '@fontsource-variable/familjen-grotesk/files/familjen-grotesk-latin-ext-wght-normal.woff2?url';
 import monoLatin from '@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-500-normal.woff2?url';
 import monoExt from '@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-ext-500-normal.woff2?url';
 import bodoniLatin from '@fontsource/bodoni-moda/files/bodoni-moda-latin-700-normal.woff2?url';
 import bodoniExt from '@fontsource/bodoni-moda/files/bodoni-moda-latin-ext-700-normal.woff2?url';
 import pixelLatin from '@fontsource/press-start-2p/files/press-start-2p-latin-400-normal.woff2?url';
 import pixelExt from '@fontsource/press-start-2p/files/press-start-2p-latin-ext-400-normal.woff2?url';
+import subsets from '../assets/fonts/subsets.json';
 
-/** A game's title face: Bodoni Moda (The Perfect Murder), Press Start 2P (The Perfect Race). */
-export type GameFace = 'murder' | 'race';
-
-interface Props {
-  /** Game title faces this page shows on its first screen: preloaded with the page. */
-  games?: GameFace[];
-  /** Whether the page sets anything in the studio face (game pages do not). */
-  studio?: boolean;
-}
-const { games = [], studio = true } = Astro.props;
+// The inline subsets, as data: URLs.
+const inline = import.meta.glob<string>('../assets/fonts/*.woff', { query: '?inline', import: 'default', eager: true });
 
 const LATIN = 'U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD';
 const LATIN_EXT = 'U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF';
-const DISPLAY = 'optional';
 
-const faces: { family: string; weight: number; latin: string; ext: string; extra?: string }[] = [
+// The Perfect Race's own correction (its tokens.css): the line box runs from the baseline
+// to the cap top, so the pixel face centres true next to anything else.
+const PIXEL_METRICS = 'ascent-override:100%;descent-override:0%;line-gap-override:0%;';
+
+const faces: { family: string; weight: number | string; latin: string; ext: string; extra?: string }[] = [
   { family: 'Saira Condensed', weight: 700, latin: sairaLatin, ext: sairaExt },
-  { family: 'Familjen Grotesk', weight: 400, latin: body400, ext: body400x },
-  { family: 'Familjen Grotesk', weight: 500, latin: body500, ext: body500x },
-  { family: 'Familjen Grotesk', weight: 600, latin: body600, ext: body600x },
-  { family: 'Familjen Grotesk', weight: 700, latin: body700, ext: body700x },
+  { family: 'Familjen Grotesk', weight: '400 700', latin: bodyLatin, ext: bodyExt },
   { family: 'IBM Plex Mono', weight: 500, latin: monoLatin, ext: monoExt },
   { family: 'Bodoni Moda', weight: 700, latin: bodoniLatin, ext: bodoniExt },
-  // The Perfect Race's own correction (its tokens.css): the line box runs from the
-  // baseline to the cap top, so the pixel face centres true next to anything else.
-  { family: 'Press Start 2P', weight: 400, latin: pixelLatin, ext: pixelExt, extra: 'ascent-override:100%;descent-override:0%;line-gap-override:0%;' },
+  { family: 'Press Start 2P', weight: 400, latin: pixelLatin, ext: pixelExt, extra: PIXEL_METRICS },
 ];
+
+// A subset's unicode-range: exactly the characters it has, as runs (U+41-5A,U+C4-C5,...).
+const rangeOf = (text: string) => {
+  const cps = [...new Set([...text].map((c) => c.codePointAt(0)!))].sort((a, b) => a - b);
+  const runs: [number, number][] = [];
+  for (const cp of cps) {
+    const last = runs[runs.length - 1];
+    if (last && cp === last[1] + 1) last[1] = cp;
+    else runs.push([cp, cp]);
+  }
+  const hex = (n: number) => n.toString(16).toUpperCase();
+  return runs.map(([a, b]) => (a === b ? `U+${hex(a)}` : `U+${hex(a)}-${hex(b)}`)).join(',');
+};
 
 // Fallbacks: a local font scaled to the web font's width (size-adjust, from the advance
 // widths of typical text in each face), with the web font's own vertical metrics.
@@ -83,20 +85,25 @@ const fallbacks: { family: string; weight: number; local: string[]; size: string
   { family: 'Press Start 2P Fallback', weight: 400, local: ['Courier New Bold', 'CourierNewPS-BoldMT', 'Courier New'], size: '166.64%', ascent: '60.01%', descent: '0%' },
 ];
 
+const face = (family: string, weight: number | string, src: string, range: string, display: string, extra = '') =>
+  `@font-face{font-family:'${family}';font-style:normal;font-weight:${weight};font-display:${display};src:${src};unicode-range:${range};${extra}}`;
+
 const css =
-  faces
-    .flatMap((f) =>
-      [
-        [f.latin, LATIN],
-        [f.ext, LATIN_EXT],
-      ].map(([url, range]) => `@font-face{font-family:'${f.family}';font-style:normal;font-weight:${f.weight};font-display:${DISPLAY};src:url(${url}) format('woff2');unicode-range:${range};${f.extra ?? ''}}`),
-    )
+  faces.flatMap((f) => [face(f.family, f.weight, `url(${f.latin}) format('woff2')`, LATIN, 'optional', f.extra), face(f.family, f.weight, `url(${f.ext}) format('woff2')`, LATIN_EXT, 'optional', f.extra)]).join('') +
+  // After the full faces, so the browser takes these first for their characters.
+  subsets
+    .map((s) => {
+      const data = inline[`../assets/fonts/${s.file}`];
+      if (!data) throw new Error(`Fonts.astro: run scripts/make-font-subsets.py (no ${s.file})`);
+      return face(s.family, s.weight, `url(${data}) format('woff')`, rangeOf(s.text), 'block', s.family === 'Press Start 2P' ? PIXEL_METRICS : '');
+    })
     .join('') +
   fallbacks
     .map((f) => `@font-face{font-family:'${f.family}';font-style:normal;font-weight:${f.weight};src:${f.local.map((n) => `local('${n}')`).join(',')};size-adjust:${f.size};ascent-override:${f.ascent};descent-override:${f.descent};line-gap-override:0%}`)
     .join('');
 
-const preloads = [...(studio ? [sairaLatin] : []), body400, monoLatin, ...(games.includes('murder') ? [bodoniLatin] : []), ...(games.includes('race') ? [pixelLatin] : [])];
+// The one downloaded face every page's first screen needs.
+const preloads = [bodyLatin];
 ---
 {preloads.map((href) => <link rel="preload" href={href} as="font" type="font/woff2" crossorigin />)}
 <style is:inline set:html={css}></style>
