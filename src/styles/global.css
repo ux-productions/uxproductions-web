@@ -2,12 +2,12 @@
    own logo, so each game's art and colours carry its panel and its page.
    The amber stays as the studio accent for links and focus. */
 :root {
-  --ground: #0f0e0d;
-  --ground-2: #151413;
-  --plate: #1c1a18;
-  --plate-2: #242120;
-  --line: #2e2b28;
-  --line-strong: #4a4540;
+  --ground: #1f1d1b;
+  --ground-2: #262321;
+  --plate: #2c2926;
+  --plate-2: #34302d;
+  --line: #3d3935;
+  --line-strong: #5a544d;
   --text: #f2eee6;
   --text-dim: #c9c2b6;
   --text-muted: #a39b8e;
@@ -200,7 +200,7 @@ p { margin: 0 0 1em; }
 .site-footer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
 .site-footer a { color: var(--text-dim); text-decoration: none; }
 .site-footer a:hover { color: var(--text); text-decoration: underline; }
-.footer-mark { color: var(--paper); margin-top: clamp(44px, 6vw, 88px); }
+.footer-mark { color: #8f877b; margin-top: clamp(44px, 6vw, 88px); }
 .footer-mark svg { display: block; width: 100%; height: auto; }
 .footer-mark .fm-stack { display: none; }
 .footer-base { margin-top: clamp(20px, 2.4vw, 32px); padding-top: 18px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 6px 24px; justify-content: space-between; color: var(--text-muted); font-size: 13.5px; }
