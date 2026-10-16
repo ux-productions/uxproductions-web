@@ -1,8 +1,7 @@
 import type { ImageMetadata } from 'astro';
-import type { Lang } from './site';
+import { robotOnSteam, type Lang } from './site';
 
 import robotHero from '../assets/robot/hero.jpg';
-import robotCapsule from '../assets/robot/capsule.jpg';
 import robotLogo from '../assets/robot/logo.png';
 import robotIcon from '../assets/robot/icon.png';
 import robotTrailerPoster from '../assets/robot/trailer-poster.jpg';
@@ -16,7 +15,6 @@ import robot06 from '../assets/robot/06_race.jpg';
 import robot07 from '../assets/robot/07_worlds.jpg';
 import robot08 from '../assets/robot/08_results.jpg';
 import murderHero from '../assets/murder/hero.jpg';
-import murderCard from '../assets/murder/card.jpg';
 import murderIcon from '../assets/murder/icon.png';
 import murder01 from '../assets/murder/01-role-reveal.jpg';
 import murder02 from '../assets/murder/02-night.jpg';
@@ -25,7 +23,6 @@ import murder04 from '../assets/murder/04-dawn.jpg';
 import murder05 from '../assets/murder/05-gameover.jpg';
 import murder06 from '../assets/murder/06-lobby.jpg';
 import raceHero from '../assets/race/harbour-street-night.jpg';
-import raceCard from '../assets/race/card.jpg';
 import raceIcon from '../assets/race/icon.png';
 import race01 from '../assets/race/01-breaker-bay.jpg';
 import race02 from '../assets/race/02-switchback-nocturne.jpg';
@@ -78,8 +75,9 @@ export interface Game {
   platforms: string[];
   stores: Store[];
   website?: string;
+  /** The game's own art without its name: its page's hero, and the picture on its card
+   *  (games index, 404, press index), which sets the name itself under it. */
   hero: ImageMetadata;
-  card: ImageMetadata;
   /** The game's app icon, as players see it on their phones and in the stores (square, unrounded). */
   icon: ImageMetadata;
   logo?: ImageMetadata;
@@ -97,6 +95,12 @@ export interface Game {
     datePublished?: string;
   };
 }
+
+/** A platform's name in a language ('Browser' is 'Webbläsare' in Swedish). */
+export const platformLabel = (platform: string, lang: Lang) => (lang === 'sv' && platform === 'Browser' ? 'Webbläsare' : platform);
+
+// The Robot's Steam release in the words of the build's day: before it, "comes out"; after, "came out".
+const robotOut = robotOnSteam();
 
 export const ROBOT: Game = {
   slug: 'the-perfect-robot',
@@ -168,7 +172,7 @@ export const ROBOT: Game = {
       { label: 'Innehåll', value: '57 handgjorda banor i sex världar' },
       { label: 'Spellägen', value: 'Kampanj, Quick Game mot bottar, online med vänner' },
       { label: 'Styrning', value: 'Pekskärm, mus och tangentbord, handkontroll' },
-      { label: 'Släpps på Steam', value: '22 oktober 2026' },
+      { label: robotOut ? 'Släpptes på Steam' : 'Släpps på Steam', value: '22 oktober 2026' },
       { label: 'Hette tidigare', value: 'Tiny Treads' },
       { label: 'Utvecklare', value: 'UX Productions, Sverige' },
     ],
@@ -176,14 +180,18 @@ export const ROBOT: Game = {
   faq: {
     en: [
       { q: 'Do I need to know how to code?', a: 'No. You program with six move cards: forward, two forward, back, turn left, turn right and wait. The puzzle is in the order you lay them down.' },
-      { q: 'When is it out on Steam?', a: 'The Perfect Robot comes out on Steam on 22 October 2026. It is already out on iOS and Android.' },
+      robotOut
+        ? { q: 'Is it on Steam?', a: 'Yes. The Perfect Robot came out on Steam on 22 October 2026. It is also on iOS and Android.' }
+        : { q: 'When is it out on Steam?', a: 'The Perfect Robot comes out on Steam on 22 October 2026. It is already out on iOS and Android.' },
       { q: 'Can I play with friends?', a: 'Yes. Race or battle friends online, or take on robot rivals in Quick Game.' },
       { q: 'Is this the game that was called Tiny Treads?', a: 'Yes. Tiny Treads became The Perfect Robot with version 2.0 in 2026, with new worlds, new levels and a new look. Your progress carried over.' },
       { q: 'Does it have ads or a subscription?', a: 'No. There are no ads, no subscription and no accounts.' },
     ],
     sv: [
       { q: 'Måste jag kunna programmera?', a: 'Nej. Du programmerar med sex rörelsekort: framåt, två framåt, bakåt, vänd vänster, vänd höger och vänta. Pusslet ligger i ordningen du lägger dem i.' },
-      { q: 'När kommer det på Steam?', a: 'The Perfect Robot släpps på Steam den 22 oktober 2026. Det finns redan på iOS och Android.' },
+      robotOut
+        ? { q: 'Finns det på Steam?', a: 'Ja. The Perfect Robot släpptes på Steam den 22 oktober 2026. Det finns också på iOS och Android.' }
+        : { q: 'När kommer det på Steam?', a: 'The Perfect Robot släpps på Steam den 22 oktober 2026. Det finns redan på iOS och Android.' },
       { q: 'Kan jag spela med vänner?', a: 'Ja. Tävla eller slåss mot vänner online, eller möt robotrivaler i Quick Game.' },
       { q: 'Är det här spelet som hette Tiny Treads?', a: 'Ja. Tiny Treads blev The Perfect Robot med version 2.0 under 2026, med nya världar, nya banor och nytt utseende. Dina framsteg följde med.' },
       { q: 'Finns det reklam eller prenumeration?', a: 'Nej. Ingen reklam, ingen prenumeration och inga konton.' },
@@ -196,7 +204,6 @@ export const ROBOT: Game = {
     { kind: 'googleplay', url: 'https://play.google.com/store/apps/details?id=se.uxproductions.tinytreads' },
   ],
   hero: robotHero,
-  card: robotCapsule,
   icon: robotIcon,
   logo: robotLogo,
   shots: [
@@ -325,7 +332,6 @@ export const MURDER: Game = {
   ],
   website: 'https://the-perfect-murder.com',
   hero: murderHero,
-  card: murderCard,
   icon: murderIcon,
   shots: [
     { src: murder01, alt: { en: 'A secret role being revealed', sv: 'En hemlig roll avslöjas' } },
@@ -433,7 +439,6 @@ export const RACE: Game = {
   ],
   website: 'https://the-perfect-race.com',
   hero: raceHero,
-  card: raceCard,
   icon: raceIcon,
   shots: [
     { src: race01, alt: { en: 'Racing through Breaker Bay', sv: 'Racing genom Breaker Bay' } },

@@ -7,9 +7,9 @@ import Icon from '../components/Icon.astro';
 import Mark from '../components/Mark.astro';
 import Socials from '../components/Socials.astro';
 import StoreButtons from '../components/StoreButtons.astro';
-import { GAMES, MURDER, ROBOT } from '../data/games';
+import { GAMES, MURDER, ROBOT, platformLabel } from '../data/games';
 import PanelArt from '../components/PanelArt.astro';
-import { BADGES, FEATURED_GAME, ROBOT_STEAM_RELEASE, SITE, badgeFor, formatDate, localize, loopsFor, robotOnSteam, steamRelease, storeLabel, t, type Lang } from '../data/site';
+import { BADGES, FEATURED_GAME, ROBOT_STEAM_RELEASE, SITE, badgeFor, formatDate, keepOpeners, localize, loopsFor, robotOnSteam, steamRelease, storeLabel, storeShort, t, type Lang } from '../data/site';
 import { freshNews } from '../data/news';
 import robotKeyArt from '../assets/robot/key-art.jpg';
 import murderNight from '../assets/murder/harbour-night.jpg';
@@ -90,14 +90,17 @@ const ART = {
     phone: { src: raceNightPhone, widths: [600, 900, 1170], sizes: '100vw', media: PHONE },
   },
 } as const;
-// Each panel's loop (site.ts LOOPS): today's, and any later one, so a page left open
-// past a loop's end switches by itself.
+// Each panel's loop (site.ts LOOPS): today's and any later one. The script takes the first
+// whose end is still ahead when it makes the panel's video, so a page loaded after a loop's
+// end (the build before the next one, or a cached copy) already plays the next.
 const loopsOf = (slug: string) =>
   loopsFor(slug).map((l) => ({
     until: l.until?.toISOString(),
     position: l.position,
     aspect: +(1600 / l.height).toFixed(4),
-    files: [1200, 1600].map((w) => ({ w, webm: `/video/${l.name}-${w}.webm`, mp4: `/video/${l.name}-${w}.mp4`, poster: l.stillIsPoster ? undefined : `/video/${l.name}-${w}.jpg` })),
+    minWidth: l.minWidth,
+    stillIsPoster: l.stillIsPoster,
+    files: [1200, 1600].map((w) => ({ w, webm: `/video/${l.name}-${w}.webm`, mp4: `/video/${l.name}-${w}.mp4` })),
   }));
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
@@ -113,7 +116,7 @@ const facts = [
   { n: '0', text: sv ? 'Reklam eller prenumerationer, i något av spelen' : 'Ads or subscriptions, in any of the games' },
 ];
 ---
-<Base title={title} description={description} lang={lang} path="/" bilingual image="/og/studio.jpg" imageAlt="The Perfect Robot, The Perfect Murder and The Perfect Race" jsonld={[website]} fonts={['murder', 'race']}>
+<Base title={title} description={description} lang={lang} path="/" bilingual image="/og/studio.jpg" imageAlt="The Perfect Robot, The Perfect Murder and The Perfect Race" jsonld={[website]}>
   <script is:inline slot="head">document.documentElement.classList.add('js')</script>
 
   <section class:list={['mast', { 'has-launch': launch }]}>
@@ -129,7 +132,9 @@ const facts = [
             <span class="badge" data-after={launch.after?.chip}>{launch.chip}</span>
             <a class="launch-name" href={localize(`/games/${ROBOT.slug}/`, lang)}><GameTitle game={ROBOT} logoSizes="120px" eager /></a>
           </p>
-          <p class="launch-note" data-after={launch.after?.note}>{launch.note}</p>
+          {/* Before the release the note keeps room for the longer of its two texts (the
+              hidden ones in data-now and data-out), so the switch never moves the stage. */}
+          <p class="launch-note" data-now={launch.after && launch.note} data-out={launch.after?.note}><span data-after={launch.after?.note}>{launch.note}</span></p>
           <div class="launch-row">
             <a class="btn primary" href={steam.url} rel="noopener">
               <Icon name="steam" />
@@ -196,13 +201,13 @@ const facts = [
                 <h2 class="tp-title" id={`${g.slug}-t`}>
                   <a href={href}><GameTitle game={g} logoSizes="(min-width: 960px) clamp(230px, 21vw, 320px), 320px" eager={lead} /></a>
                 </h2>
-                <p class="tp-tag">{g.tagline[lang]}</p>
+                <p class="tp-tag">{keepOpeners(g.tagline[lang])}</p>
                 <p class="tp-pitch">{g.pitch[lang]}</p>
                 <div class="tp-actions">
                   <StoreButtons game={g} lang={lang} mainOnly named />
                   <a class="more" href={href}>{s.aboutGame}<span class="visually-hidden">{` (${g.name})`}</span></a>
                 </div>
-                <ul class="chips" aria-label={sv ? 'Plattformar' : 'Platforms'}>{g.platforms.map((pl) => <li><span>{pl}</span></li>)}</ul>
+                <ul class="chips" aria-label={sv ? 'Plattformar' : 'Platforms'}>{g.platforms.map((pl) => <li><span>{platformLabel(pl, lang)}</span></li>)}</ul>
               </div>
 
               {/* What a closed panel shows on wide screens, like the spine of a boxed edition:
@@ -218,10 +223,14 @@ const facts = [
                 <h2 class="tp-vname"><GameTitle game={g} logoSizes="300px" /></h2>
                 <div class="tp-foot">
                   <p class="tp-genre">{g.genreShort[lang]}</p>
-                  <p class="tp-fact"><b>{fact(g)}</b> {g.stat.detail[lang]}</p>
+                  <p class="tp-fact"><b>{fact(g)}</b> <span class="tp-detail">{g.stat.detail[lang]}</span></p>
+                  {/* On laptops the button shows only its first word (Play, Wishlist); the
+                      whole label stays its name for screen readers. */}
                   <a class="btn primary tp-cta" href={main.url} rel="noopener">
                     <Icon name={main.kind} />
-                    <span data-after={main.kind === 'steam' && !steamOut ? storeLabel('steam', lang, true) : undefined}>{storeLabel(main.kind, lang)}</span><span class="visually-hidden">{` (${g.name})`}</span>
+                    <span class="tp-cta-full" data-after={main.kind === 'steam' && !steamOut ? storeLabel('steam', lang, true) : undefined}>{storeLabel(main.kind, lang)}</span>
+                    <span class="tp-cta-short" aria-hidden="true" data-after={main.kind === 'steam' && !steamOut ? storeShort('steam', lang, true) : undefined}>{storeShort(main.kind, lang)}</span>
+                    <span class="visually-hidden">{` (${g.name})`}</span>
                   </a>
                   <a class="tp-more" href={`#${g.slug}`} aria-controls={`${g.slug}-body`}>
                     {sv ? 'Mer' : 'More'}<span class="visually-hidden">{sv ? ` om ${g.name}` : ` about ${g.name}`}</span>
@@ -329,13 +338,23 @@ const facts = [
       }
     };
 
-    type Loop = { until?: string; position: string; aspect: number; files: { w: number; webm: string; mp4: string; poster?: string }[] };
+    type Loop = { until?: string; position: string; aspect: number; minWidth?: number; stillIsPoster?: boolean; files: { w: number; webm: string; mp4: string }[] };
+    // A panel's loop for today: the first whose end is still ahead, if the open panel is
+    // the size it is made for (`box` is the size of an open panel).
+    const loopFor = (p: HTMLElement, box: DOMRect) => {
+      const loop = (JSON.parse(p.dataset.loops!) as Loop[]).find((l) => !l.until || Date.now() < Date.parse(l.until));
+      return loop && (!loop.minWidth || (box.width >= loop.minWidth && box.width > box.height * 1.2)) ? loop : undefined;
+    };
+
     // `box` is the size of an open panel, measured before this one starts to widen.
     const addVideo = (p: HTMLElement, box: DOMRect) => {
       if (videos.has(p) || !p.dataset.loops || !loaded || !wide.matches || still.matches || saveData) return;
-      // Today's loop: the first whose end is still ahead.
-      const loop = (JSON.parse(p.dataset.loops) as Loop[]).find((l) => !l.until || Date.now() < Date.parse(l.until));
+      const loop = loopFor(p, box);
       if (!loop) return;
+      addButton(p);
+      // While the loops are paused, a newly opened game gets its button (set to Play) but
+      // no video yet: nothing is downloaded until the visitor presses Play.
+      if (paused) return;
       // The loop covers the open panel (Race's at --art-zoom times its width). Take the
       // smaller file when it is never enlarged (at this screen's density), else the larger:
       // the games' fine detail (Race's pixel-art cars, Murder's windows) stays sharp.
@@ -349,9 +368,9 @@ const facts = [
       v.playsInline = true;
       v.preload = 'auto';
       v.className = 'tp-video';
-      // The poster is the loop's first frame: its own file, or the panel's still, which is
-      // that frame and already loaded.
-      v.poster = file.poster ?? p.querySelector<HTMLImageElement>('.tp-art img')?.currentSrc ?? '';
+      // Murder's and Race's still is the loop's first frame, already loaded: their poster.
+      // The video is hidden until it plays, so the Robot's needs none.
+      if (loop.stillIsPoster) v.poster = p.querySelector<HTMLImageElement>('.tp-art img')?.currentSrc ?? '';
       v.style.objectPosition = loop.position;
       v.setAttribute('aria-hidden', 'true');
       for (const [src, type] of [[file.webm, 'video/webm'], [file.mp4, 'video/mp4']]) {
@@ -361,17 +380,26 @@ const facts = [
         v.append(so);
       }
       v.addEventListener('playing', () => p.classList.add('has-video'), { once: true });
-      p.querySelector('.tp-art')!.append(v);
-
+      // In a box of its own: the Robot's ends where its key art does (see .tp-loop).
+      const frame = document.createElement('div');
+      frame.className = 'tp-loop';
+      frame.append(v);
+      p.querySelector('.tp-art')!.append(frame);
+    };
+    // The panel's pause button, made with its loop (or, while paused, in its place).
+    const addButton = (p: HTMLElement) => {
+      if (p.querySelector('.tp-pause')) return;
       const pb = document.createElement('button');
       pb.type = 'button';
       pb.className = 'tp-pause';
       pb.addEventListener('click', () => {
         paused = !paused;
         for (const b of pauseButtons) label(b);
-        sync();
+        if (!paused) videoForOpen();
+        else sync();
       });
       p.append(pb);
+      p.classList.add('has-loop');
       pauseButtons.push(pb);
       label(pb);
     };
@@ -539,16 +567,20 @@ const facts = [
      --cd-n and --cd-u are the number and unit sizes; a card is (n + u + 26px) tall. */
   .launch { --cd-n: 1.6rem; --cd-u: 10px; --cd-w: 58px; --cd-pad: 0px; }
   .cd { display: flex; gap: 8px; margin: 0; }
-  html.js .cd[hidden] { display: flex !important; visibility: hidden; }
+  @media (min-width: 960px) {
+    html.js .cd[hidden] { display: flex !important; visibility: hidden; }
+  }
   .cd-card { display: block; width: var(--cd-w); border-radius: 6px; overflow: hidden; background: #0a1524; border: 1px solid #24476b; text-align: center; box-shadow: 0 3px 0 #050c16; }
   .cd-card b { display: block; background: var(--c); color: #0a1524; font: 700 var(--cd-n)/1 var(--studio); padding: calc(7px - var(--cd-pad)) 0 calc(5px - var(--cd-pad)); font-variant-numeric: tabular-nums;
     box-shadow: inset 0 -3px 0 rgba(10, 21, 36, .18), inset 0 2px 0 rgba(255, 255, 255, .35); }
   .cd-card span { display: block; font: 600 var(--cd-u)/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--c); padding: calc(6px - var(--cd-pad)) 0; }
   /* At the release the script hides the countdown but keeps its place, and the sentence
-     keeps its two lines, so the stage below never jumps. */
-  @media (min-width: 960px) {
-    html.js .launch.has-cd .launch-note { min-height: 2lh; }
-  }
+     changes to its out-now words in a box sized for the longer of the two (both are
+     there, hidden, in the same grid cell), so the stage below never jumps. */
+  .launch-note[data-out] { display: grid; }
+  .launch-note[data-out] > span, .launch-note[data-out]::before, .launch-note[data-out]::after { grid-area: 1 / 1; }
+  .launch-note[data-out]::before { content: attr(data-now); visibility: hidden; }
+  .launch-note[data-out]::after { content: attr(data-out); visibility: hidden; }
   /* Laptops: the countdown stands beside the words and the button, a size smaller. */
   @media (min-width: 960px) and (max-height: 860px) {
     .launch { --cd-n: 1.35rem; --cd-u: 9.5px; --cd-w: 52px; --cd-pad: 2px;
@@ -614,6 +646,18 @@ const facts = [
     .tp.has-video.is-open .tp-art video { opacity: 1; }
     .tp.has-video.is-open .tp-art img { opacity: 0; }
   }
+  /* The script puts each loop in a box of its own, as large as the panel. The Robot's key
+     art, open, fades out at 82% of the panel's height (its foot is under the copy), so its
+     loop's box stops at 80% and fades out the same way: drawn exactly as it would be in the
+     whole panel, it never covers more of the panel than the key art, which stays the
+     page's largest image (LCP) when the loop starts. */
+  .tp-loop { position: absolute; inset: 0; overflow: hidden; }
+  .theme-robot .tp-loop {
+    bottom: 20%;
+    -webkit-mask-image: linear-gradient(180deg, #000 72%, transparent);
+    mask-image: linear-gradient(180deg, #000 72%, transparent);
+  }
+  .theme-robot .tp-loop video { height: 125%; }
   /* Slim panels keep their art lit in the middle and dark where the type sits;
      the open one is dark only under its copy. */
   .tp-art::before, .tp-art::after { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none; }
@@ -643,7 +687,7 @@ const facts = [
   /* Race: lit cars cross the copy's edge now and then. */
   .theme-race .tp-art::after { --scrim: 66%; }
   .theme-robot .tp-art img { -webkit-mask-image: linear-gradient(180deg, #000 82%, transparent); mask-image: linear-gradient(180deg, #000 82%, transparent); }
-  /* As a spine its top edge sits below the number, so it fades in there too. */
+  /* As a spine its top edge sits below the app icon, so it fades in there too. */
   @media (min-width: 960px) {
     .theme-robot .tp-art img {
       -webkit-mask-image: linear-gradient(180deg, transparent, #000 14%, #000 82%, transparent);
@@ -678,10 +722,11 @@ const facts = [
     border: 1px solid color-mix(in srgb, var(--g-text) 45%, transparent); background: color-mix(in srgb, var(--g-bg) 55%, transparent);
     color: var(--g-text); cursor: pointer; display: none;
   }
-  /* Only where the loop plays: a window narrowed (or a tablet turned) below 960 px
-     hides the video, and its button goes with it. */
+  /* With the open panel's loop (from the moment it is made, and while the loops are
+     paused): a window narrowed (or a tablet turned) below 960 px hides the video, and its
+     button goes with it; so does reduced motion (see the end of the stage). */
   @media (min-width: 960px) {
-    .tp.has-video.is-open .tp-pause { display: block; z-index: 4; }
+    .tp.has-loop.is-open .tp-pause { display: block; z-index: 4; }
   }
   .tp-pause::before { content: ''; position: absolute; inset: 0; margin: auto; width: 10px; height: 12px; border-inline: 3px solid currentColor; box-sizing: border-box; }
   .tp-pause.is-paused::before { width: 0; height: 0; border: 0; border-left: 11px solid currentColor; border-block: 7px solid transparent; margin-left: 15px; }
@@ -721,7 +766,7 @@ const facts = [
        is placed by two of its own points rather than by object-position: point --a of
        the art (a share of its width) sits at --r across the panel. As a spine (0) the
        floating head (75% across the art) is centred, a little smaller and below the
-       number; open (1) the art zooms in and the green robot (44% across) stands just
+       app icon; open (1) the art zooms in and the green robot (44% across) stands just
        right of the copy, never past the panel's edge. --half is half the robot's width. */
     .theme-robot {
       --t0: 60px; --h0: min(100%, 520px); --r0: 50%; --a0: 75%;
@@ -737,17 +782,19 @@ const facts = [
     }
     /* Race: the game's camera keeps the pack mid-frame, so the open panel draws its loop
        (and the still, the loop's first frame) at least --art-zoom times the panel's width
-       and puts the frame's middle 70% across: the pack races right of the copy, its cars
-       larger. As a spine it is drawn to the panel's height with its 54% line, through the
-       pack, in the middle. The script reads --art-zoom to pick the loop's file. */
-    .theme-race { --art-zoom: 1.4; }
+       and puts the frame's middle (--ra1) 70% across (--rl1): the pack races right of the
+       copy, its cars larger. As a spine it is drawn to the panel's height with the frame's
+       65% line (--ra0) in the middle (--rl0): the pack runs down the spine's left half and
+       the game's name over the empty track beside it. The script reads --art-zoom to pick
+       the loop's file. */
+    .theme-race { --art-zoom: 1.4; --ra0: 65%; --rl0: 50%; --ra1: 50%; --rl1: 70%; }
     .theme-race .tp-art { container-type: size; }
     .theme-race .tp-art :is(img, video) {
       --h: calc(100cqh + (max(100cqw * var(--art-zoom) / 1.6, 100cqh) - 100cqh) * var(--open));
       inset: auto; width: auto; max-width: none; height: var(--h);
       top: calc((100cqh - var(--h)) / 2);
-      left: calc(54% + 16% * var(--open));
-      transform: translateX(calc(-54% + 4% * var(--open)));
+      left: calc(var(--rl0) + (var(--rl1) - var(--rl0)) * var(--open));
+      transform: translateX(calc(-1 * (var(--ra0) + (var(--ra1) - var(--ra0)) * var(--open))));
     }
 
     .tp-body, .tp-spine { grid-area: 1 / 1; }
@@ -787,27 +834,37 @@ const facts = [
     }
     .tp-spine-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
     /* At the top, like a boxed edition's spine: the game's app icon, and the studio's UX. */
-    .tp-icon { width: 48px; height: 48px; }
+    .tp-icon { width: 48px; height: 48px; box-shadow: 0 0 0 1px rgba(255, 255, 255, .16), 0 2px 16px 4px color-mix(in srgb, var(--g-bg) 78%, transparent); }
     .tp-glyph { width: 30px; height: auto; color: var(--g-accent); margin-top: 4px; }
     /* The game's own name turned on its side, reading up the spine, as large as the room
-       it has allows (cqh, cqw: shares of its own box), so a short stage, larger text or
-       wider spacing shrinks it instead of cutting it off. */
-    .tp-vname { flex: 1 1 0; min-height: 0; margin: 14px 0; position: relative; container-type: size; overflow: hidden; font-size: 16px; line-height: 1; }
+       it has allows (cqh, cqw: shares of its own box), so a short stage or larger text
+       shrinks it instead of cutting it off. */
+    .tp-vname { flex: 1 1 0; min-height: 0; margin: 14px 0; position: relative; container-type: size; font-size: 16px; line-height: 1; }
     .tp-vname > .gt {
       position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate(-90deg); white-space: nowrap;
       filter: drop-shadow(0 1px 8px color-mix(in srgb, var(--g-bg) 85%, transparent));
     }
-    /* Room for the reader's own text spacing too (letters +.12em, words +.16em). */
+    /* A soft band of the game's ground right behind the name, so the art (Race's cars and
+       their headlights, Murder's lamp post) never runs through the letters, at rest or
+       when the spine lights up. */
+    .tp-vname > :is(.gt-murder, .gt-race)::before {
+      content: ''; position: absolute; z-index: -1; inset: -.45em -.7em; border-radius: .8em;
+      background: color-mix(in srgb, var(--g-bg) 74%, transparent); filter: blur(.4em);
+    }
+    /* Room for the reader's own text spacing too (letters +.12em, words +.16em): Murder's
+       within its box; Race's (16.6em long, 18.2em spaced) partly in the margins around it,
+       which it may run into (nothing is cut), so the lockup stays as large as it can. */
     .theme-murder .tp-vname > .gt { font-size: min(44px, 100cqh / 13.8, 70cqw); }
-    .theme-race .tp-vname > .gt { font-size: min(30px, 100cqh / 18.4, 40cqw); }
+    .theme-race .tp-vname > .gt { font-size: min(30px, 100cqh / 17.2, 40cqw); }
     .theme-robot .tp-vname > .gt-robot { width: min(300px, 100cqh, 160cqw); max-width: none; }
     .tp-foot { display: flex; flex-direction: column; align-items: stretch; gap: 10px; }
     .tp-genre { margin: 0; font: 500 11px/1.35 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--g-accent); hyphens: manual; overflow-wrap: break-word; }
     /* The game's one fact as plain words: the number and its unit together, then a few more. */
-    .tp-fact { margin: 0 0 2px; color: var(--g-dim); font-size: 13.5px; line-height: 1.35; }
+    .tp-fact { margin: 0 0 2px; color: var(--g-dim); font-size: 13.5px; line-height: 1.35; min-height: calc(19px * 1.2 + 1px + 2 * 13.5px * 1.35); }
     .tp-fact b { display: block; font: 700 19px/1.2 var(--body); color: var(--g-text); margin-bottom: 1px; }
     .tp-cta { position: relative; z-index: 2; min-height: 44px; padding: 8px 12px; gap: 8px; font-size: 14px; line-height: 1.2; text-align: left; justify-content: flex-start; }
     .tp-cta svg { width: 18px; height: 18px; }
+    .tp-cta-short { display: none; }
     /* "More" opens the panel; its hit area covers the whole spine, under the store button. */
     .tp-more { display: inline-flex; align-items: center; gap: 4px; align-self: flex-start; margin: 0; padding: 4px 0; border: 0; background: none; font: 600 14px/1 var(--body); color: var(--g-text) !important; text-decoration: none; cursor: pointer; transition: color .25s; }
     .tp-more svg { width: 14px; height: 14px; transition: transform .25s var(--ease); }
@@ -815,17 +872,34 @@ const facts = [
     .tp-more:focus-visible { outline: none; }
     .tp-more:focus-visible::after { outline: 2px solid var(--g-accent); outline-offset: -5px; border-radius: 4px; }
     /* A closed panel answers the pointer or the keyboard without moving: its art brightens,
-       its top rule lights up and "More" takes the game's colour. */
+       its top rule lights up and "More" takes the game's colour. The shade over the art
+       stays, so the spine's small type at its foot keeps its contrast; the art brightens
+       where it shows, in the middle. */
     .tp::after { opacity: calc(.55 + .45 * var(--open)); transition: opacity .3s; }
     .tp:not(.is-open):is(:hover, :focus-within)::after { opacity: 1; }
-    .tp:not(.is-open):is(:hover, :focus-within) .tp-art::before { opacity: .62; }
-    .tp:not(.is-open):is(:hover, :focus-within) .tp-art img { filter: brightness(1.14) saturate(1.06); }
+    .tp:not(.is-open):is(:hover, :focus-within) .tp-art img { filter: brightness(1.24) saturate(1.08); }
     .tp:not(.is-open):is(:hover, :focus-within) .tp-more { color: var(--g-accent) !important; }
     .tp:not(.is-open):is(:hover, :focus-within) .tp-more svg { transform: translateX(3px); }
   }
   /* Laptops: a lower stage (see the masthead). */
   @media (min-width: 960px) and (max-height: 860px) {
     .tri { --stage-h: clamp(450px, calc(100svh - 280px), 760px); }
+  }
+  /* Short stages (laptops, and any screen up to 960 px tall): the spine's foot gets
+     compact, so the game's name, the spine's main line, has the room: the button shows
+     only its first word (its whole label stays its name for screen readers), the fact
+     keeps its number and unit, and Murder's name takes two lines ("The Perfect" /
+     "Murder"); Race's lockup stays one line, as the game sets it. */
+  @media (min-width: 960px) and (max-height: 960px) {
+    .tp-spine { padding-top: 14px; }
+    .tp-vname { margin: 8px 0 10px; }
+    .tp-foot { gap: 8px; }
+    .tp-detail { display: none; }
+    .tp-fact { min-height: 0; }
+    .tp-cta-full { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    .tp-cta-short { display: inline; }
+    .theme-murder .tp-vname > .gt-murder { font-size: min(44px, 100cqh / 9.4, 100cqw / 3.2); }
+    .theme-murder .tp-vname > .gt-murder .gt-name { white-space: normal; width: min-content; }
   }
   /* Portrait tablets and tall narrow windows: the open panel is taller than it is wide
      and too narrow for the robot beside the copy, so the robot stands above it instead,
@@ -864,6 +938,9 @@ const facts = [
 
   @media (prefers-reduced-motion: reduce) {
     .tp, .tp *, .tp::after, .tp-art::before, .tp-art::after { transition: none !important; animation: none !important; }
+    /* Also when it is turned on while a loop plays: the still comes back. */
+    .tp-loop, .tp-pause { display: none !important; }
+    .tp.has-video.is-open .tp-art img { opacity: 1; }
   }
 
   /* Print: the games' copy and buttons as plain text; the art, the spines and the

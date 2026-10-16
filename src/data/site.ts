@@ -60,21 +60,25 @@ export const badgeFor = (game: string, now = new Date()) =>
   BADGES.find((b) => b.game === game && (!b.from || now >= b.from) && (!b.until || now < b.until));
 
 /**
- * Each game panel's muted loop on wide screens, by date like BADGES: each build (and the
- * page itself, if it stays open past an `until`) plays a game's first loop whose `until`
- * is still ahead. Every loop is footage from the game itself and lives in public/video/
- * as <name>-1200 and <name>-1600 (the width in pixels; `height` is the 1600 file's), each
- * a .webm and an .mp4 with no audio; the page takes the width the open panel needs. Its
- * poster, the loop's first frame, is <name>-<width>.jpg, or with `stillIsPoster` the
- * panel's own still art, which is that same frame (so it costs no extra download).
- * `position` is the open panel's object-position, the same as its still's.
+ * Each game panel's muted loop on wide screens, by date like BADGES: each build plays a
+ * game's first loop whose `until` is still ahead, and so does a page loaded after an
+ * `until` (the choice is made when the page makes the panel's video, so a page left open
+ * keeps its loop until it is loaded again). Every loop is footage from the game itself and
+ * lives in public/video/ as <name>-1200 and <name>-1600 (the width in pixels; `height` is
+ * the 1600 file's), each a .webm and an .mp4 with no audio; the page takes the width the
+ * open panel needs. The video stays hidden until it plays, so it needs no poster file;
+ * with `stillIsPoster` the panel's own still art, which is the loop's first frame and
+ * already loaded, is its poster. `position` is the open panel's object-position, the same
+ * as its still's. With `minWidth` the loop plays only in an open panel at least that wide
+ * (and wider than it is tall); a narrower one keeps its still, whose crop is made for it.
  */
-export const LOOPS: { game: string; name: string; height: number; until?: Date; position: string; stillIsPoster?: boolean }[] = [
+export const LOOPS: { game: string; name: string; height: number; until?: Date; position: string; stillIsPoster?: boolean; minWidth?: number }[] = [
   // The Robot's Halloween world (Grave Circle, from a 4K take) while the Halloween sale
-  // runs: to the end of 31 October 2026, Swedish time.
-  { game: 'the-perfect-robot', name: 'robot-loop-halloween', height: 1024, until: new Date('2026-10-31T23:00:00Z'), position: '0% 50%' },
+  // runs: to the end of 31 October 2026, Swedish time. Below 800 px (tablets) the copy
+  // would cover the robots, so the key art stays.
+  { game: 'the-perfect-robot', name: 'robot-loop-halloween', height: 1024, until: new Date('2026-10-31T23:00:00Z'), position: '0% 50%', minWidth: 800 },
   // Evergreen: the Clockwork world (a robot riding the conveyor onto a turntable).
-  { game: 'the-perfect-robot', name: 'robot-loop-clockwork', height: 1024, position: '0% 50%' },
+  { game: 'the-perfect-robot', name: 'robot-loop-clockwork', height: 1024, position: '0% 50%', minWidth: 800 },
   // Murder: a round's night and day on the harbour, night → dawn → day → dusk → night,
   // rendered by the game's own engine from its four paintings of the harbour (16 s).
   { game: 'the-perfect-murder', name: 'murder-loop-daynight', height: 900, position: '0% 50%', stillIsPoster: true },
@@ -98,6 +102,25 @@ export const storeLabel = (kind: string, lang: Lang, steamOut = robotOnSteam()) 
       return sv ? 'Spela i webbläsaren' : 'Play in your browser';
   }
 };
+
+/** The first word or two of a store button, where room is tight (the front page spines on
+ *  laptops): always the start of the full label, so the button's name still begins with
+ *  the words it shows. */
+export const storeShort = (kind: string, lang: Lang, steamOut = robotOnSteam()) => {
+  const sv = lang === 'sv';
+  switch (kind) {
+    case 'steam':
+      return steamOut ? (sv ? 'Köp' : 'Buy') : sv ? 'Önskelista' : 'Wishlist';
+    case 'web':
+      return sv ? 'Spela' : 'Play';
+    default:
+      return storeLabel(kind, lang, steamOut);
+  }
+};
+
+/** A sentence's first word kept with the next one (a no-break space), so a line never ends
+ *  on a lone "One" or "Det" that starts the next sentence. */
+export const keepOpeners = (text: string) => text.replace(/(^|[.!?]\s+)(\S+) /g, '$1$2\u00a0');
 
 /** The game whose panel is open when the front page loads. */
 export const FEATURED_GAME = 'the-perfect-robot';

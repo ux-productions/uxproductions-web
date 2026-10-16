@@ -5,7 +5,7 @@ import GameTitle from '../components/GameTitle.astro';
 import StoreButtons from '../components/StoreButtons.astro';
 import NewsList from '../components/NewsList.astro';
 import type { Game } from '../data/games';
-import { SITE, localize, robotOnSteam, t, type Lang } from '../data/site';
+import { SITE, keepOpeners, localize, robotOnSteam, t, type Lang } from '../data/site';
 import { publishedNews } from '../data/news';
 
 interface Props {
@@ -95,8 +95,6 @@ const breadcrumbs = {
   image={`/og/${game.slug}.jpg`}
   imageAlt={game.name}
   jsonld={[videoGame, breadcrumbs]}
-  fonts={game.theme === 'robot' ? [] : [game.theme]}
-  studioFace={false}
 >
   <div class={`game theme-${game.theme}`}>
     {/* Art narrower than a wide screen is never stretched: it keeps its own width and fades out at the sides. */}
@@ -123,7 +121,7 @@ const breadcrumbs = {
           ) : (
             <h1><GameTitle game={game} /></h1>
           )}
-          <p class="tagline">{game.tagline[lang]}</p>
+          <p class="tagline">{keepOpeners(game.tagline[lang])}</p>
           <StoreButtons game={game} lang={lang} />
         </div>
       </div>

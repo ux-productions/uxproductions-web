@@ -1,6 +1,7 @@
 ---
 import fs from 'node:fs';
 import path from 'node:path';
+import sharp from 'sharp';
 import Base from '../../layouts/Base.astro';
 import GameTitle from '../../components/GameTitle.astro';
 import Icon from '../../components/Icon.astro';
@@ -15,9 +16,22 @@ const { game } = Astro.props as { game: Game };
 // The kit's files live in public/press/<slug>/; list them as they are.
 const dir = path.join(process.cwd(), 'public', 'press', game.slug);
 const files = fs.readdirSync(dir).sort();
-const sizeOf = (f: string) => `${(fs.statSync(path.join(dir, f)).size / 1048576).toFixed(1)} MB`;
+// A file's size as people read it: "46 KB", "1.2 MB".
+const sizeText = (bytes: number) => (bytes >= 1048576 ? (bytes / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(bytes / 1024)) + ' KB');
+const sizeOf = (f: string) => sizeText(fs.statSync(path.join(dir, f)).size);
 const zip = files.find((f) => f.endsWith('.zip'));
-const images = files.filter((f) => /\.(jpe?g|png)$/i.test(f));
+// Each image with its thumbnail (thumbs/, made by scripts/make-press-thumbs.py). A wide
+// one (a feature graphic or a panorama, wider than 1.8:1) is shown whole in its tile, so
+// its own lettering is never cut; the rest fill their tiles.
+const images = await Promise.all(
+  files
+    .filter((f) => /\.(jpe?g|png)$/i.test(f))
+    .map(async (f) => {
+      const thumb = 'thumbs/' + f.replace(/\.(jpe?g|png)$/i, '.jpg');
+      const { width = 1, height = 1 } = await sharp(path.join(dir, thumb)).metadata();
+      return { f, thumb, width, height, wide: width / height > 1.8 };
+    }),
+);
 // On wide screens, a column count that divides the number of files: no half-empty last row.
 const cols = [4, 3, 6].find((c) => images.length % c === 0);
 const nice = (f: string) =>
@@ -25,7 +39,7 @@ const nice = (f: string) =>
 
 const videoFiles = game.videos.map((v) => ({
   ...v,
-  size: `${(fs.statSync(path.join(process.cwd(), 'public', v.file)).size / 1048576).toFixed(1)} MB`,
+  size: sizeText(fs.statSync(path.join(process.cwd(), 'public', v.file)).size),
 }));
 ---
 <Base
@@ -35,13 +49,17 @@ const videoFiles = game.videos.map((v) => ({
   path={`/press/${game.slug}/`}
   image={`/og/${game.slug}.jpg`}
   imageAlt={game.name}
-  fonts={game.theme === 'robot' ? [] : [game.theme]}
 >
   <div class="wrap">
     <header class="page-head">
       <nav class="crumbs" aria-label="Breadcrumb"><a href="/press/">Press</a> / {game.name}</nav>
       <p class="label kit-label">Press kit</p>
-      <h1 class="kit-title"><GameTitle game={game} logoSizes="(max-width: 640px) 260px, 360px" eager /><span class="visually-hidden"> press kit</span></h1>
+      {/* The heading says its words as text (for crawlers too); the Robot's logo is then decorative. */}
+      {game.theme === 'robot' ? (
+        <h1 class="kit-title"><GameTitle game={game} logoSizes="(max-width: 640px) 260px, 360px" eager decorative /><span class="visually-hidden">{game.name} press kit</span></h1>
+      ) : (
+        <h1 class="kit-title"><GameTitle game={game} logoSizes="(max-width: 640px) 260px, 360px" eager /><span class="visually-hidden"> press kit</span></h1>
+      )}
       <p>{game.tagline.en}</p>
       <div class="btns" style="margin-top:20px">
         {zip && <a class="btn primary" href={`/press/${game.slug}/${zip}`} download><Icon name="download" />Download everything ({sizeOf(zip)})</a>}
@@ -80,9 +98,9 @@ const videoFiles = game.videos.map((v) => ({
     </div>
 
     <div class="downloads" style={cols ? `--cols:${cols}` : undefined}>
-      {images.map((f) => (
+      {images.map(({ f, thumb, width, height, wide }) => (
         <a href={`/press/${game.slug}/${f}`} download class="dl">
-          <img src={`/press/${game.slug}/thumbs/${f.replace(/\.(jpe?g|png)$/i, '.jpg')}`} alt="" loading="lazy" decoding="async" />
+          <img src={`/press/${game.slug}/${thumb}`} alt="" width={width} height={height} class:list={{ wide }} loading="lazy" decoding="async" />
           <span class="name">{nice(f)} <small>{sizeOf(f)}</small></span>
         </a>
       ))}
@@ -103,7 +121,8 @@ const videoFiles = game.videos.map((v) => ({
   @media (min-width: 1100px) { .downloads[style*="--cols"] { grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); } }
   .dl { display: flex; flex-direction: column; gap: 8px; padding: 10px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--plate); color: var(--text); text-decoration: none; font-size: 15px; text-transform: none; }
   .dl:hover { border-color: var(--accent); color: var(--text); }
-  .dl img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 3px; background: var(--ground); }
+  .dl img { width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 3px; background: var(--ground); }
+  .dl img.wide { object-fit: contain; }
   .dl .name::first-letter { text-transform: uppercase; }
   .dl small { color: var(--text-muted); margin-left: 6px; }
 </style>

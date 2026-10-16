@@ -1,6 +1,7 @@
 ---
 import { Picture } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
+import GameTitle from '../../components/GameTitle.astro';
 import { GAMES } from '../../data/games';
 import { SITE } from '../../data/site';
 ---
@@ -44,8 +45,9 @@ import { SITE } from '../../data/site';
         <div class="kits">
           {GAMES.map((g) => (
             <a class="kit" href={`/press/${g.slug}/`}>
-              <Picture src={g.card} alt="" widths={[360, 680, 960].filter((w) => w <= g.card.width)} sizes="(max-width: 900px) 100vw, 364px" formats={['avif', 'webp']} />
-              <span><b>{g.name}</b><small>{g.genre.en}</small></span>
+              <Picture src={g.hero} alt="" widths={[360, 680, 960].filter((w) => w <= g.hero.width)} sizes="(max-width: 900px) 100vw, 364px" formats={['avif', 'webp']} />
+              {/* Each game's name as the game sets it, as on the games' own cards. */}
+              <span><b class="kit-name"><GameTitle game={g} logoSizes="132px" /></b><small>{g.genre.en}</small></span>
             </a>
           ))}
         </div>
@@ -66,6 +68,10 @@ import { SITE } from '../../data/site';
   .kit { display: block; background: var(--plate); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; color: var(--text); text-decoration: none; }
   .kit:hover { border-color: var(--line-strong); color: var(--text); }
   .kit img { aspect-ratio: 16 / 9; object-fit: cover; width: 100%; }
-  .kit span { display: block; padding: 12px 16px 14px; }
+  .kit span { display: block; padding: 12px 16px 14px; container-type: inline-size; }
+  .kit-name { display: flex; align-items: center; min-height: 2.4rem; margin-bottom: 2px; }
+  .kit-name :global(.gt-murder) { font-size: min(1.35rem, 100cqi / 11.6); }
+  .kit-name :global(.gt-race) { font-size: min(.95rem, 100cqi / 16.8); }
+  .kit-name :global(.gt-robot) { width: 120px; margin: -6px 0 -4px -6px; }
   .kit small { display: block; color: var(--text-muted); font-size: 14px; }
 </style>
