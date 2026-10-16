@@ -2,6 +2,7 @@ import type { ImageMetadata } from 'astro';
 import { robotOnSteam, type Lang } from './site';
 
 import robotHero from '../assets/robot/hero.jpg';
+import robotCard from '../assets/robot/card-art.jpg';
 import robotLogo from '../assets/robot/logo.png';
 import robotIcon from '../assets/robot/icon.png';
 import robotTrailerPoster from '../assets/robot/trailer-poster.jpg';
@@ -78,6 +79,9 @@ export interface Game {
   /** The game's own art without its name: its page's hero, and the picture on its card
    *  (games index, 404, press index), which sets the name itself under it. */
   hero: ImageMetadata;
+  /** A 16:9 crop for the card, where the hero is too wide to fill one (the Robot's
+   *  panorama): framed for the card, and sharp at the card's size. */
+  card?: ImageMetadata;
   /** The game's app icon, as players see it on their phones and in the stores (square, unrounded). */
   icon: ImageMetadata;
   logo?: ImageMetadata;
@@ -204,6 +208,7 @@ export const ROBOT: Game = {
     { kind: 'googleplay', url: 'https://play.google.com/store/apps/details?id=se.uxproductions.tinytreads' },
   ],
   hero: robotHero,
+  card: robotCard,
   icon: robotIcon,
   logo: robotLogo,
   shots: [
@@ -261,8 +266,9 @@ export const MURDER: Game = {
     sv: 'Någon vid det här bordet är en mördare. Lita på ingen.',
   },
   pitch: {
-    en: 'A noir party game of secret roles for 4 to 20 players, in one room or online.',
-    sv: 'Ett noir-partyspel med hemliga roller för 4 till 20 spelare, i samma rum eller online.',
+    // A range of players stays on one line ("4 to 20").
+    en: 'A noir party game of secret roles for 4 to 20 players, in one room or online.',
+    sv: 'Ett noir-partyspel med hemliga roller för 4 till 20 spelare, i samma rum eller online.',
   },
   metaDescription: {
     en: 'The Perfect Murder is a noir social deduction party game for 4 to 20 players, like Mafia or Werewolf. No game master: every phone is a player. Free to join.',

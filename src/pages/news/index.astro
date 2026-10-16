@@ -18,7 +18,7 @@ const posts = await publishedNews();
       <p>Releases, updates and sales from the studio. <a href="/news/rss.xml">Follow by RSS</a>.</p>
     </header>
     <div style="padding-block: 28px 88px">
-      <NewsList posts={posts} lang="en" />
+      <NewsList posts={posts} lang="en" eagerFirst />
     </div>
   </div>
 </Base>

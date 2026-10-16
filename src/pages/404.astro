@@ -12,7 +12,7 @@ import { GAMES } from '../data/games';
       <p lang="sv" class="muted">Sidan finns inte. Gå till <a href="/sv/">startsidan på svenska</a>.</p>
     </header>
     <div class="game-grid" style="padding-block: 24px 88px">
-      {GAMES.map((g) => <GameCard game={g} lang="en" />)}
+      {GAMES.map((g, i) => <GameCard game={g} lang="en" eager={i === 0} />)}
     </div>
   </div>
 </Base>

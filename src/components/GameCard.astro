@@ -1,6 +1,7 @@
 ---
 import { Picture } from 'astro:assets';
 import GameTitle from './GameTitle.astro';
+import Words from './Words.astro';
 import { platformLabel, type Game } from '../data/games';
 import { localize, type Lang } from '../data/site';
 
@@ -11,23 +12,25 @@ interface Props {
 }
 const { game, lang, eager = false } = Astro.props;
 const strip = { robot: '#5ce1e6', murder: '#c9a045', race: '#b46bff' }[game.theme];
-// The card's picture is the game's own art without its name (its page's hero), since the
-// card sets the name itself (GameTitle) right under it.
+// The card's picture is the game's own art without its name (its page's hero, or a card
+// crop of it), since the card sets the name itself (GameTitle) right under it.
+const art = game.card ?? game.hero;
 ---
 <a class="game-card" href={localize(`/games/${game.slug}/`, lang)} style={`--strip:${strip}`}>
   <Picture
-    src={game.hero}
+    src={art}
     alt=""
-    widths={[400, 640, 960, 1280].filter((w) => w <= game.hero.width)}
+    widths={[400, 640, 960, 1280].filter((w) => w <= art.width)}
     sizes="(max-width: 700px) 100vw, (max-width: 1440px) 33vw, 476px"
     formats={['avif', 'webp']}
     loading={eager ? 'eager' : 'lazy'}
+    fetchpriority={eager ? 'high' : 'auto'}
   />
   <div class="strip"></div>
   <div class="body">
     <span class="genre">{game.genre[lang]}</span>
     <h3><GameTitle game={game} logoSizes="132px" /></h3>
-    <p>{game.pitch[lang]}</p>
+    <p><Words text={game.pitch[lang]} /></p>
     <div class="chips">{game.platforms.map((p) => <span>{platformLabel(p, lang)}</span>)}</div>
   </div>
 </a>

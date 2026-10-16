@@ -6,13 +6,15 @@ import { formatDate, type Lang } from '../data/site';
 interface Props {
   posts: CollectionEntry<'news'>[];
   lang: Lang;
+  /** The list is the page's first content (the news index): its first picture loads at once. */
+  eagerFirst?: boolean;
 }
-const { posts, lang } = Astro.props;
+const { posts, lang, eagerFirst = false } = Astro.props;
 ---
 <div class="news-list">
-  {posts.map((p) => (
+  {posts.map((p, i) => (
     <a class="news-item" href={`/news/${p.id}/`} hreflang="en">
-      <Picture src={p.data.image} alt="" widths={[400, 720]} sizes="(max-width: 700px) 100vw, 380px" formats={['avif', 'webp']} />
+      <Picture src={p.data.image} alt="" widths={[400, 720]} sizes="(max-width: 700px) 100vw, 380px" formats={['avif', 'webp']} loading={eagerFirst && i === 0 ? 'eager' : 'lazy'} fetchpriority={eagerFirst && i === 0 ? 'high' : 'auto'} />
       <time datetime={p.data.date.toISOString()}>{formatDate(p.data.date, lang)}</time>
       <h3 lang="en">{p.data.title}</h3>
       <p lang="en">{p.data.description}</p>

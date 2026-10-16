@@ -45,7 +45,7 @@ import { SITE } from '../../data/site';
         <div class="kits">
           {GAMES.map((g) => (
             <a class="kit" href={`/press/${g.slug}/`}>
-              <Picture src={g.hero} alt="" widths={[360, 680, 960].filter((w) => w <= g.hero.width)} sizes="(max-width: 900px) 100vw, 364px" formats={['avif', 'webp']} />
+              <Picture src={g.card ?? g.hero} alt="" widths={[360, 680, 960].filter((w) => w <= (g.card ?? g.hero).width)} sizes="(max-width: 900px) 100vw, 364px" formats={['avif', 'webp']} />
               {/* Each game's name as the game sets it, as on the games' own cards. */}
               <span><b class="kit-name"><GameTitle game={g} logoSizes="132px" /></b><small>{g.genre.en}</small></span>
             </a>

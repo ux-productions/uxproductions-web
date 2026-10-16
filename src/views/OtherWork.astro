@@ -23,9 +23,9 @@ const description = sv
       <p>{sv ? 'Lärappar vi har byggt tillsammans med pedagoger.' : 'Learning apps we built together with educators.'}</p>
     </header>
     <div class="work-list">
-      {OTHER_WORK.map((w) => (
+      {OTHER_WORK.map((w, i) => (
         <article class="work" id={w.id}>
-          {w.image && <Picture src={w.image} alt={w.title} widths={[480, 800]} sizes="(max-width: 800px) 100vw, 460px" formats={['avif', 'webp']} />}
+          {w.image && <Picture src={w.image} alt={w.title} widths={[480, 800]} sizes="(max-width: 800px) 100vw, 460px" formats={['avif', 'webp']} loading={i === 0 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : 'auto'} />}
           <div>
             <h2>{w.title}</h2>
             <p class="dim">{w.text[lang]}</p>
