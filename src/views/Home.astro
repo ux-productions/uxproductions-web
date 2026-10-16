@@ -108,7 +108,7 @@ const loopsOf = (slug: string) =>
     aspect: +(1600 / l.height).toFixed(4),
     minWidth: l.minWidth,
     stillIsPoster: l.stillIsPoster,
-    files: [1200, 1600].map((w) => ({ w, webm: `/video/${l.name}-${w}.webm`, mp4: `/video/${l.name}-${w}.mp4` })),
+    files: [720, 1200, 1600].map((w) => ({ w, webm: `/video/${l.name}-${w}.webm`, mp4: `/video/${l.name}-${w}.mp4` })),
   }));
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
@@ -319,10 +319,11 @@ const facts = [
   //  1. On wide screens one panel is open and the others are spines. A spine opens only
   //     when it is clicked or tapped (or its "More" button pressed); pointing at it or
   //     tabbing through it only lights it up, so nothing moves under the pointer.
-  //  2. A muted loop of the game in the open panel (wide screens, never with reduced motion
-  //     or Save-Data), with a pause button. Each panel's video is made the first time the
-  //     panel opens (the Robot's, open from the start, once the page has loaded), so a loop
-  //     is downloaded only when someone opens its game; phones never get one.
+  //  2. A muted loop of the game (never with reduced motion or Save-Data), with a pause
+  //     button. On wide screens, in the open panel: each panel's video is made the first
+  //     time the panel opens (the Robot's, open from the start, once the page has loaded).
+  //     On phones and tablets, in each tile while it is on screen (a small file); so a loop
+  //     is downloaded only when someone opens or scrolls to its game.
   //  3. The launch countdown, and the switch to "out now" wording at the release.
   const wide = matchMedia('(min-width: 960px)');
   const still = matchMedia('(prefers-reduced-motion: reduce)');
@@ -342,9 +343,12 @@ const facts = [
     let loaded = document.readyState === 'complete';
     const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
 
+    // Phones and tablets: the tiles at least half on screen.
+    const onScreen = new Set<HTMLElement>();
     const sync = () => {
       for (const [p, v] of videos) {
-        if (p.classList.contains('is-open') && seen && !paused && wide.matches && !still.matches) v.play().catch(() => {});
+        const show = wide.matches ? p.classList.contains('is-open') && seen : onScreen.has(p);
+        if (show && !paused && !still.matches) v.play().catch(() => {});
         else v.pause();
       }
     };
@@ -354,12 +358,12 @@ const facts = [
     // the size it is made for (`box` is the size of an open panel).
     const loopFor = (p: HTMLElement, box: DOMRect) => {
       const loop = (JSON.parse(p.dataset.loops!) as Loop[]).find((l) => !l.until || Date.now() < Date.parse(l.until));
-      return loop && (!loop.minWidth || (box.width >= loop.minWidth && box.width > box.height * 1.2)) ? loop : undefined;
+      return loop && (!wide.matches || !loop.minWidth || (box.width >= loop.minWidth && box.width > box.height * 1.2)) ? loop : undefined;
     };
 
     // `box` is the size of an open panel, measured before this one starts to widen.
     const addVideo = (p: HTMLElement, box: DOMRect) => {
-      if (videos.has(p) || failed.has(p) || !p.dataset.loops || !loaded || !wide.matches || still.matches || saveData) return;
+      if (videos.has(p) || failed.has(p) || !p.dataset.loops || !loaded || still.matches || saveData) return;
       const loop = loopFor(p, box);
       if (!loop) return;
       addButton(p);
@@ -373,7 +377,9 @@ const facts = [
       // smaller file when it is never enlarged (at this screen's density), else the larger:
       // the games' fine detail (Race's pixel-art cars, Murder's windows) stays sharp.
       const zoom = parseFloat(getComputedStyle(p).getPropertyValue('--art-zoom')) || 1;
-      const shown = Math.max(box.width * zoom, box.height * loop.aspect) * devicePixelRatio;
+      // Phones take the small file: a moving picture there reads well below its pixel size.
+      const art = wide.matches ? box : p.querySelector('.tp-art')!.getBoundingClientRect();
+      const shown = wide.matches ? Math.max(art.width * zoom, art.height * loop.aspect) * devicePixelRatio : art.width * 1.6;
       const file = loop.files.find((f) => shown <= f.w) ?? loop.files[loop.files.length - 1];
       const v = document.createElement('video');
       videos.set(p, v);
@@ -444,10 +450,27 @@ const facts = [
     };
     const current = () => panels.find((q) => q.classList.contains('is-open'));
     const videoForOpen = () => {
-      const p = current();
-      if (p) addVideo(p, p.getBoundingClientRect());
+      if (wide.matches) {
+        const p = current();
+        if (p) addVideo(p, p.getBoundingClientRect());
+      } else for (const p of onScreen) addVideo(p, p.getBoundingClientRect());
       sync();
     };
+    // Phones and tablets: a tile's loop is made when it first comes into view, and plays
+    // only while it is there.
+    const tiles = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          const p = e.target as HTMLElement;
+          if (e.isIntersecting) onScreen.add(p);
+          else onScreen.delete(p);
+          if (e.isIntersecting && !wide.matches) addVideo(p, p.getBoundingClientRect());
+        }
+        sync();
+      },
+      { threshold: 0.5 },
+    );
+    for (const p of panels) tiles.observe(p);
 
     // Transitions run only around a visitor's own gesture (and while pointing at or
     // tabbing through the stage), so loading, resizing or a screenshot never catches a
@@ -1008,7 +1031,11 @@ const facts = [
     .tp-cover-stat::before { content: ''; position: absolute; z-index: -1; inset: -16px -18px; border-radius: 18px; background: color-mix(in srgb, var(--g-bg) 85%, transparent); filter: blur(8px); }
     .tp-cover-stat b { display: block; font: 700 19px/1.2 var(--body); color: var(--g-text); margin-bottom: 2px; }
     .tp-body { position: relative; margin-top: -64px; padding: 0 var(--gutter) 40px; z-index: 1; }
-    .tp-pause, .tp-art video { display: none; }
+    .tp.has-video .tp-art video { opacity: 1; }
+    .tp.has-video .tp-art img { opacity: 0; }
+    .theme-robot .tp-loop { bottom: 0; }
+    .theme-robot .tp-loop video { height: 100%; }
+    .tp.has-loop .tp-pause { display: block; z-index: 4; top: 86px; right: var(--gutter); }
   }
 
   @media (prefers-reduced-motion: reduce) {
