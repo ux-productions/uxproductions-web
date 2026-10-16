@@ -366,7 +366,7 @@ export const RACE: Game = {
   genre: { en: 'Top-down arcade racing', sv: 'Arkadracing uppifrån' },
   genreShort: { en: 'Arcade racing', sv: 'Arkadracing' },
   stat: {
-    value: '4',
+    value: '5',
     unit: { en: 'circuits', sv: 'banor' },
     detail: { en: 'and three car classes', sv: 'och tre bilklasser' },
     label: { en: 'circuits and three car classes', sv: 'banor och tre bilklasser' },
@@ -399,7 +399,7 @@ export const RACE: Game = {
       { title: 'Time Attack', text: 'Server-verified laps, seasonal boards and downloadable ghosts.' },
       { title: 'Live rooms', text: 'Qualifying and wheel-to-wheel racing with friends.' },
       { title: 'Deathmatch', text: 'A separate vehicle combat mode with stylized weapons.' },
-      { title: 'Four circuits', text: 'Each with its own grip, rhythm, weather and racing line.' },
+      { title: 'Five circuits', text: 'Each with its own grip, rhythm, weather and racing line.' },
       { title: 'Three car classes', text: 'Each with its own handling and leaderboard.' },
     ],
     sv: [
@@ -407,7 +407,7 @@ export const RACE: Game = {
       { title: 'Time Attack', text: 'Verifierade varv, säsongstopplistor och spökvarv att ladda ner.' },
       { title: 'Livespel', text: 'Kvalificering och racing hjul mot hjul med vänner.' },
       { title: 'Deathmatch', text: 'Ett eget stridsläge med fordon och stiliserade vapen.' },
-      { title: 'Fyra banor', text: 'Var och en med eget grepp, rytm, väder och linje.' },
+      { title: 'Fem banor', text: 'Var och en med eget grepp, rytm, väder och linje.' },
       { title: 'Tre bilklasser', text: 'Var och en med egen körkänsla och topplista.' },
     ],
   },
@@ -415,14 +415,14 @@ export const RACE: Game = {
     en: [
       { label: 'Genre', value: 'Arcade racing, time attack' },
       { label: 'Platforms', value: 'Browser, iOS, Android' },
-      { label: 'Content', value: 'Four circuits, three car classes, Deathmatch arena' },
+      { label: 'Content', value: 'Five circuits, three car classes, Deathmatch arena' },
       { label: 'Price', value: 'Free to start; one-time Full Game unlock' },
       { label: 'Developer', value: 'UX Productions, Sweden' },
     ],
     sv: [
       { label: 'Genre', value: 'Arkadracing, time attack' },
       { label: 'Plattformar', value: 'Webbläsare, iOS, Android' },
-      { label: 'Innehåll', value: 'Fyra banor, tre bilklasser, deathmatch-arena' },
+      { label: 'Innehåll', value: 'Fem banor, tre bilklasser, deathmatch-arena' },
       { label: 'Pris', value: 'Gratis att börja; hela spelet låses upp med ett köp' },
       { label: 'Utvecklare', value: 'UX Productions, Sverige' },
     ],
