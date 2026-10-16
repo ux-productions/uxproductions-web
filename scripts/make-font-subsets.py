@@ -8,6 +8,11 @@ first. src/assets/fonts/subsets.json lists each subset's source file (from the
 @fontsource packages) and the characters it keeps; Fonts.astro reads the same list for
 each subset's unicode-range.
 
+A subset's `alias` draws a character the font lacks with one of its own glyphs: the
+hyphen (U+2010) that Firefox and WebKit draw where a word breaks at a soft hyphen, and
+the no-break hyphen (U+2011), both drawn as the font's hyphen-minus. Without them, such
+a break would make the browser fetch the full font file to look for the character.
+
 Run after changing a list or updating a font package:
     python scripts/make-font-subsets.py
 Needs fontTools (pip install fonttools). Writes WOFF (zlib), which needs no brotli.
@@ -29,9 +34,15 @@ for s in json.loads((OUT / 'subsets.json').read_text(encoding='utf-8')):
     opts.layout_features = ['kern', 'liga', 'calt', 'case']
     opts.name_IDs = [1, 2, 4, 6]
     opts.notdef_outline = False
+    alias = s.get('alias', {})
     sub = subset.Subsetter(opts)
-    sub.populate(text=s['text'])
+    sub.populate(text=''.join(c for c in s['text'] if c not in alias) + ''.join(alias.values()))
     sub.subset(font)
+    cmap = font.getBestCmap()
+    for c, target in alias.items():
+        for table in font['cmap'].tables:
+            if table.isUnicode():
+                table.cmap[ord(c)] = cmap[ord(target)]
     missing = [c for c in s['text'] if ord(c) not in font.getBestCmap()]
     if missing:
         raise SystemExit(f"{s['file']}: the font has no {missing}")

@@ -4,27 +4,35 @@
     "source": "@fontsource/saira-condensed/files/saira-condensed-latin-700-normal.woff",
     "family": "Saira Condensed",
     "weight": 700,
-    "text": "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖÉÜ0123456789 \u00a0\u00ad.,:;!?&'’\"“”-–—/()[]+%·"
+    "text": "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖÉÜ0123456789  ­.,:;!?&'’\"“”-–—/()[]+%·‐‑",
+    "alias": {
+      "‐": "-",
+      "‑": "-"
+    }
   },
   {
     "file": "ibm-plex-mono-500-caps.woff",
     "source": "@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-500-normal.woff",
     "family": "IBM Plex Mono",
     "weight": 500,
-    "text": "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖÉÜ0123456789 \u00a0\u00ad.,:;!?&'’\"“”-–—/()[]+%·"
+    "text": "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖÉÜ0123456789  ­.,:;!?&'’\"“”-–—/()[]+%·‐‑",
+    "alias": {
+      "‐": "-",
+      "‑": "-"
+    }
   },
   {
     "file": "bodoni-moda-700-title.woff",
     "source": "@fontsource/bodoni-moda/files/bodoni-moda-latin-700-normal.woff",
     "family": "Bodoni Moda",
     "weight": 700,
-    "text": "The Perfect Murder\u00a0"
+    "text": "The Perfect Murder "
   },
   {
     "file": "press-start-2p-400-title.woff",
     "source": "@fontsource/press-start-2p/files/press-start-2p-latin-400-normal.woff",
     "family": "Press Start 2P",
     "weight": 400,
-    "text": "THE PERFECT RACE\u00a0"
+    "text": "THE PERFECT RACE "
   }
 ]

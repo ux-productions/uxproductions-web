@@ -23,7 +23,8 @@
  *    has the font from the cache.
  *  - The fallbacks are local fonts with their metrics matched to the web font
  *    (size-adjust, ascent, descent and line gap, computed from the font files), so that
- *    fallback takes almost the same room.
+ *    fallback takes almost the same room. The body's fallback faces are loaded before the
+ *    first paint (the script at the end), so no engine draws plain Arial first.
  * latin covers English and Swedish (å, ä, ö); latin-ext loads only for other letters.
  */
 import sairaLatin from '@fontsource/saira-condensed/files/saira-condensed-latin-700-normal.woff2?url';
@@ -57,9 +58,9 @@ const faces: { family: string; weight: number | string; latin: string; ext: stri
   { family: 'Press Start 2P', weight: 400, latin: pixelLatin, ext: pixelExt, extra: PIXEL_METRICS },
 ];
 
-// A subset's unicode-range: exactly the characters it has, as runs (U+41-5A,U+C4-C5,...).
-const rangeOf = (text: string) => {
-  const cps = [...new Set([...text].map((c) => c.codePointAt(0)!))].sort((a, b) => a - b);
+// A unicode-range of exactly the given characters, as runs (U+41-5A,U+C4-C5,...).
+const rangeOfCodes = (codes: Iterable<number>) => {
+  const cps = [...new Set(codes)].sort((a, b) => a - b);
   const runs: [number, number][] = [];
   for (const cp of cps) {
     const last = runs[runs.length - 1];
@@ -69,20 +70,39 @@ const rangeOf = (text: string) => {
   const hex = (n: number) => n.toString(16).toUpperCase();
   return runs.map(([a, b]) => (a === b ? `U+${hex(a)}` : `U+${hex(a)}-${hex(b)}`)).join(',');
 };
+const codesOf = (text: string) => [...text].map((c) => c.codePointAt(0)!);
+// A subset's unicode-range: exactly the characters it has.
+const rangeOf = (text: string) => rangeOfCodes(codesOf(text));
+// A unicode-range less some characters. A family with a subset has its full latin face
+// cover only what the subset lacks: no browser then has a reason to fetch the full file for
+// a character the subset draws (WebKit did for the soft hyphen in "Programmerings-pussel").
+const without = (range: string, text = '') => {
+  const cut = new Set(codesOf(text));
+  const codes: number[] = [];
+  for (const run of range.split(',')) {
+    const [a, b = a] = run.replace('U+', '').split('-').map((h) => parseInt(h, 16));
+    for (let c = a; c <= b; c++) if (!cut.has(c)) codes.push(c);
+  }
+  return rangeOfCodes(codes);
+};
+const subsetText = (family: string) => subsets.find((s) => s.family === family)?.text;
 
 // Fallbacks: a local font scaled to the web font's width (size-adjust, from the advance
 // widths of typical text in each face), with the web font's own vertical metrics.
-// Values from the font files with fontTools; see the README.
+// Values from the font files with fontTools; see the README. A bold fallback lists only
+// bold fonts: where none of them is installed (WebKit finds no 'Arial Bold' on Windows),
+// the face fails and the browser goes on to Arial in the font stack and its real (or
+// synthesised) bold, never a regular Arial standing in for bold text.
 const fallbacks: { family: string; weight: number; local: string[]; size: string; ascent: string; descent: string }[] = [
-  { family: 'Saira Condensed Fallback', weight: 700, local: ['Arial Narrow Bold', 'ArialNarrow-Bold', 'Arial Narrow'], size: '83.84%', ascent: '135.37%', descent: '52.36%' },
-  { family: 'Saira Condensed Fallback Wide', weight: 700, local: ['Arial Bold', 'Arial-BoldMT', 'Arial'], size: '68.75%', ascent: '165.10%', descent: '63.86%' },
+  { family: 'Saira Condensed Fallback', weight: 700, local: ['Arial Narrow Bold', 'ArialNarrow-Bold'], size: '83.84%', ascent: '135.37%', descent: '52.36%' },
+  { family: 'Saira Condensed Fallback Wide', weight: 700, local: ['Arial Bold', 'Arial-BoldMT'], size: '68.75%', ascent: '165.10%', descent: '63.86%' },
   { family: 'Familjen Grotesk Fallback', weight: 400, local: ['Arial', 'ArialMT', 'Roboto'], size: '93.90%', ascent: '109.16%', descent: '23.96%' },
   { family: 'Familjen Grotesk Fallback', weight: 500, local: ['Arial', 'ArialMT', 'Roboto'], size: '96.37%', ascent: '106.36%', descent: '23.35%' },
-  { family: 'Familjen Grotesk Fallback', weight: 600, local: ['Arial Bold', 'Arial-BoldMT', 'Roboto Bold', 'Arial'], size: '91.35%', ascent: '112.21%', descent: '24.63%' },
-  { family: 'Familjen Grotesk Fallback', weight: 700, local: ['Arial Bold', 'Arial-BoldMT', 'Roboto Bold', 'Arial'], size: '92.45%', ascent: '110.87%', descent: '24.34%' },
+  { family: 'Familjen Grotesk Fallback', weight: 600, local: ['Arial Bold', 'Arial-BoldMT', 'Roboto Bold'], size: '91.35%', ascent: '112.21%', descent: '24.63%' },
+  { family: 'Familjen Grotesk Fallback', weight: 700, local: ['Arial Bold', 'Arial-BoldMT', 'Roboto Bold'], size: '92.45%', ascent: '110.87%', descent: '24.34%' },
   { family: 'IBM Plex Mono Fallback', weight: 500, local: ['Consolas'], size: '109.13%', ascent: '93.92%', descent: '25.20%' },
   { family: 'IBM Plex Mono Fallback Wide', weight: 500, local: ['Menlo Regular', 'Menlo-Regular', 'Courier New', 'CourierNewPSMT'], size: '99.98%', ascent: '102.52%', descent: '27.50%' },
-  { family: 'Bodoni Moda Fallback', weight: 700, local: ['Georgia Bold', 'Georgia-Bold', 'Georgia'], size: '94.77%', ascent: '118.71%', descent: '42.21%' },
+  { family: 'Bodoni Moda Fallback', weight: 700, local: ['Georgia Bold', 'Georgia-Bold'], size: '94.77%', ascent: '118.71%', descent: '42.21%' },
   { family: 'Press Start 2P Fallback', weight: 400, local: ['Courier New Bold', 'CourierNewPS-BoldMT', 'Courier New'], size: '166.64%', ascent: '60.01%', descent: '0%' },
 ];
 
@@ -90,7 +110,7 @@ const face = (family: string, weight: number | string, src: string, range: strin
   `@font-face{font-family:'${family}';font-style:normal;font-weight:${weight};font-display:${display};src:${src};unicode-range:${range};${extra}}`;
 
 const css =
-  faces.flatMap((f) => [face(f.family, f.weight, `url(${f.latin}) format('woff2')`, LATIN, 'optional', f.extra), face(f.family, f.weight, `url(${f.ext}) format('woff2')`, LATIN_EXT, 'optional', f.extra)]).join('') +
+  faces.flatMap((f) => [face(f.family, f.weight, `url(${f.latin}) format('woff2')`, without(LATIN, subsetText(f.family)), 'optional', f.extra), face(f.family, f.weight, `url(${f.ext}) format('woff2')`, LATIN_EXT, 'optional', f.extra)]).join('') +
   // After the full faces, so the browser takes these first for their characters.
   subsets
     .map((s) => {
@@ -108,3 +128,9 @@ const preloads = [bodyLatin];
 ---
 {preloads.map((href) => <link rel="preload" href={href} as="font" type="font/woff2" crossorigin />)}
 <style is:inline set:html={css}></style>
+{/* Firefox loads a local() face only once the text needs it, which for the body's
+    fallback is when Familjen Grotesk has missed its window: the first paint would use
+    plain Arial and the text would then shrink to the metric-matched fallback. Asking for
+    the fallback faces here, before anything is drawn, has them ready for that paint.
+    Chromium and WebKit load them at once anyway. */}
+<script is:inline>try{for(const w of [400,500,600,700])document.fonts.load(w+' 1em "Familjen Grotesk Fallback"')}catch(e){}</script>
