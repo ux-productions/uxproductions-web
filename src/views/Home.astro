@@ -912,14 +912,14 @@ const facts = [
     .tp-vname { flex: 1 1 0; min-height: 0; margin: 14px 0; position: relative; container-type: size; font-size: 16px; line-height: 1; }
     .tp-vname > .gt {
       position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate(-90deg); white-space: nowrap;
-      filter: drop-shadow(0 1px 8px color-mix(in srgb, var(--g-bg) 85%, transparent));
+      filter: drop-shadow(0 1px 3px color-mix(in srgb, var(--g-bg) 90%, transparent)) drop-shadow(0 0 10px color-mix(in srgb, var(--g-bg) 70%, transparent));
     }
     /* A soft band of the game's ground right behind the name, so the art (Race's cars and
        their headlights, Murder's lamp post) never runs through the letters, at rest or
        when the spine lights up. */
     .tp-vname > :is(.gt-murder, .gt-race)::before {
-      content: ''; position: absolute; z-index: -1; inset: -.45em -.7em; border-radius: .8em;
-      background: color-mix(in srgb, var(--g-bg) 74%, transparent); filter: blur(.4em);
+      content: ''; position: absolute; z-index: -1; inset: -1.1em -1.6em;
+      background: radial-gradient(closest-side, color-mix(in srgb, var(--g-bg) 42%, transparent), transparent);
     }
     /* Room for the reader's own text spacing too (letters +.12em, words +.16em): Murder's
        within its box; Race's (16.6em long, 18.2em spaced) partly in the margins around it,
