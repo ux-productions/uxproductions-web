@@ -9,7 +9,7 @@ const news = defineCollection({
       description: z.string(),
       /** A post stays hidden until this moment; the daily build publishes it. */
       date: z.coerce.date(),
-      game: z.enum(['the-perfect-robot', 'the-perfect-murder', 'the-perfect-race']).optional(),
+      game: z.enum(['the-perfect-robot', 'the-perfect-murder', 'the-perfect-race', 'the-perfect-part']).optional(),
       image: image(),
       imageAlt: z.string(),
       og: z.string().optional(),

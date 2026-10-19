@@ -7,11 +7,14 @@
  *   The Perfect Race    one line of Press Start 2P, THE and RACE in ink (#dfe5f2) on a
  *                       dark backing shadow, only PERFECT in neon purple (#b46bff) with
  *                       its glow (tokens.css and chrome.css .brand)
+ *   The Perfect Part    its logo for dark grounds as the game's boot screen sets it (THE PERFECT
+ *                       on a riveted nameplate over PART, whose T is an end mill, all in the
+ *                       console screen's teal), an SVG from concept/logo/svg/logo-dark.svg
  * The size comes from the font-size where it is used: Murder is about 11.4em wide with
  * its glass, Race about 16.6em, so a one-line title fits in width / 11.6 or width / 16.8.
  * The text (or the logo's alt) is the game's name, so it can stand in a heading or a link;
- * with `decorative` the Robot's logo has an empty alt, for a heading that says its words
- * itself. Murder's name can break only before "Murder" (a spine sets it on two lines).
+ * with `decorative` the Robot's and the Part's logos have an empty alt, for a heading that
+ * says its words itself. Murder's name can break only before "Murder" (a spine sets it on two lines).
  */
 import { Image } from 'astro:assets';
 import type { Game } from '../data/games';
@@ -22,7 +25,7 @@ interface Props {
   /** Robot: the logo's drawn width, for its srcset. */
   logoSizes?: string;
   eager?: boolean;
-  /** Robot: the logo is decorative (alt=""), its words are in the heading as text. */
+  /** Robot, Part: the logo is decorative (alt=""), its words are in the heading as text. */
   decorative?: boolean;
 }
 const { game, class: className, logoSizes = '320px', eager = false, decorative = false } = Astro.props;
@@ -31,6 +34,8 @@ const murderName = game.name.replace(/ (?=\S+ )/g, '\u00a0');
 ---
 {game.theme === 'robot' && game.logo ? (
   <Image src={game.logo} alt={decorative ? '' : game.name} class:list={['gt gt-robot', className]} widths={[240, 360, 480, 720]} sizes={logoSizes} loading={eager ? 'eager' : 'lazy'} />
+) : game.theme === 'part' && game.logo ? (
+  <img src={game.logo.src} width={game.logo.width} height={game.logo.height} alt={decorative ? '' : game.name} class:list={['gt gt-part', className]} loading={eager ? 'eager' : 'lazy'} decoding="async" />
 ) : game.theme === 'murder' ? (
   <span class:list={['gt gt-murder', className]}><svg class="gt-glass" viewBox="0 0 22 22" fill="none" aria-hidden="true" focusable="false"><circle cx="9" cy="9" r="6.25" stroke="currentColor" stroke-width="1.5" /><line x1="13.6" y1="13.6" x2="19.5" y2="19.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg><span class="gt-name">{murderName}</span></span>
 ) : (
