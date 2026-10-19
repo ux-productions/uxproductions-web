@@ -17,6 +17,13 @@ const { game, lang, mainOnly = false, named = false } = Astro.props;
 const steamPending = !robotOnSteam();
 ---
 <div class="btns">
+  {/* A game that is not out yet has no store to link to: where it is coming stands in their place. */}
+  {game.comingSoon && (
+    <p class="soon">
+      <span class="soon-icons" aria-hidden="true">{game.platforms.map((p) => <Icon name={p === 'Steam' ? 'steam' : p === 'iOS' ? 'appstore' : 'googleplay'} />)}</span>
+      {game.comingSoon[lang]}{named && <span class="visually-hidden">{` (${game.name})`}</span>}
+    </p>
+  )}
   {(mainOnly ? game.stores.slice(0, 1) : game.stores).map((s, i) => (
     <a class:list={['btn', { primary: i === 0 }]} href={s.url} rel="noopener">
       <Icon name={s.kind} />

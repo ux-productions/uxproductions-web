@@ -29,7 +29,7 @@ OTHER_WORK.forEach((w) => (redirects[w.id] = localize(`/games/other-work/#${w.id
     <header class="page-head">
       <span class="label">UX Productions</span>
       <h1>{title}</h1>
-      <p>{sv ? 'Tre spel som var och ett gör en sak riktigt bra. Ingen reklam, inga prenumerationer.' : 'Three games that each do one thing really well. No ads, no subscriptions.'}</p>
+      <p>{sv ? 'Spel som var och ett gör en sak riktigt bra: tre ute nu och The Perfect Part på väg. Ingen reklam, inga prenumerationer.' : 'Games that each do one thing really well: three out now and The Perfect Part on its way. No ads, no subscriptions.'}</p>
     </header>
     <div class="game-grid" style="margin-top:28px">
       {GAMES.map((g, i) => <GameCard game={g} lang={lang} eager={i === 0} />)}

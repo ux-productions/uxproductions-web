@@ -46,7 +46,8 @@ const nice = (f: string) =>
 
 const videoFiles = game.videos.map((v) => ({
   ...v,
-  size: sizeText(fs.statSync(path.join(process.cwd(), 'public', v.file)).size),
+  frame: v.size ?? '1280x720',
+  bytes: sizeText(fs.statSync(path.join(process.cwd(), 'public', v.file)).size),
 }));
 ---
 <Base
@@ -62,7 +63,7 @@ const videoFiles = game.videos.map((v) => ({
       <nav class="crumbs" aria-label="Breadcrumb"><a href="/press/">Press</a> / {game.name}</nav>
       <p class="label kit-label">Press kit</p>
       {/* The heading says its words as text (for crawlers too); the Robot's logo is then decorative. */}
-      {game.theme === 'robot' ? (
+      {game.theme === 'robot' || game.theme === 'part' ? (
         <h1 class="kit-title"><GameTitle game={game} logoSizes="(max-width: 640px) 260px, 360px" eager decorative /><span class="visually-hidden">{game.name} press kit</span></h1>
       ) : (
         <h1 class="kit-title"><GameTitle game={game} logoSizes="(max-width: 640px) 260px, 360px" eager /><span class="visually-hidden"> press kit</span></h1>
@@ -82,9 +83,9 @@ const videoFiles = game.videos.map((v) => ({
         <ul>{game.features.en.map((f) => <li><strong>{f.title}:</strong> {f.text}</li>)}</ul>
         {videoFiles.length > 0 && (
           <>
-            <h2>Trailers</h2>
-            <ul>{videoFiles.map((v) => <li><a href={v.file} download>{v.title.en}</a> (MP4, 1280x720, {v.seconds} s, {v.size})</li>)}</ul>
-            <p>Need them at 1920x1080? Email <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.</p>
+            <h2>{videoFiles.every((v) => v.gameplay) ? 'Gameplay' : 'Trailers'}</h2>
+            <ul>{videoFiles.map((v) => <li><a href={v.file} download>{v.title.en}</a> (MP4, {v.frame}, {v.seconds} s, {v.bytes})</li>)}</ul>
+            {videoFiles.some((v) => v.frame !== '1920x1080') && <p>Need them at 1920x1080? Email <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.</p>}
           </>
         )}
         <h2>Images</h2>
@@ -97,7 +98,7 @@ const videoFiles = game.videos.map((v) => ({
             <dt>Developer and publisher</dt><dd>{SITE.legalName}, {SITE.city}, Sweden</dd>
             {game.facts.en.filter((f) => f.label !== 'Developer').map((f) => (<><dt>{f.label}</dt><dd>{f.value}</dd></>))}
             <dt>Store pages</dt>
-            <dd>{game.stores.map((s, i) => (<>{i > 0 && ', '}<a href={s.url} rel="noopener">{{ steam: 'Steam', appstore: 'App Store', googleplay: 'Google Play', web: 'Website' }[s.kind]}</a></>))}</dd>
+            <dd>{game.comingSoon && !game.stores.length && `${game.comingSoon.en}; no date yet`}{game.stores.map((s, i) => (<>{i > 0 && ', '}<a href={s.url} rel="noopener">{{ steam: 'Steam', appstore: 'App Store', googleplay: 'Google Play', web: 'Website' }[s.kind]}</a></>))}</dd>
             <dt>Press contact</dt><dd><a href={`mailto:${SITE.email}`}>{SITE.email}</a></dd>
           </dl>
         </div>
@@ -121,6 +122,7 @@ const videoFiles = game.videos.map((v) => ({
   .kit-label { margin: 18px 0 0; }
   .page-head h1.kit-title { container-type: inline-size; max-width: none; margin: 10px 0 14px; }
   .kit-title :global(.gt-robot) { width: min(360px, 70vw); margin: -14px 0 -10px -12px; }
+  .kit-title :global(.gt-part) { width: min(320px, 66vw); }
   .kit-title :global(.gt-murder) { font-size: min(3.5rem, 100cqi / 11.6); }
   .kit-title :global(.gt-race) { font-size: min(2.25rem, 100cqi / 16.8); }
   .kit-grid .prose h2:first-child { margin-top: 0; }
