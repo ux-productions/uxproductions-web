@@ -233,6 +233,9 @@ p { margin: 0 0 1em; }
 .prose li { margin: .35em 0; }
 .prose .lead { font-size: 1.15rem; color: var(--text); }
 .prose img { border-radius: var(--radius); margin: 1.4em 0; }
+.prose figure { margin: 1.4em 0; }
+.prose video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; background: #000; border-radius: var(--radius); }
+.prose figcaption { font-size: 14px; color: var(--text-muted); margin-top: 8px; }
 .prose table { border-collapse: collapse; width: 100%; margin: 1em 0 1.4em; font-size: 15px; display: block; overflow-x: auto; }
 .prose th, .prose td { border-bottom: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; color: var(--text-dim); }
 .prose th { color: var(--text); }
