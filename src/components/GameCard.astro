@@ -11,7 +11,7 @@ interface Props {
   eager?: boolean;
 }
 const { game, lang, eager = false } = Astro.props;
-const strip = { robot: '#5ce1e6', murder: '#c9a045', race: '#b46bff' }[game.theme];
+const strip = { robot: '#5ce1e6', murder: '#c9a045', race: '#b46bff', part: '#6ec8be' }[game.theme];
 // The card's picture is the game's own art without its name (its page's hero, or a card
 // crop of it), since the card sets the name itself (GameTitle) right under it.
 const art = game.card ?? game.hero;

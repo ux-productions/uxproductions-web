@@ -62,7 +62,7 @@ const videoGame = {
     : {}),
   author: { '@id': `${SITE.url}/#organization` },
   publisher: { '@id': `${SITE.url}/#organization` },
-  sameAs: game.stores.map((st) => st.url),
+  ...(game.stores.length ? { sameAs: game.stores.map((st) => st.url) } : {}),
   ...(game.videos.length
     ? {
         trailer: game.videos.map((v, i) => ({
@@ -114,12 +114,12 @@ const breadcrumbs = {
           <nav class="crumbs" aria-label={sv ? 'Brödsmulor' : 'Breadcrumb'}>
             <a href={localize('/games/', lang)}>{s.nav.games}</a> / {game.name}
           </nav>
-          {game.logo ? (
+          {game.theme === 'robot' && game.logo ? (
             <h1>
               <Image src={game.logo} class="logo" alt={game.name} widths={[440, 880]} sizes="440px" loading="eager" />
             </h1>
           ) : (
-            <h1><GameTitle game={game} /></h1>
+            <h1><GameTitle game={game} eager /></h1>
           )}
           <p class="tagline">{keepOpeners(game.tagline[lang])}</p>
           <StoreButtons game={game} lang={lang} />
@@ -140,7 +140,7 @@ const breadcrumbs = {
 
         {game.videos.length > 0 && (
           <section>
-            <h2>{s.trailer}</h2>
+            <h2>{game.videos.every((v) => v.gameplay) ? (sv ? 'Så spelas det' : 'Gameplay') : s.trailer}</h2>
             <div class:list={['videos', { two: game.videos.length > 1 }]}>
               {game.videos.map((v, i) => (
                 <div class="video">
@@ -211,11 +211,19 @@ const breadcrumbs = {
               ))}
             </dl>
           </div>
-          <div class="aside-block">
-            <b>{s.getIt}</b>
-            <p>{game.website ? (sv ? 'Spela direkt i webbläsaren eller på mobilen.' : 'Play right in your browser or on your phone.') : sv ? 'På Steam, iOS och Android.' : 'On Steam, iOS and Android.'}</p>
-            <StoreButtons game={game} lang={lang} />
-          </div>
+          {game.comingSoon ? (
+            <div class="aside-block">
+              <b>{sv ? 'Kommer snart' : 'Coming soon'}</b>
+              <p>{sv ? `Till ${game.platforms.join(', ').replace(/, (?=[^,]+$)/, ' och ')}, inget datum ännu. Vi skriver om det i nyheterna och i våra sociala kanaler när det finns ett.` : `To ${game.platforms.join(', ').replace(/, (?=[^,]+$)/, ' and ')}, with no date yet. We will post it in our news and on our socials when there is one.`}</p>
+              <a href="/news/" hreflang={sv ? 'en' : undefined}>{s.allNews}</a>
+            </div>
+          ) : (
+            <div class="aside-block">
+              <b>{s.getIt}</b>
+              <p>{game.website ? (sv ? 'Spela direkt i webbläsaren eller på mobilen.' : 'Play right in your browser or on your phone.') : sv ? 'På Steam, iOS och Android.' : 'On Steam, iOS and Android.'}</p>
+              <StoreButtons game={game} lang={lang} />
+            </div>
+          )}
           <div class="aside-block">
             <b>{s.pressKit}</b>
             <p>{s.pressKitText}</p>

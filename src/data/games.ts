@@ -30,6 +30,17 @@ import race02 from '../assets/race/02-switchback-nocturne.jpg';
 import race03 from '../assets/race/03-fallow-pines.jpg';
 import race04 from '../assets/race/04-ladder.jpg';
 import race05 from '../assets/race/05-lobby.jpg';
+import partHero from '../assets/part/hero.jpg';
+import partCard from '../assets/part/card-art.jpg';
+import partLogo from '../assets/part/logo-dark.svg';
+import partIcon from '../assets/part/icon.png';
+import partGameplayPoster from '../assets/part/gameplay-poster.jpg';
+import part01 from '../assets/part/01-work-order.jpg';
+import part03 from '../assets/part/03-cutting.jpg';
+import part04 from '../assets/part/04-crash-path.jpg';
+import part05 from '../assets/part/05-inspection.jpg';
+import part06 from '../assets/part/06-three-stars.jpg';
+import part07 from '../assets/part/07-close-up.jpg';
 
 type L<T = string> = Record<Lang, T>;
 
@@ -50,6 +61,10 @@ export interface Video {
   description: string;
   seconds: number;
   uploaded: string;
+  /** The file's frame size, when it is not 1280x720. */
+  size?: string;
+  /** A stretch of play in one take rather than a cut trailer. */
+  gameplay?: boolean;
 }
 
 export interface Game {
@@ -74,7 +89,10 @@ export interface Game {
   facts: L<{ label: string; value: string }[]>;
   faq: L<{ q: string; a: string }[]>;
   platforms: string[];
+  /** Empty while the game is not out: `comingSoon` then stands where the store buttons would. */
   stores: Store[];
+  /** A game that is announced but not out yet: where it is coming, in a few words. */
+  comingSoon?: L;
   website?: string;
   /** The game's own art without its name: its page's hero, and the picture on its card
    *  (games index, 404, press index), which sets the name itself under it. */
@@ -88,7 +106,7 @@ export interface Game {
   shots: Shot[];
   shotsPortrait?: boolean;
   videos: Video[];
-  theme: 'robot' | 'murder' | 'race';
+  theme: 'robot' | 'murder' | 'race' | 'part';
   schema: {
     genre: string[];
     playMode: string[];
@@ -464,5 +482,122 @@ export const RACE: Game = {
   },
 };
 
-export const GAMES: Game[] = [ROBOT, MURDER, RACE];
+export const PART: Game = {
+  slug: 'the-perfect-part',
+  name: 'The Perfect Part',
+  shortName: 'Part',
+  genre: { en: 'Casual machining puzzle', sv: 'Avslappnat fräspussel' },
+  genreShort: { en: 'Machining puzzle', sv: 'Fräspussel' },
+  stat: {
+    value: '3',
+    unit: { en: 'stars', sv: 'stjärnor' },
+    detail: { en: 'a job: passed, on time, clean', sv: 'per jobb: godkänd, i tid, ren yta' },
+    label: { en: 'stars a job: passed, on time and a clean finish', sv: 'stjärnor per jobb: godkänd, i tid och ren yta' },
+  },
+  tagline: {
+    en: 'Measure twice, cut once.',
+    sv: 'Mät två gånger, fräs en gång.',
+  },
+  pitch: {
+    en: 'Record a CNC program step by step, press CYCLE START and watch the cutter carve the part you planned.',
+    sv: 'Spela in ett CNC-program steg för steg, tryck på CYCLE START och se fräsen skära ut detaljen du planerade.',
+  },
+  metaDescription: {
+    en: 'The Perfect Part is a casual machining puzzle: record steps at a CNC console, press CYCLE START and watch your part being cut. Coming to iOS, Android and Steam.',
+    sv: 'The Perfect Part är ett fräspussel: spela in stegen vid en CNC-panel, tryck på CYCLE START och se fräsen skära ut detaljen. Kommer till iOS, Android och Steam.',
+  },
+  intro: {
+    en: [
+      'A work order comes in with a drawing: a machine foot, a bolt tray, a servo bracket. A block of aluminium sits in the vise and the tools for the job hang in the rack, a few of them tempting and wrong. Record the program one step at a time at the machine’s console, press CYCLE START and watch the cutter carve the block exactly as you told it to, chips flying.',
+      'The steps you record become real machine code, and the inspector measures the finished part against the drawing. A long cutter reaches deep but wobbles, a long drill wanders unless a spot drill seats it first, and a round cutter leaves its radius in every inside corner. The puzzle is in the plan.',
+    ],
+    sv: [
+      'En arbetsorder kommer in med en ritning: en maskinfot, ett bultfack, en servokonsol. Ett aluminiumblock sitter i skruvstycket och verktygen för jobbet hänger i stället, några av dem frestande och fel. Spela in programmet ett steg i taget vid maskinens panel, tryck på CYCLE START och se fräsen skära blocket precis som du sa, så att spånen flyger.',
+      'Stegen du spelar in blir riktig maskinkod, och kontrollanten mäter den färdiga detaljen mot ritningen. En lång fräs når djupt men vibrerar, en lång borr vandrar om inte en centrumborr sätter den först, och en rund fräs lämnar sin radie i varje innerhörn. Pusslet ligger i planen.',
+    ],
+  },
+  features: {
+    en: [
+      { title: 'Work orders', text: 'A drawing with its dimensions, a block in the vise and the tools for the job in the rack.' },
+      { title: 'Record the program', text: 'NEW STEP, a tool, an operation, tap the part, STORE: all at the machine’s console.' },
+      { title: 'CYCLE START', text: 'Your steps become real machine code, and the cutter carves the block exactly as told.' },
+      { title: 'Three stars', text: 'Passed inspection, inside the time goal and a clean finish. TRY AGAIN keeps your program.' },
+      { title: 'Apprentice and Machinist', text: 'The zero set for you and warnings before a run, or no warnings and the zero is yours.' },
+      { title: 'Playground', text: 'Draw your own part on the block, then machine it.' },
+    ],
+    sv: [
+      { title: 'Arbetsordrar', text: 'En ritning med mått, ett block i skruvstycket och verktygen för jobbet i stället.' },
+      { title: 'Spela in programmet', text: 'NEW STEP, ett verktyg, en operation, tryck på detaljen, STORE: allt vid maskinens panel.' },
+      { title: 'CYCLE START', text: 'Dina steg blir riktig maskinkod, och fräsen skär blocket precis som du sa.' },
+      { title: 'Tre stjärnor', text: 'Godkänd kontroll, inom tidsmålet och en ren yta. TRY AGAIN behåller ditt program.' },
+      { title: 'Apprentice och Machinist', text: 'Nollpunkten satt åt dig och varningar före körningen, eller inga varningar och nollpunkten är din.' },
+      { title: 'Playground', text: 'Rita din egen detalj på blocket och fräs ut den.' },
+    ],
+  },
+  facts: {
+    en: [
+      { label: 'Genre', value: 'Casual machining puzzle' },
+      { label: 'Platforms', value: 'iOS, Android, Windows (Steam)' },
+      { label: 'Release', value: 'Coming soon, no date yet' },
+      { label: 'Modes', value: 'Apprentice and Machinist, Playground' },
+      { label: 'Developer', value: 'UX Productions, Sweden' },
+    ],
+    sv: [
+      { label: 'Genre', value: 'Avslappnat fräspussel' },
+      { label: 'Plattformar', value: 'iOS, Android, Windows (Steam)' },
+      { label: 'Släpps', value: 'Snart, inget datum ännu' },
+      { label: 'Spellägen', value: 'Apprentice och Machinist, Playground' },
+      { label: 'Utvecklare', value: 'UX Productions, Sverige' },
+    ],
+  },
+  faq: {
+    en: [
+      { q: 'When does it come out?', a: 'There is no date yet. The Perfect Part is coming to iPhone, iPad, Android phones and tablets and to Windows on Steam; we will post on our news page and our socials when there is a date.' },
+      { q: 'Do I need to know CNC machining or G-code?', a: 'No. You record each step with a few keys and taps on the part, in plain words. The game writes the machine code from your steps, and shows it on the console’s screen while it cuts.' },
+      { q: 'What happens when a run goes wrong?', a: 'Nothing is lost. TRY AGAIN puts a fresh block in the vise and keeps your program, so you only fix the step that went wrong. As an Apprentice, the machine also stops itself the moment before a crash.' },
+    ],
+    sv: [
+      { q: 'När kommer det?', a: 'Det finns inget datum ännu. The Perfect Part kommer till iPhone, iPad, Android-telefoner och surfplattor och till Windows på Steam; vi skriver på nyhetssidan och i våra sociala kanaler när det finns ett datum.' },
+      { q: 'Måste jag kunna CNC-fräsning eller G-kod?', a: 'Nej. Du spelar in varje steg med några knappar och tryck på detaljen, med vanliga ord. Spelet skriver maskinkoden utifrån dina steg och visar den på panelens skärm medan fräsen skär.' },
+      { q: 'Vad händer när en körning går fel?', a: 'Inget går förlorat. TRY AGAIN sätter ett nytt block i skruvstycket och behåller ditt program, så du rättar bara steget som gick fel. Som Apprentice stannar maskinen också själv precis innan en krock.' },
+    ],
+  },
+  platforms: ['iOS', 'Android', 'Steam'],
+  stores: [],
+  comingSoon: { en: 'Coming soon to iOS, Android and Steam', sv: 'Kommer snart till iOS, Android och Steam' },
+  hero: partHero,
+  card: partCard,
+  icon: partIcon,
+  logo: partLogo,
+  // Six of the seven screenshots (the press kit has all seven), so they make full rows.
+  shots: [
+    { src: part01, alt: { en: 'The work order: a drawing with dimensions and the ordered part turning in 3D', sv: 'Arbetsordern: en ritning med mått och den beställda detaljen som snurrar i 3D' } },
+    { src: part03, alt: { en: 'CYCLE START: the end mill cuts the pocket while the console shows the program running', sv: 'CYCLE START: pinnfräsen skär fickan medan panelen visar programmet som körs' } },
+    { src: part04, alt: { en: 'A planned path in red where the holder would hit the part', sv: 'En planerad bana i rött där hållaren skulle slå i detaljen' } },
+    { src: part05, alt: { en: 'Inspection: the finished part coloured where it is in and out of tolerance', sv: 'Kontrollen: den färdiga detaljen färgad där den är inom och utanför toleransen' } },
+    { src: part06, alt: { en: 'A passed job with three stars and the cycle time against a simulated shop', sv: 'Ett godkänt jobb med tre stjärnor och cykeltiden mot en simulerad verkstad' } },
+    { src: part07, alt: { en: 'Close up: a pocket being cut in a block of aluminium, chips flying', sv: 'På nära håll: en ficka skärs i ett aluminiumblock och spånen flyger' } },
+  ],
+  videos: [
+    {
+      file: '/video/the-perfect-part-gameplay.mp4',
+      poster: partGameplayPoster,
+      title: { en: 'The Perfect Part: gameplay', sv: 'The Perfect Part: spelet' },
+      description: 'One job, the Bolt tray, from the work order to three stars, in one take.',
+      seconds: 38,
+      uploaded: '2026-10-19',
+      size: '1920x1080',
+      gameplay: true,
+    },
+  ],
+  theme: 'part',
+  schema: {
+    genre: ['Puzzle', 'Simulation'],
+    playMode: ['SinglePlayer'],
+    gamePlatform: ['PC', 'iOS', 'Android'],
+    operatingSystem: 'Windows, iOS, Android',
+  },
+};
+
+export const GAMES: Game[] = [ROBOT, MURDER, RACE, PART];
 export const gameBySlug = (slug: string) => GAMES.find((g) => g.slug === slug);

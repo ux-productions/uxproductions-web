@@ -103,11 +103,13 @@ p { margin: 0 0 1em; }
 .gt-race { font: 400 1em/1.3 var(--race-face); text-transform: uppercase; letter-spacing: .04em; color: #dfe5f2; text-shadow: 0 .077em .154em rgba(0, 0, 0, .35); }
 .gt-race b { font-weight: inherit; color: #b46bff; text-shadow: 0 0 .54em rgba(180, 107, 255, .28); }
 .gt-robot { display: block; height: auto; }
+.gt-part { display: block; height: auto; }
 /* Contrast themes paint every background in the theme's own colour: a light one would
    leave the Robot logo's light letters on white, so the logo keeps its own navy plate
    (as in print). */
 @media (forced-colors: active) {
   img.gt-robot, .game-hero .logo { forced-color-adjust: none; background: #0a1524; border-radius: 6px; }
+  img.gt-part { forced-color-adjust: none; background: #0d2124; border-radius: 6px; }
 }
 
 /* Buttons */
@@ -124,6 +126,10 @@ p { margin: 0 0 1em; }
 .btn.primary { background: var(--g-cta); border-color: var(--g-cta); color: var(--g-cta-ink); font-weight: 700; }
 .btn.primary:hover { filter: brightness(1.08); color: var(--g-cta-ink); }
 .btns { display: flex; flex-wrap: wrap; gap: 10px; }
+/* Where a game that is not out yet has its store buttons: the same height, but no button. */
+.soon { display: inline-flex; align-items: center; gap: 12px; min-height: 46px; margin: 0; padding: 0 16px; border: 1px dashed var(--g-accent); border-radius: 4px; font: 600 15px/1.25 var(--body); color: var(--text); }
+.soon-icons { display: inline-flex; gap: 6px; color: var(--g-accent); }
+.soon svg { width: 18px; height: 18px; flex: none; }
 
 /* Header: the UX of the logo, then PRODUCTIONS in the studio face. */
 .site-header { border-bottom: 1px solid var(--line); background: var(--ground); }
@@ -164,6 +170,7 @@ p { margin: 0 0 1em; }
 .game-card h3 .gt-murder { font-size: min(1.55rem, 100cqi / 11.6); }
 .game-card h3 .gt-race { font-size: min(1.05rem, 100cqi / 16.8); }
 .game-card h3 .gt-robot { width: 132px; margin: -6px 0 -2px -6px; }
+.game-card h3 .gt-part { width: 132px; }
 .game-card .body { container-type: inline-size; }
 .game-card .genre { font: 500 12px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--strip); }
 .game-card p { color: var(--text-dim); margin: 0; font-size: 15.5px; }
@@ -270,11 +277,14 @@ p { margin: 0 0 1em; }
 }
 .theme-robot { --g-bg: #0a1524; --g-plate: #10213a; --g-line: #24476b; --g-text: #e8f1ff; --g-dim: #aac0da; --g-accent: #5ce1e6; --g-cta: #ffc857; --g-cta-ink: #0a1524; }
 .theme-murder { --g-bg: #080c16; --g-plate: #0f1420; --g-line: #3b3322; --g-text: #ede5d1; --g-dim: #b9b09b; --g-accent: #c9a045; --g-cta: #c9a045; --g-cta-ink: #080c16; --g-title: var(--murder-face); }
+/* Part: the console's dark teal face and its screen's teal, the game's yellow START button. */
+.theme-part { --g-bg: #0c1e21; --g-plate: #122c30; --g-line: #25494e; --g-text: #fff8ee; --g-dim: #b0c6c2; --g-accent: #6ec8be; --g-cta: #ffc440; --g-cta-ink: #262e3c; }
 .theme-race { --g-bg: #0a0d13; --g-plate: #111725; --g-line: #232c42; --g-text: #f4f7fd; --g-dim: #a8b1c8; --g-accent: #b46bff; --g-cta: #b46bff; --g-cta-ink: #0a0d13; --g-title: var(--race-face); }
 .game a:not(.btn) { color: var(--g-accent); }
 .game .btn { border-color: var(--g-line); color: var(--g-text); }
 .game .btn:hover { border-color: var(--g-dim); }
 .game .btn.primary { border-color: var(--g-cta); color: var(--g-cta-ink); }
+.game .soon { color: var(--g-text); }
 .game .label, .game .crumbs, .game .crumbs a { color: var(--g-dim); }
 .game .label.accent { color: var(--g-accent); }
 
@@ -299,6 +309,7 @@ p { margin: 0 0 1em; }
 .theme-race .game-hero h1 { font-size: min(2.6rem, 100cqi / 16.8); line-height: 1.3; letter-spacing: 0; margin-block: 14px 16px; }
 .theme-murder .game-hero h1 { font-size: min(4rem, 100cqi / 11.6); letter-spacing: 0; }
 .game-hero .logo { width: min(440px, 70vw); height: auto; margin: -10px 0 -6px -10px; }
+.game-hero .gt-part { width: min(400px, 66vw); margin-block: 6px 4px; }
 .game-hero .tagline { font-size: clamp(1.1rem, 2.2vw, 1.4rem); color: var(--g-text); max-width: 32em; margin-bottom: 18px; text-wrap: pretty; }
 /* Phones: the art is a band above the copy, so it fades into the page itself (the
    section's shade would cover the copy too and leave the art's edge hard); the
@@ -356,7 +367,7 @@ p { margin: 0 0 1em; }
 
 /* Print: black text on white paper, without the screen's shadows and sign-off. */
 @media print {
-  :root, .game, .theme-robot, .theme-murder, .theme-race {
+  :root, .game, .theme-robot, .theme-murder, .theme-race, .theme-part {
     --ground: #fff; --ground-2: #fff; --plate: #fff; --plate-2: #fff; --line: #bbb; --line-strong: #888;
     --text: #000; --text-dim: #222; --text-muted: #444; --accent: #000; --paper: #fff; --ink: #000; --ink-dim: #222;
     --g-bg: #fff; --g-plate: #fff; --g-line: #bbb; --g-text: #000; --g-dim: #222; --g-accent: #000;
@@ -374,4 +385,5 @@ p { margin: 0 0 1em; }
   .gt-race b { color: #6a2bbf; }
   .gt-murder { color: #7a5c17; }
   img.gt-robot, .game-hero .logo { background: #0a1524; padding: 4px 8px; border-radius: 6px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  img.gt-part { background: #0d2124; padding: 6px 8px; border-radius: 6px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }

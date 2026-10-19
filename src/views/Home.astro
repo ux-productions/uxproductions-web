@@ -7,7 +7,7 @@ import Icon from '../components/Icon.astro';
 import Mark from '../components/Mark.astro';
 import Socials from '../components/Socials.astro';
 import StoreButtons from '../components/StoreButtons.astro';
-import { GAMES, MURDER, ROBOT, platformLabel } from '../data/games';
+import { GAMES as ALL_GAMES, MURDER, ROBOT, platformLabel } from '../data/games';
 import PanelArt from '../components/PanelArt.astro';
 import Words from '../components/Words.astro';
 import { BADGES, FEATURED_GAME, ROBOT_STEAM_RELEASE, SITE, badgeFor, excerpt, formatDate, localize, loopsFor, robotOnSteam, steamRelease, storeLabel, storeShort, t, type Lang } from '../data/site';
@@ -23,6 +23,9 @@ interface Props {
   lang: Lang;
 }
 const { lang } = Astro.props;
+// The front page's panels are the games that are out: a game that is coming soon (`comingSoon`)
+// stays off the front page until its release (owner, 2026-10-19).
+const GAMES = ALL_GAMES.filter((g) => !g.comingSoon);
 const s = t(lang);
 const sv = lang === 'sv';
 const news = await freshNews();
