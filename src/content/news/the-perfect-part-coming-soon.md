@@ -19,7 +19,7 @@ Then press CYCLE START and watch. The steps you recorded become real machine cod
   <video controls preload="none" playsinline poster="/video/the-perfect-part-gameplay-poster.jpg" width="1920" height="1080">
     <source src="/video/the-perfect-part-gameplay.mp4" type="video/mp4" />
   </video>
-  <figcaption>One job, the Bolt tray, from the work order to three stars, in one take. The game is in development.</figcaption>
+  <figcaption>One job, the Bolt tray, from recording the step to three stars, then the Gimbal block. The game is in development.</figcaption>
 </figure>
 
 ## The puzzle is in the plan
@@ -33,9 +33,9 @@ Three stars grade the work: the part passed inspection, it was made inside the t
 
 ![Close up: a pocket being cut in a block of aluminium, chips flying](../../assets/part/07-close-up.jpg)
 
-## Two ways to play, and a playground
+## One idea a job, and a playground
 
-**Apprentice** sets the zero for you and warns you before a run. **Machinist** gives you no warnings and leaves the zero to you: put it on the wrong corner and the whole program lands somewhere else. In the **Playground** you draw your own part on the block and machine it.
+Each job teaches one lesson, and the game warns you about it until you have passed that job; after that the plan stays quiet and the inspector tells you the rest. The machine always stops itself the moment before a crash or a broken tool, so nothing ever breaks. In the **Playground** you make your own part on the block's grid and machine it.
 
 ![The work order: a drawing with dimensions and the ordered part turning in 3D](../../assets/part/01-work-order.jpg)
 
