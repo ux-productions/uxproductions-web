@@ -2,6 +2,7 @@
 title: 'The Perfect Part is coming to iOS, Android and Steam'
 description: 'Our next game is a casual machining puzzle: record the steps at a CNC console, press CYCLE START and watch the cutter carve the part you planned.'
 date: 2026-10-19T07:00:00+02:00
+game: the-perfect-part
 image: ../../assets/part/key-art.jpg
 imageAlt: 'The Perfect Part logo beside a small CNC mill and its console on a wooden plinth'
 ---
