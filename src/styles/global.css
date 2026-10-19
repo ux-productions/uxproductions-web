@@ -161,7 +161,8 @@ p { margin: 0 0 1em; }
 .game-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 22px; }
 .game-card { display: flex; flex-direction: column; background: var(--plate); border-radius: var(--radius); overflow: hidden; color: var(--text); text-decoration: none; border: 1px solid var(--line); transition: border-color .15s, transform .15s; }
 .game-card:hover { border-color: var(--line-strong); color: var(--text); transform: translateY(-2px); }
-.game-card img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+/* Only the art: the title logos (.gt) are imgs too and keep their own shape. */
+.game-card > picture img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
 .game-card .strip { height: 4px; background: var(--strip); }
 .game-card .body { padding: 18px 20px 22px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
 /* Every card's title row is as tall as the Robot's logo (66 px at 132 px wide), so the
