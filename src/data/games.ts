@@ -523,7 +523,7 @@ export const PART: Game = {
       { title: 'CYCLE START', text: 'Your steps become real machine code, and the cutter carves the block exactly as told.' },
       { title: 'Three stars', text: 'Passed inspection, inside the time goal and a clean finish. TRY AGAIN keeps your program.' },
       { title: 'Apprentice and Machinist', text: 'The zero set for you and warnings before a run, or no warnings and the zero is yours.' },
-      { title: 'Playground', text: 'Draw your own part on the block, then machine it.' },
+      { title: 'Playground', text: 'Make your own part on the block’s grid, then machine it.' },
     ],
     sv: [
       { title: 'Arbetsordrar', text: 'En ritning med mått, ett block i skruvstycket och verktygen för jobbet i stället.' },
@@ -531,7 +531,7 @@ export const PART: Game = {
       { title: 'CYCLE START', text: 'Dina steg blir riktig maskinkod, och fräsen skär blocket precis som du sa.' },
       { title: 'Tre stjärnor', text: 'Godkänd kontroll, inom tidsmålet och en ren yta. TRY AGAIN behåller ditt program.' },
       { title: 'Apprentice och Machinist', text: 'Nollpunkten satt åt dig och varningar före körningen, eller inga varningar och nollpunkten är din.' },
-      { title: 'Playground', text: 'Rita din egen detalj på blocket och fräs ut den.' },
+      { title: 'Playground', text: 'Gör din egen detalj på blockets rutnät och fräs ut den.' },
     ],
   },
   facts: {
@@ -583,8 +583,8 @@ export const PART: Game = {
       file: '/video/the-perfect-part-gameplay.mp4',
       poster: partGameplayPoster,
       title: { en: 'The Perfect Part: gameplay', sv: 'The Perfect Part: spelet' },
-      description: 'One job, the Bolt tray, from the work order to three stars, in one take.',
-      seconds: 38,
+      description: 'One job, the Bolt tray, from recording the step to three stars, then the Gimbal block cut and revealed.',
+      seconds: 35,
       uploaded: '2026-10-19',
       size: '1920x1080',
       gameplay: true,
