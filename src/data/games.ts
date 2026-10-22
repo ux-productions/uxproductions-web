@@ -244,9 +244,9 @@ export const ROBOT: Game = {
       file: '/video/the-perfect-robot-trailer.mp4',
       poster: robotTrailerPoster,
       title: { en: 'The Perfect Robot: trailer', sv: 'The Perfect Robot: trailer' },
-      description: 'Program your robot four cards at a time and watch it carry them out to the letter.',
-      seconds: 26,
-      uploaded: '2026-10-07',
+      description: 'One wrong card and the robot blows up; rewind, swap it and get it perfect. Machines, rivals and 57 hand-made levels in six worlds.',
+      seconds: 61,
+      uploaded: '2026-10-22',
     },
     {
       file: '/video/the-perfect-robot-halloween.mp4',
