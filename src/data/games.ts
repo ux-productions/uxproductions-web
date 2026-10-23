@@ -35,6 +35,7 @@ import partCard from '../assets/part/card-art.jpg';
 import partLogo from '../assets/part/logo-dark.svg';
 import partIcon from '../assets/part/icon.png';
 import partGameplayPoster from '../assets/part/gameplay-poster.jpg';
+import partTrailerPoster from '../assets/part/trailer-poster.jpg';
 import part01 from '../assets/part/01-work-order.jpg';
 import part03 from '../assets/part/03-cutting.jpg';
 import part04 from '../assets/part/04-crash-path.jpg';
@@ -579,6 +580,15 @@ export const PART: Game = {
     { src: part07, alt: { en: 'Close up: a pocket being cut in a block of aluminium, chips flying', sv: 'På nära håll: en ficka skärs i ett aluminiumblock och spånen flyger' } },
   ],
   videos: [
+    {
+      file: '/video/the-perfect-part-trailer.mp4',
+      poster: partTrailerPoster,
+      title: { en: 'The Perfect Part: trailer', sv: 'The Perfect Part: trailer' },
+      description: 'A mill, a lathe and a rotary table at work: record the steps, press CYCLE START and watch a handheld shell, a brass chess set and your name tag being cut.',
+      seconds: 24,
+      uploaded: '2026-10-23',
+      size: '1920x1080',
+    },
     {
       file: '/video/the-perfect-part-gameplay.mp4',
       poster: partGameplayPoster,
