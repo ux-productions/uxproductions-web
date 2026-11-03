@@ -51,6 +51,8 @@ save(cover(ASSETS / 'murder' / 'card.jpg'), 'the-perfect-murder.jpg')
 save(cover(ASSETS / 'race' / 'card.jpg'), 'the-perfect-race.jpg')
 # The Part's key art: its logo beside the machine, as the game's menu shows them.
 save(cover(ASSETS / 'part' / 'key-art.jpg'), 'the-perfect-part.jpg')
+# The Quest's key art: its pixel logo over the ship in rough sea, as on its Steam trailer.
+save(cover(ASSETS / 'quest' / 'key-art.jpg'), 'the-perfect-quest.jpg')
 
 for post in sorted((ROOT / 'src' / 'content' / 'news').glob('*.md')):
     m = re.search(r'^image:\s*(.+)$', post.read_text(encoding='utf-8'), re.M)

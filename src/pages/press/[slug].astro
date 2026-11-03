@@ -63,7 +63,7 @@ const videoFiles = game.videos.map((v) => ({
       <nav class="crumbs" aria-label="Breadcrumb"><a href="/press/">Press</a> / {game.name}</nav>
       <p class="label kit-label">Press kit</p>
       {/* The heading says its words as text (for crawlers too); the Robot's logo is then decorative. */}
-      {game.theme === 'robot' || game.theme === 'part' ? (
+      {game.theme === 'robot' || game.theme === 'part' || game.theme === 'quest' ? (
         <h1 class="kit-title"><GameTitle game={game} logoSizes="(max-width: 640px) 260px, 360px" eager decorative /><span class="visually-hidden">{game.name} press kit</span></h1>
       ) : (
         <h1 class="kit-title"><GameTitle game={game} logoSizes="(max-width: 640px) 260px, 360px" eager /><span class="visually-hidden"> press kit</span></h1>
@@ -123,6 +123,7 @@ const videoFiles = game.videos.map((v) => ({
   .page-head h1.kit-title { container-type: inline-size; max-width: none; margin: 10px 0 14px; }
   .kit-title :global(.gt-robot) { width: min(360px, 70vw); margin: -14px 0 -10px -12px; }
   .kit-title :global(.gt-part) { width: min(320px, 66vw); }
+  .kit-title :global(.gt-quest) { width: min(280px, 60vw); }
   .kit-title :global(.gt-murder) { font-size: min(3.5rem, 100cqi / 11.6); }
   .kit-title :global(.gt-race) { font-size: min(2.25rem, 100cqi / 16.8); }
   .kit-grid .prose h2:first-child { margin-top: 0; }

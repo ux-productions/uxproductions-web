@@ -42,6 +42,17 @@ import part04 from '../assets/part/04-crash-path.jpg';
 import part05 from '../assets/part/05-inspection.jpg';
 import part06 from '../assets/part/06-three-stars.jpg';
 import part07 from '../assets/part/07-close-up.jpg';
+import questHero from '../assets/quest/hero.jpg';
+import questCard from '../assets/quest/card-art.jpg';
+import questLogo from '../assets/quest/logo.png';
+import questIcon from '../assets/quest/icon.png';
+import questTrailerPoster from '../assets/quest/trailer-poster.jpg';
+import quest01 from '../assets/quest/01-tavern.jpg';
+import quest02 from '../assets/quest/02-forger.jpg';
+import quest03 from '../assets/quest/03-oak.jpg';
+import quest04 from '../assets/quest/04-guard.jpg';
+import quest05 from '../assets/quest/05-cannon.jpg';
+import quest07 from '../assets/quest/07-hoard.jpg';
 
 type L<T = string> = Record<Lang, T>;
 
@@ -107,7 +118,7 @@ export interface Game {
   shots: Shot[];
   shotsPortrait?: boolean;
   videos: Video[];
-  theme: 'robot' | 'murder' | 'race' | 'part';
+  theme: 'robot' | 'murder' | 'race' | 'part' | 'quest';
   schema: {
     genre: string[];
     playMode: string[];
@@ -609,5 +620,123 @@ export const PART: Game = {
   },
 };
 
-export const GAMES: Game[] = [ROBOT, MURDER, RACE, PART];
+export const QUEST: Game = {
+  slug: 'the-perfect-quest',
+  name: 'The Perfect Quest: The Drowned King’s Hoard',
+  shortName: 'Quest',
+  genre: { en: 'Comedy text adventure', sv: 'Komiskt textäventyr' },
+  genreShort: { en: 'Text adventure', sv: 'Textäventyr' },
+  stat: {
+    value: '255',
+    unit: { en: 'points', sv: 'poäng' },
+    detail: { en: 'to score, Sierra style', sv: 'att samla, som hos Sierra' },
+    label: { en: 'points to score, Sierra style, across seven islands', sv: 'poäng att samla, som hos Sierra, över sju öar' },
+  },
+  tagline: {
+    en: 'A pirate with a hat and no ship.',
+    sv: 'En pirat med hatt men utan skepp.',
+  },
+  pitch: {
+    en: 'A comedy text adventure inspired by the Sierra classics: type your way across the Caribbean to a legendary hoard.',
+    sv: 'Ett komiskt textäventyr i Sierra-klassikernas anda: skriv dig fram över Karibien till en legendarisk skatt.',
+  },
+  metaDescription: {
+    en: 'The Perfect Quest is a comedy text adventure inspired by the Sierra classics: a pirate, a sarcastic parrot and a legendary hoard. Coming soon to Steam.',
+    sv: 'The Perfect Quest är ett komiskt textäventyr i Sierra-klassikernas anda: en pirat, en sarkastisk papegoja och en legendarisk skatt. Kommer snart till Steam.',
+  },
+  intro: {
+    en: [
+      'Captain Z has a hat, seventeen doubloons and a title nobody believes. Ten years he swabbed Blackheart Briggs’ decks; this morning he quit. Then he hears the rumour: the Hoard of the Drowned King is real, and Briggs is already hunting for it. First, Z needs a boat. Any boat.',
+      'There is no list of verbs to click: you type what you want to do. Walk with the arrow keys, type LOOK, TAKE, USE THE PLANKS ON THE QUICKSAND or GIVE THE FISH TO THE GUARD, and talk to everyone. A sarcastic parrot tags along with hints for wherever you are stuck.',
+    ],
+    sv: [
+      'Kapten Z har en hatt, sjutton dubloner och en titel som ingen tror på. I tio år skurade han Blackheart Briggs däck; i morse sa han upp sig. Sedan hör han ryktet: den drunknade kungens skatt finns på riktigt, och Briggs letar redan efter den. Först behöver Z en båt. Vilken båt som helst.',
+      'Det finns ingen lista med verb att klicka på: du skriver vad du vill göra. Gå med piltangenterna, skriv LOOK, TAKE, USE THE PLANKS ON THE QUICKSAND eller GIVE THE FISH TO THE GUARD, och prata med alla. En sarkastisk papegoja följer med och tipsar när du kör fast. Spelet är på engelska.',
+    ],
+  },
+  features: {
+    en: [
+      { title: 'Seven islands', text: 'Four acts from a run-down tavern to a skull-shaped mountain at the end of the map, linked by a sailing map.' },
+      { title: 'Type what you want', text: 'A forgiving parser that understands how people actually type, and around 900 written answers to what you try.' },
+      { title: 'A sarcastic parrot', text: 'Ask the parrot when you are stuck: its hints follow how far you have come.' },
+      { title: 'Classic deaths', text: 'Each with a joke and an epitaph, and TRY AGAIN to rewind a moment.' },
+      { title: 'A sword fight', text: 'Meet your old captain on the beach: read his moves and drive him into the sea.' },
+      { title: '255 points', text: 'Points the Sierra way for completionists, eleven achievements and a secret or two under the waves.' },
+    ],
+    sv: [
+      { title: 'Sju öar', text: 'Fyra akter från en sliten krog till ett dödskalleberg vid kartans slut, sammanbundna av en sjökarta.' },
+      { title: 'Skriv vad du vill', text: 'En förlåtande tolk som förstår hur folk faktiskt skriver, och runt 900 skrivna svar på det du försöker.' },
+      { title: 'En sarkastisk papegoja', text: 'Fråga papegojan när du kör fast: tipsen följer hur långt du har kommit.' },
+      { title: 'Klassiska dödsfall', text: 'Vart och ett med ett skämt och en gravskrift, och TRY AGAIN för att spola tillbaka en stund.' },
+      { title: 'En svärdsduell', text: 'Möt din gamla kapten på stranden: läs hans drag och driv ut honom i havet.' },
+      { title: '255 poäng', text: 'Poäng som hos Sierra för den som vill ha allt, elva prestationer och en hemlighet eller två under vågorna.' },
+    ],
+  },
+  facts: {
+    en: [
+      { label: 'Genre', value: 'Comedy text adventure' },
+      { label: 'Platform', value: 'Windows (Steam)' },
+      { label: 'Release', value: 'Coming soon' },
+      { label: 'Size', value: '24 locations, 14 characters, about 60 items' },
+      { label: 'Language', value: 'English' },
+      { label: 'Developer', value: 'UX Productions, Sweden' },
+    ],
+    sv: [
+      { label: 'Genre', value: 'Komiskt textäventyr' },
+      { label: 'Plattform', value: 'Windows (Steam)' },
+      { label: 'Släpps', value: 'Snart' },
+      { label: 'Omfång', value: '24 platser, 14 personer, ett 60-tal föremål' },
+      { label: 'Språk', value: 'Engelska' },
+      { label: 'Utvecklare', value: 'UX Productions, Sverige' },
+    ],
+  },
+  faq: {
+    en: [
+      { q: 'When does it come out?', a: 'Soon, on Steam for Windows. We will post on our news page and our socials when there is a date.' },
+      { q: 'Do I have to guess the exact words?', a: 'No. The parser takes what people actually type: GIVE FISH TO GUARD, FEED THE GUARD THE FISH and GIVE THE GUARD A FISH all work. When you are stuck, TALK TO PARROT for a hint, and HELP lists the commands.' },
+      { q: 'Can I die?', a: 'Yes, the classic way, with a joke and an epitaph. TRY AGAIN rewinds to the moment before, so nothing is lost.' },
+    ],
+    sv: [
+      { q: 'När kommer det?', a: 'Snart, på Steam för Windows. Vi skriver på nyhetssidan och i våra sociala kanaler när det finns ett datum.' },
+      { q: 'Måste jag gissa exakt rätt ord?', a: 'Nej. Tolken tar emot det folk faktiskt skriver: GIVE FISH TO GUARD, FEED THE GUARD THE FISH och GIVE THE GUARD A FISH fungerar alla. Kör du fast, skriv TALK TO PARROT för ett tips, och HELP visar kommandona. Spelet är på engelska.' },
+      { q: 'Kan man dö?', a: 'Ja, på klassiskt vis, med ett skämt och en gravskrift. TRY AGAIN spolar tillbaka till stunden före, så inget går förlorat.' },
+    ],
+  },
+  platforms: ['Steam'],
+  stores: [],
+  comingSoon: { en: 'Coming soon to Steam', sv: 'Kommer snart till Steam' },
+  hero: questHero,
+  card: questCard,
+  icon: questIcon,
+  logo: questLogo,
+  // Six of the seven screenshots (the press kit has all seven), so they make full rows.
+  shots: [
+    { src: quest01, alt: { en: 'The Rusty Cutlass tavern: Captain Z, the parrot and the bartender', sv: 'Krogen The Rusty Cutlass: kapten Z, papegojan och bartendern' } },
+    { src: quest02, alt: { en: 'The forger’s stall in the market alley, handing over a set of passage papers', sv: 'Förfalskarens stånd i marknadsgränden, där hon lämnar över ett pass' } },
+    { src: quest03, alt: { en: 'An old oak by the sea: Z takes the first fragment of the map', sv: 'En gammal ek vid havet: Z tar kartans första bit' } },
+    { src: quest04, alt: { en: 'A skeleton guard at the vault door, delighted with a fish', sv: 'En skelettvakt vid valvdörren, förtjust över en fisk' } },
+    { src: quest05, alt: { en: 'The fort’s cannon fires and the boulders sealing the cave across the water burst apart', sv: 'Fortets kanon skjuter och stenblocken som spärrar grottan på andra sidan vattnet sprängs' } },
+    { src: quest07, alt: { en: 'The hoard cave: the Drowned King on his throne among heaps of gold', sv: 'Skattgrottan: den drunknade kungen på sin tron bland högar av guld' } },
+  ],
+  videos: [
+    {
+      file: '/video/the-perfect-quest-trailer.mp4',
+      poster: questTrailerPoster,
+      title: { en: 'The Perfect Quest: trailer', sv: 'The Perfect Quest: trailer' },
+      description: 'Captain Z talks, forges, digs and bribes his way across the islands, fires a cannon, duels his old captain and finds the hoard: all of it typed.',
+      seconds: 51,
+      uploaded: '2026-11-03',
+      size: '1920x1080',
+    },
+  ],
+  theme: 'quest',
+  schema: {
+    genre: ['Adventure', 'Comedy'],
+    playMode: ['SinglePlayer'],
+    gamePlatform: ['PC'],
+    operatingSystem: 'Windows',
+  },
+};
+
+export const GAMES: Game[] = [ROBOT, MURDER, RACE, PART, QUEST];
 export const gameBySlug = (slug: string) => GAMES.find((g) => g.slug === slug);
