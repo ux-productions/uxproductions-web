@@ -1,6 +1,6 @@
 # UX Productions AB: website
 
-The studio website at [uxproductions.se](https://uxproductions.se): The Perfect Robot, The Perfect Murder and The Perfect Race, The Perfect Part (coming soon), news, press kits and the legal pages for the games.
+The studio website at [uxproductions.se](https://uxproductions.se): The Perfect Robot, The Perfect Murder and The Perfect Race, The Perfect Part and The Perfect Quest (both coming soon), news, press kits and the legal pages for the games.
 
 Built with [Astro](https://astro.build) as a static site: every page is a finished HTML file, so search engines, link previews and AI crawlers see the content without running JavaScript. It deploys to GitHub Pages on every push to `main` and once a day.
 
@@ -27,7 +27,7 @@ npm run check      # fails on broken internal links or anchors in dist/
 | Page templates (one per page type, rendered in both languages) | `src/views/` |
 | Front page: launch block, the game panels (the games that are out), news strip, studio band | `src/views/Home.astro` |
 | The UX Productions mark as vector paths (traced from `public/press/ux-productions-logo.png`), used in the header (UX and the word PRODUCTIONS), the studio band and the footer | `src/components/Mark.astro` |
-| Each game's name as the game itself sets it (Robot: its logo; Murder: Bodoni Moda in gold with the magnifying glass; Race: one line of Press Start 2P with PERFECT in purple; Part: its logo for dark grounds, `the-perfect-part/concept/logo/svg/logo-dark.svg`, as `src/assets/part/logo-dark.svg`), used on the front page, game pages, game cards, press kits and news posts | `src/components/GameTitle.astro` |
+| Each game's name as the game itself sets it (Robot: its logo; Murder: Bodoni Moda in gold with the magnifying glass; Race: one line of Press Start 2P with PERFECT in purple; Part: its logo for dark grounds, `the-perfect-part/concept/logo/svg/logo-dark.svg`, as `src/assets/part/logo-dark.svg`; Quest: its pixel logo from the Steam library logo, `codename-questline/Marketing/Steam/library_logo_1280x720.png` cropped, as `src/assets/quest/logo.png`, drawn with crisp pixels), used on the front page, game pages, game cards, press kits and news posts | `src/components/GameTitle.astro` |
 | Fonts: every @font-face, the one file each page preloads, the small subsets inlined into every page, and the metric-matched fallbacks (see Fonts below) | `src/components/Fonts.astro`, `src/assets/fonts/` (made by `python scripts/make-font-subsets.py`) |
 | Front page art: the Robot key art at full size; Murder's night harbour and Race's pack on Harbour Street, each the first frame of its loop as the game renders it (the Race game page's hero too); each with a crop for the phone tile (`-phone`, 1170 px wide: the part of the Robot's panorama the tile shows, and so Race's cars stay large) | `src/assets/robot/key-art{,-phone}.jpg`, `src/assets/murder/harbour-night{,-phone}.jpg`, `src/assets/race/harbour-street-night{,-phone}.jpg` |
 | Game cards (games index, 404, press index): each game's hero art without its name (`hero` in `games.ts`), or a 16:9 crop of it where the hero is a panorama (`card`: the Robot's key art around the robot, the laser and the floating head), with the name set by `GameTitle` under it | `src/assets/<game>/hero.jpg`, Race's `harbour-street-night.jpg`, `src/assets/robot/card-art.jpg` |
