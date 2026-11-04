@@ -1,0 +1,71 @@
+---
+/**
+ * One short link per game, for ads, bios and posts: uxproductions.se/robot/ sends each visitor to the
+ * store for their device (iPhone and iPad: App Store, Android: Google Play, computers: Steam), so one
+ * address fits every platform. The site is static, so the choice runs in the browser: the script stops
+ * the page from showing for more than a moment, and without it the page is a plain list of the stores.
+ * A game with no store yet goes to its page, so a link keeps working from the day it is announced and
+ * picks up the stores when they are added to games.ts.
+ *
+ * UTM tags on the link are forwarded: as they are to Steam and the games' websites, as Google Play's
+ * `referrer`. The App Store only reports its own campaign links, which need the account's provider
+ * token, so its link stays plain.
+ */
+import Base from '../layouts/Base.astro';
+import GameIcon from '../components/GameIcon.astro';
+import GameTitle from '../components/GameTitle.astro';
+import StoreButtons from '../components/StoreButtons.astro';
+import { GAMES, type Game, type Store } from '../data/games';
+
+export function getStaticPaths() {
+  return GAMES.map((game) => ({ params: { short: game.theme }, props: { game } }));
+}
+const { game } = Astro.props as { game: Game };
+
+const first = (...kinds: Store['kind'][]) => kinds.map((k) => game.stores.find((s) => s.kind === k)?.url).find(Boolean) ?? null;
+const links = {
+  ios: first('appstore', 'web', 'steam'),
+  android: first('googleplay', 'web', 'steam'),
+  desktop: first('steam', 'web', 'appstore', 'googleplay'),
+  page: `/games/${game.slug}/`,
+};
+---
+<Base
+  title={game.name}
+  description={game.genre.en}
+  lang="en"
+  path={`/${game.theme}/`}
+  image={`/og/${game.slug}.jpg`}
+  imageAlt={game.name}
+  noindex
+>
+  <script slot="head" is:inline define:vars={{ links }}>
+    (function () {
+      var ua = navigator.userAgent;
+      // iPadOS asks for desktop pages and calls itself a Mac; only its touch screen gives it away
+      var ios = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+      var to = ios ? links.ios : /Android/.test(ua) ? links.android : links.desktop;
+      if (!to) {
+        location.replace((/^sv/i.test(navigator.language || '') ? '/sv' : '') + links.page + location.search);
+        return;
+      }
+      var url = new URL(to);
+      var tags = new URLSearchParams(location.search);
+      if (url.hostname === 'play.google.com') {
+        if (tags.toString()) url.searchParams.set('referrer', tags.toString());
+      } else if (url.hostname !== 'apps.apple.com') {
+        tags.forEach(function (value, key) { url.searchParams.set(key, value); });
+      }
+      location.replace(url.href);
+    })();
+  </script>
+  <div class="wrap">
+    <header class="page-head">
+      <GameIcon game={game} eager />
+      <h1><GameTitle game={game} eager /></h1>
+      <p>{game.genre.en}</p>
+      <StoreButtons game={game} lang="en" />
+      <p style="margin-top: 16px"><a href={links.page}>More about the game</a></p>
+    </header>
+  </div>
+</Base>
