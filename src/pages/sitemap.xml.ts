@@ -4,7 +4,7 @@ import { publishedNews } from '../data/news';
 import { SITE } from '../data/site';
 
 /** Pages that exist in English and Swedish, by their English path. */
-const BILINGUAL = ['/', '/games/', ...GAMES.map((g) => `/games/${g.slug}/`), '/games/other-work/', '/about/', '/tools/', '/privacy/'];
+const BILINGUAL = ['/', '/games/', ...GAMES.map((g) => `/games/${g.slug}/`), '/games/other-work/', '/about/', '/tools/', '/privacy/', '/terms/'];
 const ENGLISH_ONLY = ['/news/', '/press/', ...GAMES.map((g) => `/press/${g.slug}/`), '/games/terms/', '/games/privacy/'];
 
 export const GET: APIRoute = async () => {

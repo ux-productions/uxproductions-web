@@ -54,11 +54,11 @@ Add `src/content/news/<slug>.md` with `title`, `description` (about 150 characte
 
 ## Languages
 
-English is the main site at `/`, Swedish copies of the home, games, game pages, other work, about, tools and privacy pages are under `/sv/`, linked with `hreflang`. News, press and the game terms are English only.
+English is the main site at `/`, Swedish copies of the home, games, game pages, other work, about, tools, privacy and terms of use pages are under `/sv/`, linked with `hreflang`. News, press and the game terms are English only.
 
 ## Addresses that must keep working
 
-`/games/terms/` and `/games/privacy/` are linked from Stripe Checkout, and `/privacy/` from the app store listings. `/integritetspolicy` forwards to `/sv/privacy/`, `/demo` to `/games/`, and old `/games#<game>` links forward to each game's page.
+`/games/terms/` and `/games/privacy/` are linked from Stripe Checkout, and `/privacy/` and `/terms/` from the app store listings. `/integritetspolicy` forwards to `/sv/privacy/`, `/demo` to `/games/`, and old `/games#<game>` links forward to each game's page.
 
 ## License
 
