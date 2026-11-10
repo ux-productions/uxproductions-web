@@ -53,6 +53,8 @@ save(cover(ASSETS / 'race' / 'card.jpg'), 'the-perfect-race.jpg')
 save(cover(ASSETS / 'part' / 'key-art.jpg'), 'the-perfect-part.jpg')
 # The Quest's key art: its pixel logo over the ship in rough sea, as on its Steam trailer.
 save(cover(ASSETS / 'quest' / 'key-art.jpg'), 'the-perfect-quest.jpg')
+# The Fight's key art: its logo beside the fighters on the sunburst, as on its Steam capsule.
+save(cover(ASSETS / 'fight' / 'key-art.jpg'), 'the-perfect-fight.jpg')
 
 for post in sorted((ROOT / 'src' / 'content' / 'news').glob('*.md')):
     m = re.search(r'^image:\s*(.+)$', post.read_text(encoding='utf-8'), re.M)
