@@ -10,6 +10,9 @@
  *   The Perfect Quest   its pixel logo as the title screen sets it (The Perfect / Quest in cream,
  *                       The Drowned King's Hoard in gold, NF Pixels with a dark edge), a PNG from the
  *                       game's Steam library logo, drawn with crisp pixels
+ *   The Perfect Fight   its logo as the game's Steam art sets it (THE PERFECT in white on a blue
+ *                       ribbon over FIGHT in gold, both with a dark ink edge), a PNG drawn by the game's
+ *                       art/tools/steam.py
  *   The Perfect Part    its logo for dark grounds as the game's boot screen sets it (THE PERFECT
  *                       on a riveted nameplate over PART, whose T is an end mill, all in the
  *                       console screen's teal), an SVG from concept/logo/svg/logo-dark.svg
@@ -28,7 +31,7 @@ interface Props {
   /** Robot: the logo's drawn width, for its srcset. */
   logoSizes?: string;
   eager?: boolean;
-  /** Robot, Part, Quest: the logo is decorative (alt=""), its words are in the heading as text. */
+  /** Robot, Part, Quest, Fight: the logo is decorative (alt=""), its words are in the heading as text. */
   decorative?: boolean;
 }
 const { game, class: className, logoSizes = '320px', eager = false, decorative = false } = Astro.props;
@@ -39,6 +42,8 @@ const murderName = game.name.replace(/ (?=\S+ )/g, '\u00a0');
   <Image src={game.logo} alt={decorative ? '' : game.name} class:list={['gt gt-robot', className]} widths={[240, 360, 480, 720]} sizes={logoSizes} loading={eager ? 'eager' : 'lazy'} />
 ) : game.theme === 'part' && game.logo ? (
   <img src={game.logo.src} width={game.logo.width} height={game.logo.height} alt={decorative ? '' : game.name} class:list={['gt gt-part', className]} loading={eager ? 'eager' : 'lazy'} decoding="async" />
+) : game.theme === 'fight' && game.logo ? (
+  <Image src={game.logo} alt={decorative ? '' : game.name} class:list={['gt gt-fight', className]} widths={[240, 360, 480, 720]} sizes={logoSizes} loading={eager ? 'eager' : 'lazy'} />
 ) : game.theme === 'quest' && game.logo ? (
   <img src={game.logo.src} width={game.logo.width} height={game.logo.height} alt={decorative ? '' : game.name} class:list={['gt gt-quest', className]} loading={eager ? 'eager' : 'lazy'} decoding="async" />
 ) : game.theme === 'murder' ? (

@@ -53,6 +53,17 @@ import quest03 from '../assets/quest/03-oak.jpg';
 import quest04 from '../assets/quest/04-guard.jpg';
 import quest05 from '../assets/quest/05-cannon.jpg';
 import quest07 from '../assets/quest/07-hoard.jpg';
+import fightHero from '../assets/fight/hero.jpg';
+import fightCard from '../assets/fight/card-art.jpg';
+import fightLogo from '../assets/fight/logo.png';
+import fightIcon from '../assets/fight/icon.png';
+import fightTrailerPoster from '../assets/fight/trailer-poster.jpg';
+import fight01 from '../assets/fight/01-city.jpg';
+import fight02 from '../assets/fight/02-forest-brawl.jpg';
+import fight03 from '../assets/fight/03-wolves.jpg';
+import fight04 from '../assets/fight/04-desert-mission.jpg';
+import fight05 from '../assets/fight/05-castle.jpg';
+import fight06 from '../assets/fight/06-map.jpg';
 
 type L<T = string> = Record<Lang, T>;
 
@@ -118,7 +129,7 @@ export interface Game {
   shots: Shot[];
   shotsPortrait?: boolean;
   videos: Video[];
-  theme: 'robot' | 'murder' | 'race' | 'part' | 'quest';
+  theme: 'robot' | 'murder' | 'race' | 'part' | 'quest' | 'fight';
   schema: {
     genre: string[];
     playMode: string[];
@@ -738,5 +749,123 @@ export const QUEST: Game = {
   },
 };
 
-export const GAMES: Game[] = [ROBOT, MURDER, RACE, PART, QUEST];
+export const FIGHT: Game = {
+  slug: 'the-perfect-fight',
+  name: 'The Perfect Fight',
+  shortName: 'Fight',
+  genre: { en: 'Cartoon platform fighter', sv: 'Tecknat plattformsslagsmål' },
+  genreShort: { en: 'Platform fighter', sv: 'Plattformsslagsmål' },
+  stat: {
+    value: '8',
+    unit: { en: 'fighters', sv: 'kämpar' },
+    detail: { en: 'in one match', sv: 'i samma match' },
+    label: { en: 'fighters in one match, four players on one computer', sv: 'kämpar i samma match, fyra spelare vid en dator' },
+  },
+  tagline: {
+    en: 'Built from our son’s drawings.',
+    sv: 'Byggt från vår sons teckningar.',
+  },
+  pitch: {
+    en: 'A cartoon platform fighter for up to eight: swords, arrows, fireballs and TNT, on one sofa or online.',
+    sv: 'Ett tecknat plattformsslagsmål för upp till åtta: svärd, pilar, eldklot och TNT, i samma soffa eller online.',
+  },
+  metaDescription: {
+    en: 'The Perfect Fight is a cartoon platform fighter for up to eight, built from our son’s drawings. Fight on one sofa or online. Coming soon to Steam.',
+    sv: 'The Perfect Fight är ett tecknat plattformsslagsmål för upp till åtta, byggt från vår sons teckningar. Slåss i samma soffa eller online. Snart på Steam.',
+  },
+  intro: {
+    en: [
+      'The Perfect Fight is a platform fighter built from our son’s drawings. A knight, a princess, an archer, Mr Moustache, a wizard, a viking, a robot on tank tracks and a pirate captain with a parrot on his hat: pick one, pick a weapon, and knock everyone else off the island.',
+      'Swing swords, shoot arrows and fireballs, throw TNT and launch yourself over castle walls. Fight friends on one sofa or online, team up against the grey army, or set out on an adventure across the island.',
+    ],
+    sv: [
+      'The Perfect Fight är ett plattformsslagsmål byggt från vår sons teckningar. En riddare, en prinsessa, en bågskytt, Herr Mustasch, en trollkarl, en viking, en robot på larvband och en piratkapten med en papegoja på hatten: välj en, välj ett vapen och knuffa alla andra av ön.',
+      'Svinga svärd, skjut pilar och eldklot, kasta TNT och skjut iväg dig själv över borgmurar. Slåss mot kompisar i samma soffa eller online, slå er ihop mot de grå eller ge dig ut på äventyr över ön.',
+    ],
+  },
+  features: {
+    en: [
+      { title: 'Up to eight fighters', text: 'Four players on one computer, with CPUs filling the other places.' },
+      { title: 'Any weapon', text: 'Sword and shield, long sword, great axe, sabre, long bow or the magic staff’s fireballs, plus a throwing axe or a stick of TNT.' },
+      { title: 'Adventure', text: 'Levels across an island map: free the villagers, herd the sheep, duel champions, raid grey castles and beat the bosses, alone or two together.' },
+      { title: 'Versus and Survive', text: 'Everyone against everyone in the forest, the desert or the city, or one team against waves of the grey army.' },
+      { title: 'Castle', text: 'Two teams, two castles. Climb into the catapult, fly over the wall and knock the bricks out from under them.' },
+      { title: 'Play together', text: 'Keyboard and controllers on one computer, or online: share a game’s code, invite Steam friends or quick join.' },
+    ],
+    sv: [
+      { title: 'Upp till åtta kämpar', text: 'Fyra spelare vid en dator, och datorn fyller de andra platserna.' },
+      { title: 'Alla vapen', text: 'Svärd och sköld, långsvärd, stridsyxa, sabel, långbåge eller trollstavens eldklot, och en kastyxa eller en TNT-stav.' },
+      { title: 'Äventyret', text: 'Banor på en karta över ön: befria byborna, valla fåren, duellera mot mästare, plundra de grås borgar och besegra bossarna, ensam eller två tillsammans.' },
+      { title: 'Alla mot alla och Överlev', text: 'Alla mot alla i skogen, öknen eller staden, eller ett lag mot våg efter våg av de grå.' },
+      { title: 'Borgen', text: 'Två lag, två borgar. Klättra in i katapulten, flyg över muren och slå ut stenarna under dem.' },
+      { title: 'Spela tillsammans', text: 'Tangentbord och handkontroller vid samma dator, eller online: dela en kod, bjud in Steam-vänner eller hoppa in snabbt.' },
+    ],
+  },
+  facts: {
+    en: [
+      { label: 'Genre', value: 'Cartoon platform fighter' },
+      { label: 'Platform', value: 'Windows (Steam)' },
+      { label: 'Release', value: 'Coming soon' },
+      { label: 'Players', value: '1–4 on one computer, up to 8 fighters, online' },
+      { label: 'Languages', value: '17, among them English and Swedish' },
+      { label: 'Developer', value: 'UX Productions, Sweden' },
+    ],
+    sv: [
+      { label: 'Genre', value: 'Tecknat plattformsslagsmål' },
+      { label: 'Plattform', value: 'Windows (Steam)' },
+      { label: 'Släpps', value: 'Snart' },
+      { label: 'Spelare', value: '1–4 vid en dator, upp till 8 kämpar, online' },
+      { label: 'Språk', value: '17, bland dem svenska och engelska' },
+      { label: 'Utvecklare', value: 'UX Productions, Sverige' },
+    ],
+  },
+  faq: {
+    en: [
+      { q: 'When does it come out?', a: 'Soon, on Steam for Windows. We will post on our news page and our socials when there is a date.' },
+      { q: 'How many can play?', a: 'Up to four on one computer, with keyboard and controllers together, and CPUs fill the match up to eight fighters. Online, friends join with a game’s code or a Steam invite.' },
+      { q: 'Who made the fighters?', a: 'Our son drew them. We turned his drawings into the game’s fighters, weapons and worlds.' },
+    ],
+    sv: [
+      { q: 'När kommer det?', a: 'Snart, på Steam för Windows. Vi skriver på nyhetssidan och i våra sociala kanaler när det finns ett datum.' },
+      { q: 'Hur många kan spela?', a: 'Upp till fyra vid samma dator, med tangentbord och handkontroller tillsammans, och datorn fyller matchen upp till åtta kämpar. Online går kompisar med via spelets kod eller en inbjudan på Steam.' },
+      { q: 'Vem gjorde kämparna?', a: 'Vår son ritade dem. Vi gjorde om hans teckningar till spelets kämpar, vapen och världar.' },
+    ],
+  },
+  platforms: ['Steam'],
+  stores: [],
+  comingSoon: { en: 'Coming soon to Steam', sv: 'Kommer snart till Steam' },
+  hero: fightHero,
+  card: fightCard,
+  icon: fightIcon,
+  logo: fightLogo,
+  // Six of the eight screenshots (the press kit has all eight), so they make full rows.
+  shots: [
+    { src: fight01, alt: { en: 'The robot and the viking fight on the harbour in the rain, the city behind them', sv: 'Roboten och vikingen slåss på kajen i regnet, med staden bakom sig' } },
+    { src: fight02, alt: { en: 'Eight fighters brawl in the forest under a big tree', sv: 'Åtta kämpar slåss i skogen under ett stort träd' } },
+    { src: fight03, alt: { en: 'The robot crosses the forest with wolves at its tracks', sv: 'Roboten tar sig genom skogen med vargar hack i häl' } },
+    { src: fight04, alt: { en: 'A desert mission: Captain Z smashes catapults among scorpions and a skeleton archer', sv: 'Ett ökenuppdrag: kapten Z slår sönder katapulter bland skorpioner och en skelettbågskytt' } },
+    { src: fight05, alt: { en: 'Castle: Captain Z flies over the wall from the catapult towards the castle’s towers', sv: 'Borgen: kapten Z flyger över muren från katapulten mot borgens torn' } },
+    { src: fight06, alt: { en: 'The Adventure’s island map, with the knight on the first level', sv: 'Äventyrets karta över ön, med riddaren på första banan' } },
+  ],
+  videos: [
+    {
+      file: '/video/the-perfect-fight-trailer.mp4',
+      poster: fightTrailerPoster,
+      title: { en: 'The Perfect Fight: trailer', sv: 'The Perfect Fight: trailer' },
+      description: 'Eight fighters brawl in the forest, the desert and the city, Captain Z flies over the castle walls, the robot walks the island map and the bosses come out.',
+      seconds: 27,
+      uploaded: '2026-11-10',
+    },
+  ],
+  theme: 'fight',
+  schema: {
+    genre: ['Fighting', 'Platformer', 'Action'],
+    playMode: ['SinglePlayer', 'MultiPlayer', 'CoOp'],
+    gamePlatform: ['PC'],
+    operatingSystem: 'Windows',
+    numberOfPlayers: { min: 1, max: 8 },
+  },
+};
+
+export const GAMES: Game[] = [ROBOT, MURDER, RACE, PART, QUEST, FIGHT];
 export const gameBySlug = (slug: string) => GAMES.find((g) => g.slug === slug);

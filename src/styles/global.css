@@ -106,6 +106,7 @@ p { margin: 0 0 1em; }
 .gt-part { display: block; height: auto; }
 /* The Quest's logo is pixel art: scaled, its pixels stay square. */
 .gt-quest { display: block; height: auto; image-rendering: pixelated; }
+.gt-fight { display: block; height: auto; }
 /* Contrast themes paint every background in the theme's own colour: a light one would
    leave the Robot logo's light letters on white, so the logo keeps its own navy plate
    (as in print). */
@@ -113,6 +114,7 @@ p { margin: 0 0 1em; }
   img.gt-robot, .game-hero .logo { forced-color-adjust: none; background: #0a1524; border-radius: 6px; }
   img.gt-part { forced-color-adjust: none; background: #0d2124; border-radius: 6px; }
   img.gt-quest { forced-color-adjust: none; background: #0b1424; border-radius: 6px; }
+  img.gt-fight { forced-color-adjust: none; background: #161a2a; border-radius: 6px; }
 }
 
 /* Buttons */
@@ -176,6 +178,7 @@ p { margin: 0 0 1em; }
 .game-card h3 .gt-robot { width: 132px; margin: -6px 0 -2px -6px; }
 .game-card h3 .gt-part { width: 132px; }
 .game-card h3 .gt-quest { width: 112px; }
+.game-card h3 .gt-fight { width: 132px; }
 .game-card .body { container-type: inline-size; }
 .game-card .genre { font: 500 12px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--strip); }
 .game-card p { color: var(--text-dim); margin: 0; font-size: 15.5px; }
@@ -286,6 +289,8 @@ p { margin: 0 0 1em; }
 .theme-robot { --g-bg: #0a1524; --g-plate: #10213a; --g-line: #24476b; --g-text: #e8f1ff; --g-dim: #aac0da; --g-accent: #5ce1e6; --g-cta: #ffc857; --g-cta-ink: #0a1524; }
 .theme-murder { --g-bg: #080c16; --g-plate: #0f1420; --g-line: #3b3322; --g-text: #ede5d1; --g-dim: #b9b09b; --g-accent: #c9a045; --g-cta: #c9a045; --g-cta-ink: #080c16; --g-title: var(--murder-face); }
 /* Part: the console's dark teal face and its screen's teal, the game's yellow START button. */
+/* Fight: the logo's ink, its ribbon blue and its gold. */
+.theme-fight { --g-bg: #161a2a; --g-plate: #1f2438; --g-line: #323a58; --g-text: #fff8ea; --g-dim: #bcc2d6; --g-accent: #ffd140; --g-cta: #ffd140; --g-cta-ink: #1e2030; }
 .theme-quest { --g-bg: #0b1424; --g-plate: #12203a; --g-line: #263a5c; --g-text: #fff6e2; --g-dim: #b7c2d6; --g-accent: #f2c14e; --g-cta: #f2c14e; --g-cta-ink: #1b1406; }
 .theme-part { --g-bg: #0c1e21; --g-plate: #122c30; --g-line: #25494e; --g-text: #fff8ee; --g-dim: #b0c6c2; --g-accent: #6ec8be; --g-cta: #ffc440; --g-cta-ink: #262e3c; }
 .theme-race { --g-bg: #0a0d13; --g-plate: #111725; --g-line: #232c42; --g-text: #f4f7fd; --g-dim: #a8b1c8; --g-accent: #b46bff; --g-cta: #b46bff; --g-cta-ink: #0a0d13; --g-title: var(--race-face); }
@@ -320,6 +325,7 @@ p { margin: 0 0 1em; }
 .game-hero .logo { width: min(440px, 70vw); height: auto; margin: -10px 0 -6px -10px; }
 .game-hero .gt-part { width: min(400px, 66vw); margin-block: 6px 4px; }
 .game-hero .gt-quest { width: min(336px, 66vw); margin-block: 6px 4px; }
+.game-hero .gt-fight { width: min(400px, 74vw); margin-block: 4px 2px; }
 .game-hero .tagline { font-size: clamp(1.1rem, 2.2vw, 1.4rem); color: var(--g-text); max-width: 32em; margin-bottom: 18px; text-wrap: pretty; }
 /* Phones: the art is a band above the copy, so it fades into the page itself (the
    section's shade would cover the copy too and leave the art's edge hard); the
@@ -377,7 +383,7 @@ p { margin: 0 0 1em; }
 
 /* Print: black text on white paper, without the screen's shadows and sign-off. */
 @media print {
-  :root, .game, .theme-robot, .theme-murder, .theme-race, .theme-part, .theme-quest {
+  :root, .game, .theme-robot, .theme-murder, .theme-race, .theme-part, .theme-quest, .theme-fight {
     --ground: #fff; --ground-2: #fff; --plate: #fff; --plate-2: #fff; --line: #bbb; --line-strong: #888;
     --text: #000; --text-dim: #222; --text-muted: #444; --accent: #000; --paper: #fff; --ink: #000; --ink-dim: #222;
     --g-bg: #fff; --g-plate: #fff; --g-line: #bbb; --g-text: #000; --g-dim: #222; --g-accent: #000;
@@ -397,4 +403,5 @@ p { margin: 0 0 1em; }
   img.gt-robot, .game-hero .logo { background: #0a1524; padding: 4px 8px; border-radius: 6px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   img.gt-part { background: #0d2124; padding: 6px 8px; border-radius: 6px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   img.gt-quest { background: #0b1424; padding: 6px 8px; border-radius: 6px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  img.gt-fight { background: #161a2a; padding: 6px 8px; border-radius: 6px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
