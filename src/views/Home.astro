@@ -7,7 +7,7 @@ import Icon from '../components/Icon.astro';
 import Mark from '../components/Mark.astro';
 import Socials from '../components/Socials.astro';
 import StoreButtons from '../components/StoreButtons.astro';
-import { GAMES as ALL_GAMES, MURDER, ROBOT, platformLabel } from '../data/games';
+import { GAMES as ALL_GAMES, MURDER, ROBOT, platformLabel, storeOut } from '../data/games';
 import PanelArt from '../components/PanelArt.astro';
 import Words from '../components/Words.astro';
 import { BADGES, FEATURED_GAME, ROBOT_STEAM_RELEASE, SITE, badgeFor, excerpt, formatDate, localize, loopsFor, robotOnSteam, steamRelease, storeLabel, storeShort, t, type Lang } from '../data/site';
@@ -17,6 +17,7 @@ import robotKeyArtPhone from '../assets/robot/key-art-phone.jpg';
 import murderNight from '../assets/murder/harbour-night.jpg';
 import murderNightPhone from '../assets/murder/harbour-night-phone.jpg';
 import raceNight from '../assets/race/harbour-street-night.jpg';
+import partKeyArt from '../assets/part/key-art.jpg';
 import raceNightPhone from '../assets/race/harbour-street-night-phone.jpg';
 
 interface Props {
@@ -99,6 +100,12 @@ const ART = {
     sizes: '(min-width: 960px) max(min(1310px, 97vw), calc(clamp(540px, 100vh - 360px, 760px) * 1.6)), max(100vw, calc(clamp(220px, 58vw, 420px) * 1.6))',
     x0: '54%', x1: '50%', y0: '50%', y1: '50%', xm: '50%', ym: '0%',
     phone: { src: raceNightPhone, widths: [600, 900, 1170], sizes: '100vw', media: PHONE },
+  },
+  // The Part's key art (1600x900): the machine and the finished part, no phone crop yet.
+  part: {
+    src: partKeyArt, widths: [800, 1200, 1600],
+    sizes: '(min-width: 960px) max(min(935px, 70vw), calc(clamp(540px, 100vh - 360px, 760px) * 1.78)), max(100vw, calc(clamp(220px, 58vw, 420px) * 1.78))',
+    x0: '50%', x1: '50%', y0: '50%', y1: '50%', xm: '50%', ym: '50%',
   },
 } as const;
 // Each panel's loop (site.ts LOOPS): today's and any later one. The script takes the first
@@ -239,8 +246,8 @@ const facts = [
                       whole label stays its name for screen readers. */}
                   <a class="btn primary tp-cta" href={main.url} rel="noopener">
                     <Icon name={main.kind} />
-                    <span class="tp-cta-full" data-after={main.kind === 'steam' && !steamOut ? storeLabel('steam', lang, true) : undefined}>{storeLabel(main.kind, lang)}</span>
-                    <span class="tp-cta-short" aria-hidden="true" data-after={main.kind === 'steam' && !steamOut ? storeShort('steam', lang, true) : undefined}>{storeShort(main.kind, lang)}</span>
+                    <span class="tp-cta-full" data-after={main.kind === 'steam' && main.release instanceof Date && !storeOut(main) ? storeLabel('steam', lang, true) : undefined}>{storeLabel(main.kind, lang, storeOut(main))}</span>
+                    <span class="tp-cta-short" aria-hidden="true" data-after={main.kind === 'steam' && main.release instanceof Date && !storeOut(main) ? storeShort('steam', lang, true) : undefined}>{storeShort(main.kind, lang, storeOut(main))}</span>
                     <span class="visually-hidden">{` (${g.name})`}</span>
                   </a>
                   <a class="tp-more" href={`#${g.slug}`} aria-controls={`${g.slug}-body`}>
