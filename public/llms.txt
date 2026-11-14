@@ -1,12 +1,15 @@
 # UX Productions
 
-> UX Productions AB is a small game studio in Eskilstuna, Sweden, founded in 2013. It makes The Perfect Robot, The Perfect Murder and The Perfect Race.
+> UX Productions AB is a small game studio in Eskilstuna, Sweden, founded in 2013. It makes The Perfect Robot, The Perfect Murder, The Perfect Race and The Perfect Part, with The Perfect Quest and The Perfect Fight coming to Steam.
 
 ## Games
 
 - [The Perfect Robot](https://uxproductions.se/games/the-perfect-robot/): a programming puzzle game. Program a literal-minded robot four move cards at a time across 57 hand-made levels in six worlds. Out now on Steam (Windows, since 22 October 2026), iOS and Android. Formerly Tiny Treads.
 - [The Perfect Murder](https://uxproductions.se/games/the-perfect-murder/): a noir social deduction party game for 4 to 20 players, like Mafia or Werewolf, with no game master. Browser (the-perfect-murder.com), iOS, Android.
-- [The Perfect Race](https://uxproductions.se/games/the-perfect-race/): a top-down arcade racer built around time attack and server-verified ghost laps. Browser (the-perfect-race.com), iOS, Android.
+- [The Perfect Race](https://uxproductions.se/games/the-perfect-race/): a top-down arcade racer built around time attack and server-verified ghost laps. Browser (the-perfect-race.com), iOS, Android; coming soon to Steam (https://store.steampowered.com/app/5550900/).
+- [The Perfect Part](https://uxproductions.se/games/the-perfect-part/): a casual machining puzzle game. Record a CNC program step by step, press CYCLE START and watch the cutter carve the part you planned. Out now on Steam (Windows), iOS and Android (since 7 November 2026).
+- [The Perfect Quest: The Drowned King's Hoard](https://uxproductions.se/games/the-perfect-quest/): a pirate text adventure inspired by the Sierra classics. On Steam (Windows) on 19 November 2026 (https://store.steampowered.com/app/5550890/).
+- [The Perfect Fight](https://uxproductions.se/games/the-perfect-fight/): a cartoon platform fighter for up to eight, built from our son's drawings. Coming soon to Steam (Windows) (https://store.steampowered.com/app/5597230/).
 - [Other work](https://uxproductions.se/games/other-work/): learning apps for Swedish schools made with Alfamax (Skattjakten, AHA - en eller ett?).
 
 ## Studio

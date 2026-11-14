@@ -40,6 +40,9 @@ const heroWidths = [...new Set([720, 1280, 1920, 2400, game.hero.width])].filter
 // across five).
 const shotCols = (game.shotsPortrait ? [6, 5, 4, 3] : [4, 3, 2]).find((c) => game.shots.length % c === 0);
 const steamPending = game.slug === 'the-perfect-robot' && !robotOnSteam();
+// A Steam page with a release date says the day (in Swedish time) where the game is coming.
+const steamDate = game.stores.find((st) => st.release instanceof Date)?.release as Date | undefined;
+const releaseDay = steamDate?.toLocaleDateString(lang === 'sv' ? 'sv-SE' : 'en-GB', { timeZone: 'Europe/Stockholm', day: 'numeric', month: 'long', year: 'numeric' });
 
 const videoGame = {
   '@context': 'https://schema.org',
@@ -214,8 +217,12 @@ const breadcrumbs = {
           {game.comingSoon ? (
             <div class="aside-block">
               <b>{sv ? 'Kommer snart' : 'Coming soon'}</b>
-              <p>{sv ? `Till ${game.platforms.join(', ').replace(/, (?=[^,]+$)/, ' och ')}, inget datum ännu. Vi skriver om det i nyheterna och i våra sociala kanaler när det finns ett.` : `To ${game.platforms.join(', ').replace(/, (?=[^,]+$)/, ' and ')}, with no date yet. We will post it in our news and on our socials when there is one.`}</p>
-              <a href="/news/" hreflang={sv ? 'en' : undefined}>{s.allNews}</a>
+              {releaseDay ? (
+                <p>{sv ? `Till ${game.platforms.join(', ').replace(/, (?=[^,]+$)/, ' och ')} den ${releaseDay}. Lägg det på din önskelista så säger Steam till när det är ute.` : `To ${game.platforms.join(', ').replace(/, (?=[^,]+$)/, ' and ')} on ${releaseDay}. Wishlist it and Steam will tell you when it is out.`}</p>
+              ) : (
+                <p>{sv ? `Till ${game.platforms.join(', ').replace(/, (?=[^,]+$)/, ' och ')}, inget datum ännu. Vi skriver om det i nyheterna och i våra sociala kanaler när det finns ett.` : `To ${game.platforms.join(', ').replace(/, (?=[^,]+$)/, ' and ')}, with no date yet. We will post it in our news and on our socials when there is one.`}</p>
+              )}
+              {game.stores.length > 0 ? <StoreButtons game={{ ...game, comingSoon: undefined }} lang={lang} /> : <a href="/news/" hreflang={sv ? 'en' : undefined}>{s.allNews}</a>}
             </div>
           ) : (
             <div class="aside-block">

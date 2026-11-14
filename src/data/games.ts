@@ -75,7 +75,13 @@ export interface Shot {
 export interface Store {
   kind: 'steam' | 'appstore' | 'googleplay' | 'web';
   url: string;
+  /** A Steam page that is up before the game is out: its button says Wishlist until this
+   *  moment, then Buy ('tba' while there is no date). Leave it out for a game that is out. */
+  release?: Date | 'tba';
 }
+
+/** Whether a store sells the game yet (a Steam page before its release only takes wishlists). */
+export const storeOut = (s: Store, now = new Date()) => !s.release || (s.release !== 'tba' && now >= s.release);
 
 export interface Video {
   file: string;
@@ -483,6 +489,7 @@ export const RACE: Game = {
     { kind: 'web', url: 'https://the-perfect-race.com' },
     { kind: 'appstore', url: 'https://apps.apple.com/us/app/the-perfect-race/id6800795522' },
     { kind: 'googleplay', url: 'https://play.google.com/store/apps/details?id=se.uxproductions.theperfectrace' },
+    { kind: 'steam', url: 'https://store.steampowered.com/app/5550900/The_Perfect_Race/', release: 'tba' },
   ],
   website: 'https://the-perfect-race.com',
   hero: raceHero,
@@ -561,33 +568,36 @@ export const PART: Game = {
     en: [
       { label: 'Genre', value: 'Casual machining puzzle' },
       { label: 'Platforms', value: 'iOS, Android, Windows (Steam)' },
-      { label: 'Release', value: 'Coming soon, no date yet' },
+      { label: 'Release', value: '7 November 2026' },
       { label: 'Modes', value: 'Six jobs, Playground' },
       { label: 'Developer', value: 'UX Productions, Sweden' },
     ],
     sv: [
       { label: 'Genre', value: 'Avslappnat fräspussel' },
       { label: 'Plattformar', value: 'iOS, Android, Windows (Steam)' },
-      { label: 'Släpps', value: 'Snart, inget datum ännu' },
+      { label: 'Släpptes', value: '7 november 2026' },
       { label: 'Spellägen', value: 'Sex jobb, Playground' },
       { label: 'Utvecklare', value: 'UX Productions, Sverige' },
     ],
   },
   faq: {
     en: [
-      { q: 'When does it come out?', a: 'There is no date yet. The Perfect Part is coming to iPhone, iPad, Android phones and tablets and to Windows on Steam; we will post on our news page and our socials when there is a date.' },
+      { q: 'Where can I get it?', a: 'The Perfect Part is out on Steam for Windows, on the App Store for iPhone and iPad, and on Google Play for Android phones and tablets.' },
       { q: 'Do I need to know CNC machining or G-code?', a: 'No. You record each step with a few keys and taps on the part, in plain words. The game writes the machine code from your steps, and shows it on the console’s screen while it cuts.' },
       { q: 'What happens when a run goes wrong?', a: 'Nothing is lost. TRY AGAIN puts a fresh block in the vise and keeps your program, so you only fix the step that went wrong. The machine also stops itself the moment before a crash or a broken tool, so nothing ever breaks.' },
     ],
     sv: [
-      { q: 'När kommer det?', a: 'Det finns inget datum ännu. The Perfect Part kommer till iPhone, iPad, Android-telefoner och surfplattor och till Windows på Steam; vi skriver på nyhetssidan och i våra sociala kanaler när det finns ett datum.' },
+      { q: 'Var kan jag skaffa det?', a: 'The Perfect Part finns på Steam för Windows, i App Store för iPhone och iPad och på Google Play för Android-telefoner och surfplattor.' },
       { q: 'Måste jag kunna CNC-fräsning eller G-kod?', a: 'Nej. Du spelar in varje steg med några knappar och tryck på detaljen, med vanliga ord. Spelet skriver maskinkoden utifrån dina steg och visar den på panelens skärm medan fräsen skär.' },
       { q: 'Vad händer när en körning går fel?', a: 'Inget går förlorat. TRY AGAIN sätter ett nytt block i skruvstycket och behåller ditt program, så du rättar bara steget som gick fel. Maskinen stannar också själv precis innan en krock eller ett brutet verktyg, så inget går någonsin sönder.' },
     ],
   },
-  platforms: ['iOS', 'Android', 'Steam'],
-  stores: [],
-  comingSoon: { en: 'Coming soon to iOS, Android and Steam', sv: 'Kommer snart till iOS, Android och Steam' },
+  platforms: ['Steam', 'iOS', 'Android'],
+  stores: [
+    { kind: 'steam', url: 'https://store.steampowered.com/app/5483650/The_Perfect_Part/' },
+    { kind: 'appstore', url: 'https://apps.apple.com/app/id6823982555' },
+    { kind: 'googleplay', url: 'https://play.google.com/store/apps/details?id=se.uxproductions.theperfectpart' },
+  ],
   hero: partHero,
   card: partCard,
   icon: partIcon,
@@ -687,7 +697,7 @@ export const QUEST: Game = {
     en: [
       { label: 'Genre', value: 'Comedy text adventure' },
       { label: 'Platform', value: 'Windows (Steam)' },
-      { label: 'Release', value: 'Coming soon' },
+      { label: 'Release', value: '19 November 2026' },
       { label: 'Size', value: '24 locations, 14 characters, about 60 items' },
       { label: 'Language', value: 'English' },
       { label: 'Developer', value: 'UX Productions, Sweden' },
@@ -695,7 +705,7 @@ export const QUEST: Game = {
     sv: [
       { label: 'Genre', value: 'Komiskt textäventyr' },
       { label: 'Plattform', value: 'Windows (Steam)' },
-      { label: 'Släpps', value: 'Snart' },
+      { label: 'Släpps', value: '19 november 2026' },
       { label: 'Omfång', value: '24 platser, 14 personer, ett 60-tal föremål' },
       { label: 'Språk', value: 'Engelska' },
       { label: 'Utvecklare', value: 'UX Productions, Sverige' },
@@ -703,19 +713,19 @@ export const QUEST: Game = {
   },
   faq: {
     en: [
-      { q: 'When does it come out?', a: 'Soon, on Steam for Windows. We will post on our news page and our socials when there is a date.' },
+      { q: 'When does it come out?', a: 'On 19 November 2026, on Steam for Windows. Wishlist it and Steam will tell you when it is out.' },
       { q: 'Do I have to guess the exact words?', a: 'No. The parser takes what people actually type: GIVE FISH TO GUARD, FEED THE GUARD THE FISH and GIVE THE GUARD A FISH all work. When you are stuck, TALK TO PARROT for a hint, and HELP lists the commands.' },
       { q: 'Can I die?', a: 'Yes, the classic way, with a joke and an epitaph. TRY AGAIN rewinds to the moment before, so nothing is lost.' },
     ],
     sv: [
-      { q: 'När kommer det?', a: 'Snart, på Steam för Windows. Vi skriver på nyhetssidan och i våra sociala kanaler när det finns ett datum.' },
+      { q: 'När kommer det?', a: 'Den 19 november 2026, på Steam för Windows. Lägg det på din önskelista så säger Steam till när det är ute.' },
       { q: 'Måste jag gissa exakt rätt ord?', a: 'Nej. Tolken tar emot det folk faktiskt skriver: GIVE FISH TO GUARD, FEED THE GUARD THE FISH och GIVE THE GUARD A FISH fungerar alla. Kör du fast, skriv TALK TO PARROT för ett tips, och HELP visar kommandona. Spelet är på engelska.' },
       { q: 'Kan man dö?', a: 'Ja, på klassiskt vis, med ett skämt och en gravskrift. TRY AGAIN spolar tillbaka till stunden före, så inget går förlorat.' },
     ],
   },
   platforms: ['Steam'],
-  stores: [],
-  comingSoon: { en: 'Coming soon to Steam', sv: 'Kommer snart till Steam' },
+  stores: [{ kind: 'steam', url: 'https://store.steampowered.com/app/5550890/The_Perfect_Quest_The_Drowned_Kings_Hoard/', release: new Date('2026-11-19T18:00:00Z') }],
+  comingSoon: { en: 'On Steam 19 November 2026', sv: 'På Steam 19 november 2026' },
   hero: questHero,
   card: questCard,
   icon: questIcon,
@@ -821,18 +831,18 @@ export const FIGHT: Game = {
   },
   faq: {
     en: [
-      { q: 'When does it come out?', a: 'Soon, on Steam for Windows. We will post on our news page and our socials when there is a date.' },
+      { q: 'When does it come out?', a: 'Soon, on Steam for Windows. Wishlist it and Steam will tell you when it is out; we will also post on our news page and our socials when there is a date.' },
       { q: 'How many can play?', a: 'Up to four on one computer, with keyboard and controllers together, and CPUs fill the match up to eight fighters. Online, friends join with a game’s code or a Steam invite.' },
       { q: 'Who made the fighters?', a: 'Our son drew them. We turned his drawings into the game’s fighters, weapons and worlds.' },
     ],
     sv: [
-      { q: 'När kommer det?', a: 'Snart, på Steam för Windows. Vi skriver på nyhetssidan och i våra sociala kanaler när det finns ett datum.' },
+      { q: 'När kommer det?', a: 'Snart, på Steam för Windows. Lägg det på din önskelista så säger Steam till när det är ute; vi skriver också på nyhetssidan och i våra sociala kanaler när det finns ett datum.' },
       { q: 'Hur många kan spela?', a: 'Upp till fyra vid samma dator, med tangentbord och handkontroller tillsammans, och datorn fyller matchen upp till åtta kämpar. Online går kompisar med via spelets kod eller en inbjudan på Steam.' },
       { q: 'Vem gjorde kämparna?', a: 'Vår son ritade dem. Vi gjorde om hans teckningar till spelets kämpar, vapen och världar.' },
     ],
   },
   platforms: ['Steam'],
-  stores: [],
+  stores: [{ kind: 'steam', url: 'https://store.steampowered.com/app/5597230/The_Perfect_Fight/', release: 'tba' }],
   comingSoon: { en: 'Coming soon to Steam', sv: 'Kommer snart till Steam' },
   hero: fightHero,
   card: fightCard,
